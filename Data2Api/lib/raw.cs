@@ -132,77 +132,8 @@ namespace Data2Api.lib
 
                 ThermoBiz.RunHeader runHeader = rawFile.RunHeader;
                 ThermoBiz.LogEntry trailer = rawFile.GetTrailerExtraInformation(iScanNumber);
-                for (int i = 0; i < trailer.Length; i++)
-                {
-                    var value = trailer.Values[i];
-                    if (value == null)
-                    {
-                        continue;
-                    }
-                    switch (trailer.Labels[i])
-                    {
-                        case "Access ID":
-                            int access_id = Convert.ToInt32(value);
-                            if (access_id > 0)
-                            {
-                                scan.PrecursorMasterScanNumber = access_id;
-                            }
-                            break;
-                        case "Scan Description:":
-                            scan.Description = value.Trim();
-                            break;
-                        case "Ion Injection Time (ms):":
-                            scan.IonInjectionTime = double.Parse(value);
-                            break;
-                        case "Elapsed Scan Time (sec):":
-                            scan.ElapsedScanTime = double.Parse(value);
-                            break;
-                        case "Charge State:":
-                            int charge = int.Parse(value);
-                            foreach (var precursor in scan.Precursors)
-                            {
-                                precursor.Charge = charge;
-                                precursor.OriginalCharge = precursor.Charge;
-                            }
-                            break;
-                        case "Master Scan Number:":
-                            scan.PrecursorMasterScanNumber = int.Parse(value);
-                            break;
-                        case "Master Index:":
-                            scan.MasterIndex = int.Parse(value);
-                            break;
-                        case "Monoisotopic M/Z:":
-                            if (scan.Precursors.Count > 0)
-                            {
-                                double mz = double.Parse(value);
-                                if (mz > 0)
-                                {
-                                    scan.Precursors[0].Mz = mz;
-                                }
-                            }
-                            break;
-                        case "FAIMS CV:":
-                            scan.FaimsCV = (int)double.Parse(value);
-                            break;
-                        case "FAIMS Voltage On:":
-                            scan.FaimsState = (value == "No") ? TriState.Off : TriState.On;
-                            break;
-                        case "SPS Masses:":
-                            string[] spsIonStringArray = value.TrimEnd(',').Split(',');
-                            if (!string.IsNullOrWhiteSpace(spsIonStringArray[0]) && spsIonStringArray.Length > 0)
-                            {
-                                scan.Precursors.Clear();
-                                for (int spsIndex = 0; spsIndex < spsIonStringArray.Length; spsIndex++)
-                                {
-                                    if (double.TryParse(spsIonStringArray[spsIndex], out double spsIon))
-                                    {
-                                        scan.Precursors.Add(new Precursor(spsIon, 0, 1));
-                                    }
-                                }
-                            }
-                            break;
-                    }
-                }
+
+                scan.sTrailer.FromRaw(trailer);
 
                 if (scan.PrecursorMasterScanNumber <= 0 && scan.MsOrder > 1)
                 {
@@ -239,6 +170,8 @@ namespace Data2Api.lib
                     scan.LowestMz = scan.Centroids[0].Mz;
                     scan.HighestMz = scan.Centroids[scan.PeakCount - 1].Mz;
                 }
+
+                scan.sHeader.TrySetValue();
 
                 yield return scan;
             }
@@ -467,7 +400,7 @@ namespace Data2Api.lib
         {
             Scan outscan = new Scan();
 
-            ThermoBiz.Scan thermoScan = ThermoBiz.Scan.FromFile(rawFile, scanNumber);
+            ThermoBiz.Scan rawScan = ThermoBiz.Scan.FromFile(rawFile, scanNumber);
             IScanFilter scanFilter = rawFile.GetFilterForScanNumber(scanNumber);
             IScanEvent scanEvent = rawFile.GetScanEventForScanNumber(scanNumber);
 
@@ -480,11 +413,11 @@ namespace Data2Api.lib
             {
                 ScanNumber = scanNumber,
                 ScanEvent = (scanNumber - LastMS1) + 1,
-                BasePeakIntensity = thermoScan.ScanStatistics.BasePeakIntensity,
-                BasePeakMz = thermoScan.ScanStatistics.BasePeakMass,
-                TotalIonCurrent = thermoScan.ScanStatistics.TIC,
-                LowestMz = thermoScan.ScanStatistics.LowMass,
-                HighestMz = thermoScan.ScanStatistics.HighMass,
+                BasePeakIntensity = rawScan.ScanStatistics.BasePeakIntensity,
+                BasePeakMz = rawScan.ScanStatistics.BasePeakMass,
+                TotalIonCurrent = rawScan.ScanStatistics.TIC,
+                LowestMz = rawScan.ScanStatistics.LowMass,
+                HighestMz = rawScan.ScanStatistics.HighMass,
                 StartMz = scanFilter.GetMassRange(0).Low,
                 EndMz = scanFilter.GetMassRange(0).High,
                 ScanType = ReadScanType(scanFilter.ToString()),
@@ -611,15 +544,15 @@ namespace Data2Api.lib
                 }
             }
 
-            if (thermoScan.HasCentroidStream)
+            if (rawScan.HasCentroidStream)
             {
                 // High res data
-                CentroidsFromArrays(scan, thermoScan.CentroidScan.Masses, thermoScan.CentroidScan.Intensities, thermoScan.CentroidScan.Baselines, thermoScan.CentroidScan.Noises);
+                CentroidsFromArrays(scan, rawScan.CentroidScan.Masses, rawScan.CentroidScan.Intensities, rawScan.CentroidScan.Baselines, rawScan.CentroidScan.Noises);
             }
             else
             {
                 // Low res data
-                CentroidsFromArrays(scan, thermoScan.PreferredMasses, thermoScan.PreferredIntensities);
+                CentroidsFromArrays(scan, rawScan.PreferredMasses, rawScan.PreferredIntensities);
             }
 
             if (scan.PeakCount > 0)

@@ -149,7 +149,13 @@ namespace Data2Api.lib
         /// <returns></returns>
         public List<Precursor> Precursors { get; set; } = new List<Precursor>();
 
-        public IDictionary<string, string> Header { get; set; } = new Dictionary<string, string>();
+
+        public ScanHeader sHeader { get; set; } = new ScanHeader();
+
+        public ScanTrailer sTrailer { get; set; } = new ScanTrailer();
+
+        // Implementation for IMsScan
+        public IDictionary<string, string> Header { get; set; }
 
         public IInformationSourceAccess TuneData => throw new NotImplementedException();
 
