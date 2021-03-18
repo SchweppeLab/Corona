@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Thermo.Interfaces.InstrumentAccess_V1.MsScanContainer;
+﻿using Thermo.Interfaces.InstrumentAccess_V1.MsScanContainer;
 
 namespace Data2Api.lib
 {
@@ -16,6 +11,11 @@ namespace Data2Api.lib
         }
 
         private Scan Scan;
+
+        public Scan GetFullScan()
+        {
+            return Scan;
+        }
 
         public override IMsScan GetScan()
         {

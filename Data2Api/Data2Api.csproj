@@ -119,6 +119,7 @@
     <Compile Include="lib\Precursor.cs" />
     <Compile Include="lib\raw.cs" />
     <Compile Include="lib\RawEventArgs.cs" />
+    <Compile Include="lib\ScanMeta.cs" />
     <Compile Include="Scan\Scan.cs" />
     <Compile Include="Scan\ScanHeader.cs" />
     <Compile Include="Scan\ScanTrailer.cs" />

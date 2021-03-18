@@ -1,14 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using Thermo.Interfaces.SpectrumFormat_V1;
 using ThermoBiz = ThermoFisher.CommonCore.Data.Business;
 
 namespace Data2Api.lib
 {
-    public class ScanTrailer
+    public class ScanTrailer : IInformationSourceAccess
     {
 
         private Dictionary<string, string> Trailer;
+
+        public IEnumerable<string> ItemNames {
+            get
+            {
+                return Trailer.Keys;
+            }
+        }
+
+        public bool Available { get; set; } = true;
+
+        public bool Valid { get; set; } = true;
 
         public ScanTrailer()
         {
@@ -28,6 +39,16 @@ namespace Data2Api.lib
             };
         }
 
+        public bool TryGetValue(string key, out string value)
+        {
+            return Trailer.TryGetValue(key, out value);
+        }
+
+        public bool TryGetRawValue(string name, out object value)
+        {
+            throw new NotImplementedException();
+        }
+
         public void FromRaw(ThermoBiz.LogEntry trailer)
         {
             for (int i = 0; i < trailer.Length; i++)
@@ -40,6 +61,7 @@ namespace Data2Api.lib
                 if(Trailer.TryGetValue(trailer.Labels[i],out string outer))
                 {
                     Trailer[trailer.Labels[i]] = value.Trim();
+                    Console.WriteLine(trailer.Labels[i] + " " + Trailer[trailer.Labels[i]] + " : " + value);
                 }
             }
         }

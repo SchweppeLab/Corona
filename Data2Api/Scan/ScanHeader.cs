@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using Thermo.Interfaces.InstrumentAccess_V1.MsScanContainer;
+using ThermoFisher.CommonCore.Data.Interfaces;
 using ThermoBiz = ThermoFisher.CommonCore.Data.Business;
 
 namespace Data2Api.lib
@@ -40,7 +42,6 @@ namespace Data2Api.lib
                 { "SourceFragmentaiton", "" },
                 { "SourceFragmentationEnergy", "" },
                 { "Resolution", "" },
-                { "RawOvFtT", "" },
                 { "Access ID", "" },
                 { "Temperature Comp. (ppm)", "" },
                 { "RF Comp. (ppm)", "" },
@@ -76,7 +77,7 @@ namespace Data2Api.lib
             };
         }
 
-        public Dictionary<string,string> ToApiScan()
+        public Dictionary<string,string> GetHeader()
         {
             return Header;
         }

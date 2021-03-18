@@ -8,11 +8,11 @@ using Thermo.Interfaces.InstrumentAccess_V1.MsScanContainer;
 
 namespace Data2Api
 {
-    public class d2a : IMsScanContainer
+    public class d2a
     {
         public string DetectorClass => throw new NotImplementedException();
 
-        public event EventHandler<MsScanEventArgs> MsScanArrived;
+        public event EventHandler<RawEventArgs> MsScanArrived;
 
         private Scan LastMsScan { get; set; }
 

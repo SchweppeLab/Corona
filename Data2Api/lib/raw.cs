@@ -133,7 +133,7 @@ namespace Data2Api.lib
                 ThermoBiz.RunHeader runHeader = rawFile.RunHeader;
                 ThermoBiz.LogEntry trailer = rawFile.GetTrailerExtraInformation(iScanNumber);
 
-                scan.sTrailer.FromRaw(trailer);
+                //scan.MetaInformation.FromRaw(rawFile, iScanNumber);
 
                 if (scan.PrecursorMasterScanNumber <= 0 && scan.MsOrder > 1)
                 {
@@ -171,7 +171,7 @@ namespace Data2Api.lib
                     scan.HighestMz = scan.Centroids[scan.PeakCount - 1].Mz;
                 }
 
-                scan.sHeader.TrySetValue();
+                //scan.ScanHeader.TrySetValue("","");
 
                 yield return scan;
             }
@@ -396,7 +396,12 @@ namespace Data2Api.lib
             }
         }
 
-        public Scan Raw2Api(int scanNumber)
+        /// <summary>
+        /// Send raw data down to d2a Scan class
+        /// </summary>
+        /// <param name="scanNumber"></param>
+        /// <returns></returns>
+        public Scan ToApiScan(int scanNumber)
         {
             Scan outscan = new Scan();
 
@@ -453,6 +458,9 @@ namespace Data2Api.lib
 
             ThermoBiz.RunHeader runHeader = rawFile.RunHeader;
             ThermoBiz.LogEntry trailer = rawFile.GetTrailerExtraInformation(scanNumber);
+
+            outscan.MetaInformation.Trailer.FromRaw(trailer);
+
             for (int i = 0; i < trailer.Length; i++)
             {
                 var value = trailer.Values[i];
@@ -460,6 +468,7 @@ namespace Data2Api.lib
                 {
                     continue;
                 }
+
                 switch (trailer.Labels[i])
                 {
                     case "Access ID":

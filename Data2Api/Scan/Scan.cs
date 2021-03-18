@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Thermo.Interfaces.InstrumentAccess_V1.MsScanContainer;
 using Thermo.Interfaces.SpectrumFormat_V1;
 using ThermoFisher.CommonCore.Data.FilterEnums;
@@ -14,6 +11,8 @@ namespace Data2Api.lib
     /// </summary>
     public class Scan : IMsScan
     {
+        public ScanMeta MetaInformation { get; set; } = new ScanMeta();
+
         /// <summary>
         /// Current scan number
         /// </summary>
@@ -149,17 +148,24 @@ namespace Data2Api.lib
         /// <returns></returns>
         public List<Precursor> Precursors { get; set; } = new List<Precursor>();
 
-
-        public ScanHeader sHeader { get; set; } = new ScanHeader();
-
-        public ScanTrailer sTrailer { get; set; } = new ScanTrailer();
-
         // Implementation for IMsScan
-        public IDictionary<string, string> Header { get; set; }
+        public IDictionary<string, string> Header
+        {
+            get
+            {
+                return MetaInformation.Header.GetHeader();
+            }
+        }
 
         public IInformationSourceAccess TuneData => throw new NotImplementedException();
 
-        public IInformationSourceAccess Trailer => throw new NotImplementedException();
+        public IInformationSourceAccess Trailer
+        {
+            get
+            {
+                return MetaInformation.Trailer;
+            }
+        }
 
         public IInformationSourceAccess StatusLog => throw new NotImplementedException();
 
