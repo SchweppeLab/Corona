@@ -138,7 +138,7 @@ namespace Data2Api.lib
         /// <summary>
         /// The observed centroid peaks in the scan
         /// </summary>
-        public List<Centroid> Centroids { get; set; } = new List<Centroid>();
+        public IEnumerable<ICentroid> Centroids { get; set; } = new IEnumerable<ICentroid>();
 
         /// <summary>
         /// Holds precursor information for dependent scans.
@@ -175,9 +175,13 @@ namespace Data2Api.lib
 
         public IEnumerable<INoiseNode> NoiseBand => throw new NotImplementedException();
 
-        public int? CentroidCount { get; set; }
-
-        IEnumerable<ICentroid> ISpectrum.Centroids => throw new NotImplementedException();
+        public int? CentroidCount
+        {
+            get
+            {
+                return Centroids.Count;
+            }
+        }
 
         public IChargeEnvelope[] ChargeEnvelopes => throw new NotImplementedException();
 

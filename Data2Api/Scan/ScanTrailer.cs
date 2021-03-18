@@ -49,8 +49,9 @@ namespace Data2Api.lib
             throw new NotImplementedException();
         }
 
-        public void FromRaw(ThermoBiz.LogEntry trailer)
+        public void ConsumeLogEntry(ThermoBiz.LogEntry trailer)
         {
+            Console.WriteLine("Start trailer from raw");
             for (int i = 0; i < trailer.Length; i++)
             {
                 string value = trailer.Values[i];
@@ -61,7 +62,7 @@ namespace Data2Api.lib
                 if(Trailer.TryGetValue(trailer.Labels[i],out string outer))
                 {
                     Trailer[trailer.Labels[i]] = value.Trim();
-                    Console.WriteLine(trailer.Labels[i] + " " + Trailer[trailer.Labels[i]] + " : " + value);
+                    //Console.WriteLine(trailer.Labels[i] + " " + Trailer[trailer.Labels[i]] + " : " + value);
                 }
             }
         }

@@ -28,6 +28,7 @@ namespace d2a_test
             Scan testScan = e.GetFullScan();
             Scan testScan_I = (Scan)e.GetScan();
             Console.WriteLine(testScan.ScanNumber + " : " + testScan_I.ScanNumber);
+            Console.WriteLine(testScan.Centroids[0].Mz);
             testScan.MetaInformation.Trailer.TryGetValue("Ion Injection Time (ms):", out string valueTest);
             Console.WriteLine(valueTest + " ms");
             testScan_I.Trailer.TryGetValue("Ion Injection Time (ms):", out valueTest);

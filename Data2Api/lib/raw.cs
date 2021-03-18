@@ -88,90 +88,7 @@ namespace Data2Api.lib
                     LastMS1 = iScanNumber;
                 }
 
-                Scan scan = new Scan()
-                {
-                    ScanNumber = iScanNumber,
-                    ScanEvent = (iScanNumber - LastMS1) + 1,
-                    BasePeakIntensity = thermoScan.ScanStatistics.BasePeakIntensity,
-                    BasePeakMz = thermoScan.ScanStatistics.BasePeakMass,
-                    TotalIonCurrent = thermoScan.ScanStatistics.TIC,
-                    LowestMz = thermoScan.ScanStatistics.LowMass,
-                    HighestMz = thermoScan.ScanStatistics.HighMass,
-                    StartMz = scanFilter.GetMassRange(0).Low,
-                    EndMz = scanFilter.GetMassRange(0).High,
-                    ScanType = ReadScanType(scanFilter.ToString()),
-                    MsOrder = (int)scanFilter.MSOrder,
-                    Polarity = (scanFilter.Polarity == PolarityType.Positive) ? Polarity.Positive : Polarity.Negative,
-                    FilterLine = scanFilter.ToString(),
-                    DetectorType = readDetectorType(scanFilter.MassAnalyzer),
-                    RetentionTime = rawFile.RetentionTimeFromScanNumber(iScanNumber)
-                };
-
-                if (scan.MsOrder > 1)
-                {
-                    // Get the current scan's activation method while ignoring upstream activation
-                    scan.PrecursorActivationMethod = ConvertActivationType(scanFilter.GetActivation(scan.MsOrder - 2));
-
-                    // handle dependent scans and not SPS (processed below)
-                    scan.Precursors.Clear();
-                    for (int i = 0; i < scanEvent.MassCount; ++i)
-                    {
-                        var reaction = scanEvent.GetReaction(i);
-                        scan.CollisionEnergy = reaction.CollisionEnergy;
-
-                        var precursor = new Precursor
-                        {
-                            IsolationWidth = reaction.IsolationWidth,
-                            IsolationMz = reaction.PrecursorMass,
-                            Mz = reaction.PrecursorMass,
-                            OriginalMz = reaction.PrecursorMass
-                        };
-                        scan.Precursors.Add(precursor);
-                    }
-                }
-
-                ThermoBiz.RunHeader runHeader = rawFile.RunHeader;
-                ThermoBiz.LogEntry trailer = rawFile.GetTrailerExtraInformation(iScanNumber);
-
-                //scan.MetaInformation.FromRaw(rawFile, iScanNumber);
-
-                if (scan.PrecursorMasterScanNumber <= 0 && scan.MsOrder > 1)
-                {
-                    // Try again to set the precursor scan.
-                    SetPrecursorScanNumber(scan);
-                }
-
-                if (scan.MsOrder > 1 && scan.PrecursorMasterScanNumber > rawFile.RunHeader.FirstSpectrum && scan.PrecursorMasterScanNumber < rawFile.RunHeader.LastSpectrum)
-                {
-                    // Fill precursor information
-                    var parentScan = ThermoBiz.Scan.FromFile(rawFile, scan.PrecursorMasterScanNumber);
-                    if (parentScan != null)
-                    {
-                        foreach (var precursor in scan.Precursors)
-                        {
-                            precursor.Intensity = GetMaxIntensity(parentScan, precursor.IsolationMz, precursor.IsolationWidth);
-                        }
-                    }
-                }
-
-                if (thermoScan.HasCentroidStream)
-                {
-                    // High res data
-                    CentroidsFromArrays(scan, thermoScan.CentroidScan.Masses, thermoScan.CentroidScan.Intensities, thermoScan.CentroidScan.Baselines, thermoScan.CentroidScan.Noises);
-                }
-                else
-                {
-                    // Low res data
-                    CentroidsFromArrays(scan, thermoScan.PreferredMasses, thermoScan.PreferredIntensities);
-                }
-
-                if (scan.PeakCount > 0)
-                {
-                    scan.LowestMz = scan.Centroids[0].Mz;
-                    scan.HighestMz = scan.Centroids[scan.PeakCount - 1].Mz;
-                }
-
-                //scan.ScanHeader.TrySetValue("","");
+                Scan scan = ToScan(iScanNumber);
 
                 yield return scan;
             }
@@ -205,7 +122,7 @@ namespace Data2Api.lib
                 {
                     tempCentroid.Noise = noise[i];
                 }
-                scan.Centroids.Add(tempCentroid);
+                scan.CentroidList.Add(tempCentroid);
             }
         }
 
@@ -401,10 +318,8 @@ namespace Data2Api.lib
         /// </summary>
         /// <param name="scanNumber"></param>
         /// <returns></returns>
-        public Scan ToApiScan(int scanNumber)
+        public Scan ToScan(int scanNumber)
         {
-            Scan outscan = new Scan();
-
             ThermoBiz.Scan rawScan = ThermoBiz.Scan.FromFile(rawFile, scanNumber);
             IScanFilter scanFilter = rawFile.GetFilterForScanNumber(scanNumber);
             IScanEvent scanEvent = rawFile.GetScanEventForScanNumber(scanNumber);
@@ -459,7 +374,7 @@ namespace Data2Api.lib
             ThermoBiz.RunHeader runHeader = rawFile.RunHeader;
             ThermoBiz.LogEntry trailer = rawFile.GetTrailerExtraInformation(scanNumber);
 
-            outscan.MetaInformation.Trailer.FromRaw(trailer);
+            scan.MetaInformation.Trailer.ConsumeLogEntry(trailer);
 
             for (int i = 0; i < trailer.Length; i++)
             {
@@ -566,10 +481,10 @@ namespace Data2Api.lib
 
             if (scan.PeakCount > 0)
             {
-                scan.LowestMz = scan.Centroids[0].Mz;
-                scan.HighestMz = scan.Centroids[scan.PeakCount - 1].Mz;
+                scan.LowestMz = scan.CentroidList[0].Mz;
+                scan.HighestMz = scan.CentroidList[scan.PeakCount - 1].Mz;
             }
-            return outscan;
+            return scan;
         }
     }
 }
