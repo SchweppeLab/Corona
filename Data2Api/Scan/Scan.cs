@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Thermo.Interfaces.InstrumentAccess_V1.MsScanContainer;
 using Thermo.Interfaces.SpectrumFormat_V1;
 using ThermoFisher.CommonCore.Data.FilterEnums;
@@ -138,7 +139,15 @@ namespace Data2Api.lib
         /// <summary>
         /// The observed centroid peaks in the scan
         /// </summary>
-        public IEnumerable<ICentroid> Centroids { get; set; } = new IEnumerable<ICentroid>();
+
+        public List<ICentroid> CentroidList { get; set; } = new List<ICentroid>();
+
+        public IEnumerable<ICentroid> Centroids => CentroidList;
+
+        int? ISpectrum.CentroidCount => Centroids.Count();
+
+        public int? CentroidCount => Centroids.Count();
+
 
         /// <summary>
         /// Holds precursor information for dependent scans.
@@ -157,8 +166,6 @@ namespace Data2Api.lib
             }
         }
 
-        public IInformationSourceAccess TuneData => throw new NotImplementedException();
-
         public IInformationSourceAccess Trailer
         {
             get
@@ -167,21 +174,15 @@ namespace Data2Api.lib
             }
         }
 
+        public int? NoiseCount => NoiseBand.Count();
+
+        public IInformationSourceAccess TuneData => throw new NotImplementedException();
+
         public IInformationSourceAccess StatusLog => throw new NotImplementedException();
 
         public string DetectorName => throw new NotImplementedException();
 
-        public int? NoiseCount => throw new NotImplementedException();
-
         public IEnumerable<INoiseNode> NoiseBand => throw new NotImplementedException();
-
-        public int? CentroidCount
-        {
-            get
-            {
-                return Centroids.Count;
-            }
-        }
 
         public IChargeEnvelope[] ChargeEnvelopes => throw new NotImplementedException();
 
@@ -194,8 +195,8 @@ namespace Data2Api.lib
             {
                 if (disposing)
                 {
-                    Centroids.Clear();
-                    Centroids = null;
+                    CentroidList.Clear();
+                    CentroidList = null;
                 }
                 disposedValue = true;
             }
