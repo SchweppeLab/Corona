@@ -130,7 +130,7 @@ namespace Data2Api.lib
 
         public void Consume(object obj)
         {
-            Console.WriteLine("Start rxn from raw");
+            Console.WriteLine("Start Consume from raw: " + obj.GetType());
             PropertyInfo[] props = obj.GetType().GetProperties();
             foreach (PropertyInfo prop in props)
             {

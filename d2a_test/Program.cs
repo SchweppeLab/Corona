@@ -27,17 +27,30 @@ namespace d2a_test
             if (File.Exists(rawPath) && Path.GetExtension(rawPath) == ".raw")
             {
                 d2a dCont = new d2a();
-                Console.WriteLine("Bind Listener.");
+                Console.WriteLine("Bind Listeners.");
                 dCont.MsScanArrived += DCont_MsScanArrived;
+                dCont.Acquisition.AcquisitionStreamOpening += Acquisition_AcquisitionStreamOpening;
+                dCont.Acquisition.AcquisitionStreamClosing += Acquisition_AcquisitionStreamClosing;
                 dCont.Run(rawPath);
             }
             Console.ReadLine();
         }
 
-        private static void DCont_MsScanArrived(object sender, RawEventArgs e)
+        private static void Acquisition_AcquisitionStreamClosing(object sender, EventArgs e)
+        {
+            Console.WriteLine("Stream closing");
+        }
+
+        private static void Acquisition_AcquisitionStreamOpening(object sender, Thermo.Interfaces.InstrumentAccess_V1.Control.Acquisition.AcquisitionOpeningEventArgs e)
+        {
+            Console.WriteLine("Stream opening");
+            Console.WriteLine(e.StartingInformation.First().Key);
+        }
+
+        private static void DCont_MsScanArrived(object sender, MsScanEventArgs e)
         {
             Console.WriteLine("Scan Arrived.");
-            Scan testScan = e.GetFullScan();
+            Scan testScan = (Scan)e.GetScan();
             IMsScan testScan_I = e.GetScan();
             Console.WriteLine(testScan.ScanNumber + " : " + testScan_I.Header["ScanNumber"]);
             Console.WriteLine(">>>>######################");
@@ -57,13 +70,6 @@ namespace d2a_test
             testScan.Meta.Trailer.TryGetValue("Ion Injection Time (ms):", out string valueTest);
             testScan_I.Trailer.TryGetValue("Ion Injection Time (ms):", out string valueTest1);
             Console.WriteLine(valueTest + " ms - " + valueTest1 + " ms");
-        }
-
-        private static void DCont_MsScanArrived(object sender, MsScanEventArgs e)
-        {
-            Console.WriteLine("Scan Arrived..");
-            Scan testScan = (Scan)e.GetScan();
-            Console.WriteLine(testScan.ScanNumber);
         }
     }
 }

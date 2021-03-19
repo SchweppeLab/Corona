@@ -112,6 +112,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="d2a.cs" />
+    <Compile Include="lib\Acquisition.cs" />
+    <Compile Include="lib\AcquisitionEvents.cs" />
     <Compile Include="lib\Centroid.cs" />
     <Compile Include="lib\Converter.cs" />
     <Compile Include="lib\Mass.cs" />
@@ -120,6 +122,7 @@
     <Compile Include="lib\Precursor.cs" />
     <Compile Include="lib\RawReader.cs" />
     <Compile Include="lib\RawEventArgs.cs" />
+    <Compile Include="lib\State.cs" />
     <Compile Include="Scan\ScanMeta.cs" />
     <Compile Include="Scan\Scan.cs" />
     <Compile Include="Scan\ScanHeader.cs" />

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Thermo.Interfaces.InstrumentAccess_V1.Control.Acquisition;
 using Thermo.Interfaces.InstrumentAccess_V1.MsScanContainer;
 
 namespace Data2Api
@@ -21,6 +22,8 @@ namespace Data2Api
             return LastMsScan;
         }
 
+        public Acquisition Acquisition { get; set; } = new Acquisition();
+
         protected virtual void SendMsScanArrived(Scan scan)
         {
             MsScanArrived?.Invoke(this, new RawEventArgs(scan));
@@ -28,6 +31,8 @@ namespace Data2Api
 
         public void Run(string path, int maxNumScans = 99)
         {
+            Acquisition.SendStreamOpen();
+            Acquisition.SendStateChange();
             RawReader raw = new RawReader();
             raw.Open(path);
             int scanCount = 0;
@@ -37,7 +42,10 @@ namespace Data2Api
                 Console.WriteLine("scan: " + scan.ScanNumber);
                 SendMsScanArrived(scan);
                 scanCount++;
-                if(scanCount >= maxNumScans) { return; }
+                if(scanCount >= maxNumScans) {
+                    Acquisition.SendStreamClose();
+                    return;
+                }
             }
         }
     }
