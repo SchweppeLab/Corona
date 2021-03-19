@@ -51,19 +51,25 @@ namespace Data2Api.lib
                 { new MetaItem("BasePeakMass", "", new string[]{ "BasePeakMass" }, MetaClass.Header) },
                 { new MetaItem("InjectTime", "", new string[]{ "InjectTime", "Ion Injection Time (ms):" }, MetaClass.Header) },
                 { new MetaItem("MasterScan", "", new string[]{ "MasterScan", "ParentScan", "Master Scan Number" }, MetaClass.Header) },
-                { new MetaItem("FirstMass", "", new string[]{ "FirstMass", "FirstMz" }, MetaClass.Header) },
-                { new MetaItem("LastMass", "", new string[]{ "LastMass", "LastMz" }, MetaClass.Header) },
+                { new MetaItem("FirstMass", "", new string[]{ "FirstMass", "FirstMz", "LowMass" }, MetaClass.Header) },
+                { new MetaItem("LastMass", "", new string[]{ "LastMass", "LastMz", "HighMass" }, MetaClass.Header) },
+                { new MetaItem("ActivationType", "", new string[]{ "ActivationType" }, MetaClass.Header) },
                 { new MetaItem("MSOrder", "", new string[]{ "MSOrder", "ScanOrder" }, MetaClass.Header) },
                 { new MetaItem("Dependent", "", new string[]{ "Dependent" }, MetaClass.Header) },
                 { new MetaItem("MSX", "", new string[]{ "MSX" }, MetaClass.Header) },
                 { new MetaItem("Resolution", "", new string[]{ "Resolution" }, MetaClass.Header) },
                 { new MetaItem("RawOvFtT", "", new string[]{ "RawOvFtT" }, MetaClass.Header) },
                 { new MetaItem("AGC", "", new string[]{ "AGC" }, MetaClass.Header) },
+                { new MetaItem("ScanMode", "", new string[]{ "ScanMode" }, MetaClass.Header) },
+                { new MetaItem("Filter", "", new string[]{ "Filter" }, MetaClass.Header) },
+                { new MetaItem("ScanData", "", new string[]{ "ScanData" }, MetaClass.Header) },
+                { new MetaItem("AccurateMass", "", new string[]{ "AccurateMass" }, MetaClass.Header) },
                 { new MetaItem("Orbitrap Resolution", "", new string[]{ "Orbitrap Resolution" }, MetaClass.Header) },
                 { new MetaItem("API Process Delay", "", new string[]{ "API Process Delay", "Process Delay" }, MetaClass.Header) },
-                { new MetaItem("MS2 Isolation Width", "", new string[]{ "MS2 Isolation Width", "Isolation Width" }, MetaClass.Header) },
+                { new MetaItem("Isolation Width", "", new string[]{ "MS2 Isolation Width", "Isolation Width", "IsolationWidth" }, MetaClass.Header) },
+                { new MetaItem("RetentionTime", "", new string[]{ "RetentionTime", "Retention Time", "RT" }, MetaClass.Header) },
             //trailer items
-                { new MetaItem("Master Scan Number", "", new string[]{ "Master Scan Number" }, MetaClass.Trailer) },
+                { new MetaItem("Master Scan Number", "", new string[]{ "Master Scan Number", "MasterScan" }, MetaClass.Trailer) },
                 { new MetaItem("Access ID", "", new string[]{ "Access ID", "AccessID" }, MetaClass.Trailer) },
                 { new MetaItem("Elapsed Scan Time (sec)", "", new string[]{ "Elapsed Scan Time", "Elapsed Scan Time (sec)" }, MetaClass.Trailer) },
                 { new MetaItem("Ion Injection Time (ms):", "", new string[]{ "Ion Injection Time (ms):" }, MetaClass.Trailer) },
@@ -122,54 +128,14 @@ namespace Data2Api.lib
             }
         }
 
-        public void Consume(RunHeader header)
-        {
-            Console.WriteLine("Start header from raw");
-            PropertyInfo[] props = header.GetType().GetProperties();
-            foreach (PropertyInfo prop in props)
-            {
-                string label = prop.Name;
-                string value = prop.GetValue(header,null).ToString();
-                if (value == null)
-                {
-                    value = "";
-                }
-                string metaFind = FindMeta(label);
-                if (metaFind == "")
-                {
-                    UpdateMeta(label, value);
-                }
-            }
-        }
-
-        public void Consume(IScanFilter filter)
-        {
-            Console.WriteLine("Start filter from raw");
-            PropertyInfo[] props = filter.GetType().GetProperties();
-            foreach (PropertyInfo prop in props)
-            {
-                string label = prop.Name;
-                string value = prop.GetValue(filter, null).ToString();
-                if (value == null)
-                {
-                    value = "";
-                }
-                string metaFind = FindMeta(label);
-                if (metaFind == "")
-                {
-                    UpdateMeta(label, value);
-                }
-            }
-        }
-
-        public void Consume(IReaction rxn)
+        public void Consume(object obj)
         {
             Console.WriteLine("Start rxn from raw");
-            PropertyInfo[] props = rxn.GetType().GetProperties();
+            PropertyInfo[] props = obj.GetType().GetProperties();
             foreach (PropertyInfo prop in props)
             {
                 string label = prop.Name;
-                string value = prop.GetValue(rxn, null).ToString();
+                string value = prop.GetValue(obj, null).ToString();
                 if (value == null)
                 {
                     value = "";
@@ -180,6 +146,11 @@ namespace Data2Api.lib
                     UpdateMeta(label, value);
                 }
             }
+        }
+
+        public void SetRetentionTime(string value)
+        {
+            UpdateMeta("RetentionTime", value);
         }
     }
 }

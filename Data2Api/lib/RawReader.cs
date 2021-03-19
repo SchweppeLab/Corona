@@ -7,7 +7,6 @@ using ThermoBiz = ThermoFisher.CommonCore.Data.Business;
 using ThermoFisher.CommonCore.Data.FilterEnums;
 using ThermoFisher.CommonCore.Data.Interfaces;
 using ThermoFisher.CommonCore.RawFileReader;
-using Thermo.Interfaces.InstrumentAccess_V1.MsScanContainer;
 
 namespace Data2Api.lib
 {
@@ -323,6 +322,7 @@ namespace Data2Api.lib
             ThermoBiz.Scan rawScan = ThermoBiz.Scan.FromFile(rawFile, scanNumber);
             IScanFilter scanFilter = rawFile.GetFilterForScanNumber(scanNumber);
             IScanEvent scanEvent = rawFile.GetScanEventForScanNumber(scanNumber);
+            ThermoBiz.ScanStatistics scanStats = rawScan.ScanStatistics;
             ThermoBiz.RunHeader runHeader = rawFile.RunHeader;
             ThermoBiz.LogEntry trailer = rawFile.GetTrailerExtraInformation(scanNumber);
 
@@ -335,11 +335,11 @@ namespace Data2Api.lib
             {
                 ScanNumber = scanNumber,
                 ScanEvent = (scanNumber - LastMS1) + 1,
-                BasePeakIntensity = rawScan.ScanStatistics.BasePeakIntensity,
-                BasePeakMz = rawScan.ScanStatistics.BasePeakMass,
-                TotalIonCurrent = rawScan.ScanStatistics.TIC,
-                LowestMz = rawScan.ScanStatistics.LowMass,
-                HighestMz = rawScan.ScanStatistics.HighMass,
+                BasePeakIntensity = scanStats.BasePeakIntensity,
+                BasePeakMz = scanStats.BasePeakMass,
+                TotalIonCurrent = scanStats.TIC,
+                LowestMz = scanStats.LowMass,
+                HighestMz = scanStats.HighMass,
                 StartMz = scanFilter.GetMassRange(0).Low,
                 EndMz = scanFilter.GetMassRange(0).High,
                 ScanType = ReadScanType(scanFilter.ToString()),
@@ -354,6 +354,8 @@ namespace Data2Api.lib
             scan.Meta.Consume(trailer);
             scan.Meta.Consume(runHeader);
             scan.Meta.Consume(scanFilter);
+            scan.Meta.Consume(scanStats);
+            scan.Meta.SetRetentionTime(scan.RetentionTime.ToString());
             #endregion
 
             if (scan.MsOrder > 1)

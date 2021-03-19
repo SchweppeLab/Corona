@@ -26,7 +26,7 @@ namespace Data2Api
             MsScanArrived?.Invoke(this, new RawEventArgs(scan));
         }
 
-        public void Run(string path, int maxNumScans = 100)
+        public void Run(string path, int maxNumScans = 99)
         {
             RawReader raw = new RawReader();
             raw.Open(path);
