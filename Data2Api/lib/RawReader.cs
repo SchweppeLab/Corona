@@ -323,6 +323,8 @@ namespace Data2Api.lib
             ThermoBiz.Scan rawScan = ThermoBiz.Scan.FromFile(rawFile, scanNumber);
             IScanFilter scanFilter = rawFile.GetFilterForScanNumber(scanNumber);
             IScanEvent scanEvent = rawFile.GetScanEventForScanNumber(scanNumber);
+            ThermoBiz.RunHeader runHeader = rawFile.RunHeader;
+            ThermoBiz.LogEntry trailer = rawFile.GetTrailerExtraInformation(scanNumber);
 
             if ((int)scanFilter.MSOrder == 1)
             {
@@ -348,10 +350,17 @@ namespace Data2Api.lib
                 RetentionTime = rawFile.RetentionTimeFromScanNumber(scanNumber)
             };
 
+            #region Consume Meta
+            scan.Meta.Consume(trailer);
+            scan.Meta.Consume(runHeader);
+            scan.Meta.Consume(scanFilter);
+            #endregion
+
             if (scan.MsOrder > 1)
             {
                 // Get the current scan's activation method while ignoring upstream activation
                 scan.PrecursorActivationMethod = ConvertActivationType(scanFilter.GetActivation(scan.MsOrder - 2));
+                scan.Meta.Consume(scanFilter.GetReaction(0));
 
                 // handle dependent scans and not SPS (processed below)
                 scan.Precursors.Clear();
@@ -371,10 +380,8 @@ namespace Data2Api.lib
                 }
             }
 
-            ThermoBiz.RunHeader runHeader = rawFile.RunHeader;
-            ThermoBiz.LogEntry trailer = rawFile.GetTrailerExtraInformation(scanNumber);
-
-            scan.MetaInformation.Trailer.ConsumeLogEntry(trailer);
+            #region Set trailer
+            scan.Meta.Trailer.ConsumeLogEntry(trailer);
 
             for (int i = 0; i < trailer.Length; i++)
             {
@@ -448,7 +455,8 @@ namespace Data2Api.lib
                         break;
                 }
             }
-
+            #endregion
+            #region Set centroids
             if (scan.PrecursorMasterScanNumber <= 0 && scan.MsOrder > 1)
             {
                 // Try again to set the precursor scan.
@@ -484,6 +492,7 @@ namespace Data2Api.lib
                 scan.LowestMz = scan.CentroidList[0].Mz;
                 scan.HighestMz = scan.CentroidList[scan.PeakCount - 1].Mz;
             }
+            #endregion
             return scan;
         }
     }

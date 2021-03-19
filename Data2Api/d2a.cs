@@ -26,15 +26,18 @@ namespace Data2Api
             MsScanArrived?.Invoke(this, new RawEventArgs(scan));
         }
 
-        public void Run(string path)
+        public void Run(string path, int maxNumScans = 100)
         {
             RawReader raw = new RawReader();
             raw.Open(path);
+            int scanCount = 0;
             foreach(Scan scan in raw)
             {
                 LastMsScan = scan;
                 Console.WriteLine("scan: " + scan.ScanNumber);
                 SendMsScanArrived(scan);
+                scanCount++;
+                if(scanCount >= maxNumScans) { return; }
             }
         }
     }

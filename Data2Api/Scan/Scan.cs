@@ -12,7 +12,7 @@ namespace Data2Api.lib
     /// </summary>
     public class Scan : IMsScan
     {
-        public ScanMeta MetaInformation { get; set; } = new ScanMeta();
+        public Meta Meta { get; set; } = new Meta();
 
         /// <summary>
         /// Current scan number
@@ -162,7 +162,7 @@ namespace Data2Api.lib
         {
             get
             {
-                return MetaInformation.Header.GetHeader();
+                return Meta.Header;
             }
         }
 
@@ -170,7 +170,7 @@ namespace Data2Api.lib
         {
             get
             {
-                return MetaInformation.Trailer;
+                return Meta.Trailer;
             }
         }
 
