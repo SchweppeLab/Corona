@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Thermo.Interfaces.SpectrumFormat_V1;
 
-namespace Data2Api.lib
+namespace MSim.lib
 {
     /// <summary>
     /// for pulling spectral information from API scans

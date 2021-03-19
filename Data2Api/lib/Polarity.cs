@@ -1,4 +1,4 @@
-﻿namespace Data2Api.lib
+﻿namespace MSim.lib
 {
     /// <summary>
     /// Instrument polarity

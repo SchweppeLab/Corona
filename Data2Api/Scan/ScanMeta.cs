@@ -4,7 +4,7 @@ using System.Reflection;
 using ThermoFisher.CommonCore.Data.Business;
 using ThermoFisher.CommonCore.Data.Interfaces;
 
-namespace Data2Api.lib
+namespace MSim.lib
 {
     public class Meta
     {

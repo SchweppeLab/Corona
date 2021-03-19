@@ -1,6 +1,6 @@
 ﻿using Thermo.Interfaces.InstrumentAccess_V1.MsScanContainer;
 
-namespace Data2Api.lib
+namespace MSim.lib
 {
     public class RawEventArgs : MsScanEventArgs
     {

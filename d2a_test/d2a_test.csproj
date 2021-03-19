@@ -106,9 +106,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Data2Api\Data2Api.csproj">
+    <ProjectReference Include="..\Data2Api\MSim.csproj">
       <Project>{c1645ac3-7a9e-4528-9de6-02d2566fa54d}</Project>
-      <Name>Data2Api</Name>
+      <Name>MSim</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

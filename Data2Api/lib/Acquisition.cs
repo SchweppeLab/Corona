@@ -7,7 +7,7 @@ using Thermo.Interfaces.InstrumentAccess_V1.Control.Acquisition;
 using Thermo.Interfaces.InstrumentAccess_V1.Control.Acquisition.Modes;
 using Thermo.Interfaces.InstrumentAccess_V1.Control.Acquisition.Workflow;
 
-namespace Data2Api.lib
+namespace MSim.lib
 {
     public class Acquisition : IAcquisition
     {

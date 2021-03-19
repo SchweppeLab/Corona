@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Thermo.Interfaces.SpectrumFormat_V1;
 using ThermoBiz = ThermoFisher.CommonCore.Data.Business;
 
-namespace Data2Api.lib
+namespace MSim.lib
 {
     public class ScanTrailer : IInformationSourceAccess
     {

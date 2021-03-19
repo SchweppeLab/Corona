@@ -1,4 +1,4 @@
-﻿using Data2Api.lib;
+﻿using MSim.lib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 using Thermo.Interfaces.InstrumentAccess_V1.Control.Acquisition;
 using Thermo.Interfaces.InstrumentAccess_V1.MsScanContainer;
 
-namespace Data2Api
+namespace MSim
 {
-    public class d2a
+    public class SimRunner
     {
         public string DetectorClass => throw new NotImplementedException();
 

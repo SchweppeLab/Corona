@@ -1,4 +1,4 @@
-﻿namespace Data2Api.lib
+﻿namespace MSim.lib
 {
     static class Mass
     {

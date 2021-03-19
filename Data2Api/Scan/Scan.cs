@@ -5,7 +5,7 @@ using Thermo.Interfaces.InstrumentAccess_V1.MsScanContainer;
 using Thermo.Interfaces.SpectrumFormat_V1;
 using ThermoFisher.CommonCore.Data.FilterEnums;
 
-namespace Data2Api.lib
+namespace MSim.lib
 {
     /// <summary>
     /// Class to harvest IMsScan information without holding IMsScan class

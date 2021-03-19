@@ -1,5 +1,5 @@
-﻿using Data2Api;
-using Data2Api.lib;
+﻿using MSim;
+using MSim.lib;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -26,12 +26,12 @@ namespace d2a_test
             Console.WriteLine("Extention: " + Path.GetExtension(rawPath));
             if (File.Exists(rawPath) && Path.GetExtension(rawPath) == ".raw")
             {
-                d2a dCont = new d2a();
+                SimRunner runner = new SimRunner();
                 Console.WriteLine("Bind Listeners.");
-                dCont.MsScanArrived += DCont_MsScanArrived;
-                dCont.Acquisition.AcquisitionStreamOpening += Acquisition_AcquisitionStreamOpening;
-                dCont.Acquisition.AcquisitionStreamClosing += Acquisition_AcquisitionStreamClosing;
-                dCont.Run(rawPath);
+                runner.MsScanArrived += DCont_MsScanArrived;
+                runner.Acquisition.AcquisitionStreamOpening += Acquisition_AcquisitionStreamOpening;
+                runner.Acquisition.AcquisitionStreamClosing += Acquisition_AcquisitionStreamClosing;
+                runner.Run(rawPath);
             }
             Console.ReadLine();
         }

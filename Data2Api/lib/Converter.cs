@@ -1,6 +1,6 @@
 ﻿using ThermoBiz = ThermoFisher.CommonCore.Data.Business;
 
-namespace Data2Api.lib
+namespace MSim.lib
 {
     public class Converter
     {

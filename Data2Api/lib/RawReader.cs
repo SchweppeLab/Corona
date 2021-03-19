@@ -8,7 +8,7 @@ using ThermoFisher.CommonCore.Data.FilterEnums;
 using ThermoFisher.CommonCore.Data.Interfaces;
 using ThermoFisher.CommonCore.RawFileReader;
 
-namespace Data2Api.lib
+namespace MSim.lib
 {
     public class RawReader
     {
