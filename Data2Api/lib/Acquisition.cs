@@ -32,7 +32,7 @@ namespace MSim.lib
 
         public virtual void SendStateChange()
         {
-            StateChanged?.Invoke(this, new StateChangedArgs());
+            //StateChanged?.Invoke(this, new StateChangedArgs());
         }
 
         public void CancelAcquisition()

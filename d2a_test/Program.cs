@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using Thermo.Interfaces.InstrumentAccess_V1.MsScanContainer;
 
-namespace d2a_test
+namespace msim_test
 {
     class Program
     {

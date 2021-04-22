@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Thermo.Interfaces.InstrumentAccess_V1.Control.Acquisition;
 using Thermo.Interfaces.InstrumentAccess_V1.MsScanContainer;
@@ -29,24 +30,31 @@ namespace MSim
             MsScanArrived?.Invoke(this, new RawEventArgs(scan));
         }
 
-        public void Run(string path, int maxNumScans = 99)
+        public async void Run(string path, int maxNumScans = 100000, int waitFor = 0)
         {
-            Acquisition.SendStreamOpen();
-            Acquisition.SendStateChange();
-            RawReader raw = new RawReader();
-            raw.Open(path);
-            int scanCount = 0;
-            foreach(Scan scan in raw)
+            await Task.Run(() =>
             {
-                LastMsScan = scan;
-                Console.WriteLine("scan: " + scan.ScanNumber);
-                SendMsScanArrived(scan);
-                scanCount++;
-                if(scanCount >= maxNumScans) {
-                    Acquisition.SendStreamClose();
-                    return;
+                Acquisition.SendStreamOpen();
+                Acquisition.SendStateChange();
+                RawReader raw = new RawReader();
+                raw.Open(path);
+                int scanCount = 0;
+                // needs cancellation tolken!
+                foreach (Scan scan in raw)
+                {
+                    LastMsScan = scan;
+                    Console.WriteLine("scan: " + scan.ScanNumber);
+                    SendMsScanArrived(scan);
+                    scanCount++;
+                    Thread.Sleep(waitFor);
+                    if (scanCount >= maxNumScans)
+                    {
+                        Acquisition.SendStreamClose();
+                        return;
+                    }
                 }
-            }
+            });
+
         }
     }
 }

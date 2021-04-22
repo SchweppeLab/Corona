@@ -7,8 +7,8 @@
     <ProjectGuid>{C1645AC3-7A9E-4528-9DE6-02D2566FA54D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Data2Api</RootNamespace>
-    <AssemblyName>Data2Api</AssemblyName>
+    <RootNamespace>MSim</RootNamespace>
+    <AssemblyName>MSim</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
