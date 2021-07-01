@@ -111,7 +111,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="d2a.cs" />
+    <Compile Include="msim.cs" />
     <Compile Include="lib\Acquisition.cs" />
     <Compile Include="lib\AcquisitionEvents.cs" />
     <Compile Include="lib\Centroid.cs" />

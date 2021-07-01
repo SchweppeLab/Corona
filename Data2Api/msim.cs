@@ -30,6 +30,25 @@ namespace MSim
             MsScanArrived?.Invoke(this, new RawEventArgs(scan));
         }
 
+        private CancellationTokenSource CancellationSource { get; set; } = new CancellationTokenSource();
+
+
+        public void Stop()
+        {
+            if (CancellationSource != null && !CancellationSource.IsCancellationRequested)
+            {
+                CancellationSource.Cancel();
+                Thread.Sleep(500);
+                CancellationSource.Dispose();
+                ResetCancellationTokenSource();
+            }
+        }
+
+        public void ResetCancellationTokenSource()
+        {
+            CancellationSource = new CancellationTokenSource();
+        }
+
         public async void Run(string path, int maxNumScans = 100000, int waitFor = 0)
         {
             await Task.Run(() =>
@@ -42,6 +61,10 @@ namespace MSim
                 // needs cancellation tolken!
                 foreach (Scan scan in raw)
                 {
+                    if (CancellationSource.IsCancellationRequested)
+                    {
+                        return;
+                    }
                     LastMsScan = scan;
                     Console.WriteLine("scan: " + scan.ScanNumber);
                     SendMsScanArrived(scan);

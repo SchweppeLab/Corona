@@ -50,7 +50,7 @@ namespace MSim.lib
         /// <summary>
         /// Charge state of the precursor.
         /// </summary>
-        public int Charge { get; set; } = 0;
+        public int Charge { get; set; } = 2;
 
         /// <summary>
         /// Precursor M+H

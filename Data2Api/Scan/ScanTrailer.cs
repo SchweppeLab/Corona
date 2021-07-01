@@ -60,6 +60,8 @@ namespace MSim.lib
                 }
                 if(Trailer.TryGetValue(trailer.Labels[i],out string outer))
                 {
+                    Trailer[trailer.Labels[i].Trim(new Char[] { ' ', ':', '=' })] = value.Trim(new Char[] { ' ', ':', '=' });
+                    //Trailer[trailer.Labels[i]] = value.Trim(new Char[] { ' ', ':', '=' });
                     Trailer[trailer.Labels[i]] = value.Trim();
                     //Console.WriteLine(trailer.Labels[i] + " " + Trailer[trailer.Labels[i]] + " : " + value);
                 }
