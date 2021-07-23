@@ -31,6 +31,7 @@ Depending on the downstream application this can be tuned to replicate instrumen
 Raw Files are read based on code from the `Monocle` project: https://github.com/gygilab/Monocle
 
 Author: `Devin Schweppe`
-Copywrite Schweppe Lab 2021
+
+Copywrite: Authors & Schweppe Lab 2021
 
 
