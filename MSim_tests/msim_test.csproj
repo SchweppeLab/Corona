@@ -106,7 +106,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Data2Api\MSim.csproj">
+    <ProjectReference Include="..\MSim\MSim.csproj">
       <Project>{c1645ac3-7a9e-4528-9de6-02d2566fa54d}</Project>
       <Name>MSim</Name>
     </ProjectReference>

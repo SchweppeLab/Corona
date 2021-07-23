@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Data2Api")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("mSim")]
+[assembly: AssemblyDescription("MS Instrument Simulator")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Data2Api")]
-[assembly: AssemblyCopyright("Copyright ©  2021")]
+[assembly: AssemblyCompany("University of Washington")]
+[assembly: AssemblyProduct("mSim")]
+[assembly: AssemblyCopyright("Copyright © Schweppe Lab 2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
