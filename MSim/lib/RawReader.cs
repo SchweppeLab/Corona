@@ -65,6 +65,10 @@ namespace MSim.lib
             rawFile.Dispose();
         }
 
+        //overrides for setting manual scan limits
+        public int? FirstScanManual { get; set; }
+        public int? LastScanManual { get; set; }
+
         /// <summary>
         /// Open the given file and import scans into the reader.
         /// </summary>
@@ -74,8 +78,9 @@ namespace MSim.lib
             rawFile.SelectInstrument(ThermoBiz.Device.MS, 1);
 
             // Get the first and last scan from the RAW file
-            int FirstScan = rawFile.RunHeaderEx.FirstSpectrum;
-            int LastScan = rawFile.RunHeaderEx.LastSpectrum;
+            int FirstScan = FirstScanManual ?? rawFile.RunHeaderEx.FirstSpectrum;
+            int LastScan = LastScanManual ?? rawFile.RunHeaderEx.LastSpectrum;
+
             for (int iScanNumber = FirstScan; iScanNumber <= LastScan; iScanNumber++)
             {
                 ThermoBiz.Scan thermoScan = ThermoBiz.Scan.FromFile(rawFile, iScanNumber);
