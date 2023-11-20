@@ -49,13 +49,17 @@ namespace MSim
             CancellationSource = new CancellationTokenSource();
         }
 
-        public async void Run(string path, int maxNumScans = 100000, int waitFor = 0)
+        public async void Run(string path, int maxNumScans = 100000, int waitFor = 0, int? FirstScan = null, int? LastScan = null)
         {
             await Task.Run(() =>
             {
                 Acquisition.SendStreamOpen();
                 Acquisition.SendStateChange();
-                RawReader raw = new RawReader();
+                RawReader raw = new RawReader
+                {
+                    FirstScanManual = FirstScan,
+                    LastScanManual = LastScan
+                };
                 raw.Open(path);
                 int scanCount = 0;
                 // needs cancellation tolken!
