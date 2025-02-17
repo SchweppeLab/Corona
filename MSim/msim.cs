@@ -1,87 +1,257 @@
 ﻿using MSim.lib;
+using Nova.Data.Spectrum;
+using Nova.Io;
+
 using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Thermo.Interfaces.InstrumentAccess_V1.Control.Acquisition;
-using Thermo.Interfaces.InstrumentAccess_V1.MsScanContainer;
 
 namespace MSim
 {
-    public class SimRunner
+
+  /// <summary>
+  /// Contains information about a simulated MS run.
+  /// </summary>
+  public struct RunInfo
+  {
+    public string Name;
+  }
+
+  /// <summary>
+  /// Class that operates the MS simulation asynchronously.
+  /// </summary>
+  public class SimRunner
+  {
+    public string DetectorClass => throw new NotImplementedException();
+
+    /// <summary>
+    /// Raised when simulated acquisition ends.
+    /// </summary>
+    public event AcquisitionEvent AcquisitionEnd;
+
+    /// <summary>
+    /// Raised when simulated acquisition starts.
+    /// </summary>
+    public event AcquisitionEvent AcquisitionStart;
+
+    /// <summary>
+    /// Raised when simulated MS scan is acquired.
+    /// </summary>
+    public event EventHandler<MSimEventArgs> MsScanArrived;
+
+    /// <summary>
+    /// The last scan that was acquired.
+    /// </summary>
+    private Spectrum LastMsScan { get; set; }
+
+    /// <summary>
+    /// Gains access to the last scan that was simulated.
+    /// </summary>
+    /// <returns>Spectrum object</returns>
+    public Spectrum GetLastMsScan()
     {
-        public string DetectorClass => throw new NotImplementedException();
-
-        public event EventHandler<RawEventArgs> MsScanArrived;
-
-        private Scan LastMsScan { get; set; }
-
-        public IMsScan GetLastMsScan()
-        {
-            return LastMsScan;
-        }
-
-        public Acquisition Acquisition { get; set; } = new Acquisition();
-
-        protected virtual void SendMsScanArrived(Scan scan)
-        {
-            MsScanArrived?.Invoke(this, new RawEventArgs(scan));
-        }
-
-        private CancellationTokenSource CancellationSource { get; set; } = new CancellationTokenSource();
-
-
-        public void Stop()
-        {
-            if (CancellationSource != null && !CancellationSource.IsCancellationRequested)
-            {
-                CancellationSource.Cancel();
-                Thread.Sleep(500);
-                CancellationSource.Dispose();
-                ResetCancellationTokenSource();
-            }
-        }
-
-        public void ResetCancellationTokenSource()
-        {
-            CancellationSource = new CancellationTokenSource();
-        }
-
-        public async void Run(string path, int maxNumScans = 100000, int waitFor = 0, int? FirstScan = null, int? LastScan = null)
-        {
-            await Task.Run(() =>
-            {
-                Acquisition.SendStreamOpen();
-                Acquisition.SendStateChange();
-                RawReader raw = new RawReader
-                {
-                    FirstScanManual = FirstScan,
-                    LastScanManual = LastScan
-                };
-                raw.Open(path);
-                int scanCount = 0;
-                // needs cancellation tolken!
-                foreach (Scan scan in raw)
-                {
-                    if (CancellationSource.IsCancellationRequested)
-                    {
-                        return;
-                    }
-                    LastMsScan = scan;
-                    Console.WriteLine("scan: " + scan.ScanNumber);
-                    SendMsScanArrived(scan);
-                    scanCount++;
-                    Thread.Sleep(waitFor);
-                    if (scanCount >= maxNumScans)
-                    {
-                        Acquisition.SendStreamClose();
-                        return;
-                    }
-                }
-            });
-
-        }
+        return LastMsScan;
     }
+
+    public delegate void MsScanEvent(Spectrum spec);
+    public delegate void AcquisitionEvent(RunInfo info);
+
+    /// <summary>
+    /// Used to match simulation times with scan retention times
+    /// </summary>
+    private Stopwatch RunTimer = new Stopwatch();
+
+    /// <summary>
+    /// Speed (in fold change) of the simulation.
+    /// </summary>
+    private int Speed = 1;
+
+    /// <summary>
+    /// Pauses simulation when true.
+    /// </summary>
+    private bool PauseFlag = false;
+
+    /// <summary>
+    /// Cancels simulation when true
+    /// </summary>
+    private bool CancelFlag = false;
+
+    //TODO: Rather than yes/no, create states such as Running/Stopped/Paused/etc.
+    /// <summary>
+    /// Indicates if the simulation is currently running.
+    /// </summary>
+    public bool IsRunning { get; private set; } = false;
+
+    /// <summary>
+    /// Get the total elapsed time (real time) of the current simulation.
+    /// </summary>
+    /// <returns></returns>
+    public TimeSpan ElapsedRunTime()
+    {
+      return RunTimer.Elapsed;
+    }
+
+    /// <summary>
+    /// Raise the aqcuisition end event.
+    /// </summary>
+    /// <param name="info">: the run information that just finished.</param>
+    private void OnAcquisitionEnd(RunInfo info)
+    {
+      AcquisitionEnd?.Invoke(info);
+    }
+
+    /// <summary>
+    /// Raise the acquisition start event.
+    /// </summary>
+    /// <param name="info">: the run information that just started.</param>
+    private void OnAcquisitionStart(RunInfo info)
+    {
+      AcquisitionStart?.Invoke(info);
+    }
+
+    /// <summary>
+    /// Pauses the simulation. No additional effect if simulation is already paused.
+    /// </summary>
+    public void Pause()
+    {
+      PauseFlag = true;
+    }
+
+    /// <summary>
+    /// Resumes the simulation from the paused state. No effect if the simulation is already running.
+    /// </summary>
+    public void Resume()
+    {
+      PauseFlag = false;
+    }
+
+    /// <summary>
+    /// Raise an event indicating a scan has been acquired.
+    /// </summary>
+    /// <param name="scan">: the Spectrum object acquired.</param>
+    protected virtual void SendMsScanArrived(Spectrum scan)
+    {
+      MsScanArrived?.Invoke(this, new MSimEventArgs(scan));
+    }
+
+    /// <summary>
+    /// Sets the speed of the simulation (in multiplication factor). Range limited from 1 to 100.
+    /// Can be set while the simulation is running or not.
+    /// </summary>
+    /// <param name="speed">: the desired speed.</param>
+    /// <returns>On success, returns the new speed, otherwise returns the current speed.</returns>
+    public int SetSpeed(int speed)
+    {
+      if (speed < 1) return Speed;
+      if (speed > 100) return Speed;
+      Speed = speed;
+      return Speed;
+    }
+
+    /// <summary>
+    /// Stops the simulation. No effect if simulation is already stopped.
+    /// </summary>
+    public void Stop()
+    {
+      CancelFlag = true;
+    }
+
+    /// <summary>
+    /// Starts asynchronous simulation of a mass spectrometer.
+    /// </summary>
+    /// <param name="path">: the MS data file to be simulated.</param>
+    /// <param name="maxNumScans">: stops the simulation when this number of scans are acquired.</param>
+    /// <param name="FirstScan">: starts the simulation from this scan number.</param>
+    /// <param name="LastScan">: stops the simulation when this scan number is reached.</param>
+    public async void Run(string path, int maxNumScans = -1, int FirstScan = -1, int LastScan = -1)
+    {
+      CancelFlag = false;
+      PauseFlag = false;
+      IsRunning = true;
+      await Task.Run(() =>
+      {
+
+        FileReader reader = new FileReader();
+        Spectrum spectrum;
+
+        RunInfo runInfo = new RunInfo();
+        runInfo.Name = path;
+
+        int scanCount = 0;
+        long ms = 0;
+        long lastMS = 0;
+        long fastForwardMS = 0;
+
+        //Start a high performance timer.
+        Stopwatch sw = Stopwatch.StartNew();
+        RunTimer.Start();
+
+        //Toss up the start event
+        OnAcquisitionStart(runInfo);
+
+        spectrum = reader.ReadSpectrum(path, FirstScan, false);
+
+        //if user requested a scan from the middle of the file, advance the stopwatch to that time;
+        if (FirstScan > -1)
+        {
+          fastForwardMS = (long)(spectrum.RetentionTime * 60000);
+        }
+
+        while (spectrum.ScanNumber > 0)
+        {
+
+          //if we read past the desired last scan, stop now. This is a failsafe if spectrum file skips scan numbers.
+          if (LastScan > -1 && spectrum.ScanNumber > LastScan) break;
+
+          LastMsScan = spectrum;
+  
+          //don't fire off the spectra until the instrument acquired it.
+          while (ms+fastForwardMS < spectrum.RetentionTime*60000)
+          {
+            long tmpMS = sw.ElapsedMilliseconds;
+            ms += (tmpMS-lastMS) * Speed;
+            lastMS = tmpMS;
+            //Thread.Sleep(10); //sleeping might make virtual MS less resource greedy.
+          }
+          SendMsScanArrived(spectrum);
+
+          //Check if we reached the requested limits of simulation.
+          scanCount++;
+          if (maxNumScans>0 && scanCount >= maxNumScans) break;
+          if (spectrum.ScanNumber == LastScan) break;
+
+          //Manage requests to pause, stop, or restart
+          if (PauseFlag)
+          {
+            sw.Stop();
+            RunTimer.Stop();
+            while (PauseFlag)
+            {
+              if (CancelFlag) break;
+              Thread.Sleep(10);
+            }
+            sw.Start();
+            RunTimer.Start();
+          }
+          if (CancelFlag)
+          {
+            if (!RunTimer.IsRunning) RunTimer.Stop();
+            return;
+          }
+
+          //on to the next scan
+          spectrum = reader.ReadSpectrum(null, -1, false);
+        }
+        
+        //throw up that we're done with the file.
+        OnAcquisitionEnd(runInfo);
+        if(RunTimer.IsRunning) RunTimer.Stop();              
+      });
+      IsRunning = false;
+    }
+  }
+
 }
