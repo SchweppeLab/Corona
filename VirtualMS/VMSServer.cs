@@ -15,8 +15,8 @@ namespace VirtualMS
   {
 
     private PipesServer server;
-    public event PipeConnectionEvent ClientConnected;
-    public event PipeConnectionEvent ClientDisconnected;
+    public event PipeConnectionEvent? ClientConnected;
+    public event PipeConnectionEvent? ClientDisconnected;
 
     public VMSServer(string pipeName)
     {

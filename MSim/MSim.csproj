@@ -49,8 +49,12 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Nova">
+    <Reference Include="Nova, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Nova\Nova\bin\x64\Release\Nova.dll</HintPath>
+    </Reference>
+    <Reference Include="NovaIO">
+      <HintPath>..\..\Nova\NovaIO\bin\x64\Release\net8.0\NovaIO.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

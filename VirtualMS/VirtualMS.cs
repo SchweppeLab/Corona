@@ -1,16 +1,11 @@
-﻿using MSim;
+using MSim;
 using MSim.lib;
 using ScottPlot;
 using ScottPlot.Colormaps;
 using ScottPlot.Plottables;
-
 using Nova.Data.Spectrum;
 using Pipes;
-
-using System.Collections.Generic;
-using System.IO;
-using System.Windows.Forms;
-using System;
+using System.Diagnostics;
 
 namespace VirtualMS
 {
@@ -22,6 +17,15 @@ namespace VirtualMS
     public int allScanCount;
     public int allScanMS1;
     public int allScanMS2;
+    public VMsStats()
+    {
+      curScanCount = 0;
+      curScanMS1 = 0; 
+      curScanMS2 = 0; 
+      allScanCount = 0;
+      allScanMS1 = 0;
+      allScanMS2 = 0;
+    }
   }
 
 
@@ -29,7 +33,7 @@ namespace VirtualMS
   {
     SimRunner simMS = new SimRunner();
     VMSServer server = new VMSServer("VirtualMS");
-    readonly System.Windows.Forms.Timer UpdatePlotTimer = new System.Windows.Forms.Timer();
+    readonly System.Windows.Forms.Timer UpdatePlotTimer = new() { Interval = 100, Enabled = true };
     readonly DataLogger plot;
     readonly Scatter plotSpec;
 
@@ -51,20 +55,16 @@ namespace VirtualMS
     {
       InitializeComponent();
 
-      UpdatePlotTimer.Enabled = true;
-      UpdatePlotTimer.Interval = 100;
-
       plotTIC.UserInputProcessor.Disable();
       plot = plotTIC.Plot.Add.DataLogger();
 
       plot.Add(0, 0);
       plotTIC.Refresh();
 
-      Coordinates[] co = new Coordinates[2];
-      co[0].X = 1;
-      co[0].Y = 1;
-      co[1].X = 2;
-      co[1].Y = 2;
+      Coordinates[] co = {
+        new (1, 1),
+        new (2, 2)
+      };
 
       plotSpec = plotSpectrum.Plot.Add.Scatter(co);
       plotSpec.MarkerSize = 1;
@@ -154,7 +154,7 @@ namespace VirtualMS
         log("Starting Virtal MS");
 
         Files.Clear();
-        foreach (var item in fileListBox.Items)
+        foreach (object item in fileListBox.Items)
         {
           string s = item.ToString();
           if (File.Exists(s) && (Path.GetExtension(s) == ".raw" || Path.GetExtension(s) == ".mzML"))
@@ -163,7 +163,7 @@ namespace VirtualMS
           }
         }
 
-        simMS.Run(Files[0]);
+        simMS.Run(Files.First());
         Files.RemoveAt(0);
       }
     }
@@ -173,7 +173,7 @@ namespace VirtualMS
       log("Stream closing: " + e.ToString());
     }
 
-    //private void Acquisition_AcquisitionStreamOpening(object sender, Thermo.Interfaces.InstrumentAccess_V1.Control.Acquisition.AcquisitionOpeningEventArgs e)
+    //private void Acquisition_AcquisitionStreamOpening(object sender, AcquisitionOpeningEventArgs e)
     //{
     //  log("Stream opening: " + e.ToString());
     //}
@@ -185,10 +185,10 @@ namespace VirtualMS
       allSimTime += simMS.ElapsedRunTime();
       if (Files.Count > 0)
       {
-        simMS.Run(Files[0]);
+        simMS.Run(Files.First());
         Files.RemoveAt(0);
       }
-    }
+      }
 
     private void OnAcquisitionStart(RunInfo info)
     {
@@ -209,7 +209,7 @@ namespace VirtualMS
       log("Client disconnected: " + pc.ID);
     }
 
-    private void OnMsScanArrived(object sender, MSimEventArgs e)
+    private void OnMsScanArrived(object? sender, MSimEventArgs e)
     {
       //log("Scan arrived");
       Spectrum scan = e.GetScan();
@@ -320,14 +320,7 @@ namespace VirtualMS
 
     private void tbSpeed_ValueChanged(object sender, EventArgs e)
     {
-      int[] speeds = new int[7];
-      speeds[0] = 1;
-      speeds[1] = 2;
-      speeds[2] = 5;
-      speeds[3] = 10;
-      speeds[4] = 20;
-      speeds[5] = 50;
-      speeds[6] = 100;
+      int[] speeds = [1, 2, 5, 10, 20, 50, 100];
       runSpeed = speeds[tbSpeed.Value];
       lblSpeed.Text = runSpeed.ToString() + "x";
       simMS.SetSpeed(runSpeed);

@@ -1,9 +1,4 @@
-﻿using static System.Net.Mime.MediaTypeNames;
-using System.Drawing;
-using System.Windows.Forms;
-using System.Xml.Linq;
-
-namespace VirtualMS
+﻿namespace VirtualMS
 {
   partial class VirtualMs
   {
@@ -34,463 +29,421 @@ namespace VirtualMS
     private void InitializeComponent()
     {
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(VirtualMs));
-      this.mainToolStrip = new System.Windows.Forms.ToolStrip();
-      this.tspAdd = new System.Windows.Forms.ToolStripButton();
-      this.tsbRemove = new System.Windows.Forms.ToolStripButton();
-      this.tsbRun = new System.Windows.Forms.ToolStripButton();
-      this.tsbPause = new System.Windows.Forms.ToolStripButton();
-      this.tsbStop = new System.Windows.Forms.ToolStripButton();
-      this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-      this.splitContainer3 = new System.Windows.Forms.SplitContainer();
-      this.fileListBox = new System.Windows.Forms.ListBox();
-      this.panel1 = new System.Windows.Forms.Panel();
-      this.lblSpeed = new System.Windows.Forms.Label();
-      this.tbSpeed = new System.Windows.Forms.TrackBar();
-      this.gbStats = new System.Windows.Forms.GroupBox();
-      this.lblRunTime = new System.Windows.Forms.Label();
-      this.lblScanStats = new System.Windows.Forms.Label();
-      this.label3 = new System.Windows.Forms.Label();
-      this.label2 = new System.Windows.Forms.Label();
-      this.label1 = new System.Windows.Forms.Label();
-      this.plotContainer = new System.Windows.Forms.SplitContainer();
-      this.plotTIC = new ScottPlot.WinForms.FormsPlot();
-      this.tabControl1 = new System.Windows.Forms.TabControl();
-      this.tabPage1 = new System.Windows.Forms.TabPage();
-      this.rtbLog = new System.Windows.Forms.RichTextBox();
-      this.tabPage2 = new System.Windows.Forms.TabPage();
-      this.plotSpectrum = new ScottPlot.WinForms.FormsPlot();
-      this.labelSpectrum = new System.Windows.Forms.Label();
-      this.labelScanNumber = new System.Windows.Forms.Label();
-      this.ofdAdd = new System.Windows.Forms.OpenFileDialog();
-      this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-      this.mainToolStrip.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-      this.splitContainer1.Panel1.SuspendLayout();
-      this.splitContainer1.Panel2.SuspendLayout();
-      this.splitContainer1.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
-      this.splitContainer3.Panel1.SuspendLayout();
-      this.splitContainer3.Panel2.SuspendLayout();
-      this.splitContainer3.SuspendLayout();
-      this.panel1.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.tbSpeed)).BeginInit();
-      this.gbStats.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.plotContainer)).BeginInit();
-      this.plotContainer.Panel1.SuspendLayout();
-      this.plotContainer.Panel2.SuspendLayout();
-      this.plotContainer.SuspendLayout();
-      this.tabControl1.SuspendLayout();
-      this.tabPage1.SuspendLayout();
-      this.tabPage2.SuspendLayout();
-      this.SuspendLayout();
+      mainToolStrip = new ToolStrip();
+      tspAdd = new ToolStripButton();
+      tsbRemove = new ToolStripButton();
+      tsbRun = new ToolStripButton();
+      tsbPause = new ToolStripButton();
+      tsbStop = new ToolStripButton();
+      splitContainer1 = new SplitContainer();
+      splitContainer3 = new SplitContainer();
+      fileListBox = new ListBox();
+      panel1 = new Panel();
+      lblSpeed = new Label();
+      tbSpeed = new TrackBar();
+      gbStats = new GroupBox();
+      lblRunTime = new Label();
+      lblScanStats = new Label();
+      label3 = new Label();
+      label2 = new Label();
+      label1 = new Label();
+      plotContainer = new SplitContainer();
+      plotTIC = new ScottPlot.WinForms.FormsPlot();
+      tabControl1 = new TabControl();
+      tabPage1 = new TabPage();
+      rtbLog = new RichTextBox();
+      tabPage2 = new TabPage();
+      plotSpectrum = new ScottPlot.WinForms.FormsPlot();
+      labelSpectrum = new Label();
+      labelScanNumber = new Label();
+      ofdAdd = new OpenFileDialog();
+      statusStrip1 = new StatusStrip();
+      mainToolStrip.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
+      splitContainer1.Panel1.SuspendLayout();
+      splitContainer1.Panel2.SuspendLayout();
+      splitContainer1.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)splitContainer3).BeginInit();
+      splitContainer3.Panel1.SuspendLayout();
+      splitContainer3.Panel2.SuspendLayout();
+      splitContainer3.SuspendLayout();
+      panel1.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)tbSpeed).BeginInit();
+      gbStats.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)plotContainer).BeginInit();
+      plotContainer.Panel1.SuspendLayout();
+      plotContainer.Panel2.SuspendLayout();
+      plotContainer.SuspendLayout();
+      tabControl1.SuspendLayout();
+      tabPage1.SuspendLayout();
+      tabPage2.SuspendLayout();
+      SuspendLayout();
       // 
       // mainToolStrip
       // 
-      this.mainToolStrip.AutoSize = false;
-      this.mainToolStrip.ImageScalingSize = new System.Drawing.Size(32, 32);
-      this.mainToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tspAdd,
-            this.tsbRemove,
-            this.tsbRun,
-            this.tsbPause,
-            this.tsbStop});
-      this.mainToolStrip.Location = new System.Drawing.Point(0, 0);
-      this.mainToolStrip.Name = "mainToolStrip";
-      this.mainToolStrip.Size = new System.Drawing.Size(915, 36);
-      this.mainToolStrip.TabIndex = 0;
-      this.mainToolStrip.Text = "toolStrip1";
+      mainToolStrip.AutoSize = false;
+      mainToolStrip.ImageScalingSize = new Size(32, 32);
+      mainToolStrip.Items.AddRange(new ToolStripItem[] { tspAdd, tsbRemove, tsbRun, tsbPause, tsbStop });
+      mainToolStrip.Location = new Point(0, 0);
+      mainToolStrip.Name = "mainToolStrip";
+      mainToolStrip.Size = new Size(1140, 48);
+      mainToolStrip.TabIndex = 0;
+      mainToolStrip.Text = "toolStrip1";
       // 
       // tspAdd
       // 
-      this.tspAdd.AutoSize = false;
-      this.tspAdd.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-      this.tspAdd.Image = ((System.Drawing.Image)(resources.GetObject("tspAdd.Image")));
-      this.tspAdd.ImageAlign = System.Drawing.ContentAlignment.TopLeft;
-      this.tspAdd.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this.tspAdd.Margin = new System.Windows.Forms.Padding(0);
-      this.tspAdd.Name = "tspAdd";
-      this.tspAdd.Size = new System.Drawing.Size(32, 32);
-      this.tspAdd.Text = "Add Run";
-      this.tspAdd.Click += new System.EventHandler(this.tspAdd_Click);
+      tspAdd.AutoSize = false;
+      tspAdd.DisplayStyle = ToolStripItemDisplayStyle.Image;
+      tspAdd.Image = (Image)resources.GetObject("tspAdd.Image");
+      tspAdd.ImageTransparentColor = Color.Magenta;
+      tspAdd.Name = "tspAdd";
+      tspAdd.Size = new Size(36, 36);
+      tspAdd.Text = "Add Run";
+      tspAdd.Click += tspAdd_Click;
       // 
       // tsbRemove
       // 
-      this.tsbRemove.AutoSize = false;
-      this.tsbRemove.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-      this.tsbRemove.Image = ((System.Drawing.Image)(resources.GetObject("tsbRemove.Image")));
-      this.tsbRemove.ImageAlign = System.Drawing.ContentAlignment.TopLeft;
-      this.tsbRemove.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this.tsbRemove.Margin = new System.Windows.Forms.Padding(0);
-      this.tsbRemove.Name = "tsbRemove";
-      this.tsbRemove.Size = new System.Drawing.Size(32, 32);
-      this.tsbRemove.Text = "Delete Run";
-      this.tsbRemove.Click += new System.EventHandler(this.tsbRemove_Click);
+      tsbRemove.AutoSize = false;
+      tsbRemove.DisplayStyle = ToolStripItemDisplayStyle.Image;
+      tsbRemove.Image = (Image)resources.GetObject("tsbRemove.Image");
+      tsbRemove.ImageTransparentColor = Color.Magenta;
+      tsbRemove.Name = "tsbRemove";
+      tsbRemove.Size = new Size(36, 36);
+      tsbRemove.Text = "Delete Run";
+      tsbRemove.Click += tsbRemove_Click;
       // 
       // tsbRun
       // 
-      this.tsbRun.AutoSize = false;
-      this.tsbRun.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-      this.tsbRun.Image = ((System.Drawing.Image)(resources.GetObject("tsbRun.Image")));
-      this.tsbRun.ImageAlign = System.Drawing.ContentAlignment.TopLeft;
-      this.tsbRun.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this.tsbRun.Margin = new System.Windows.Forms.Padding(0);
-      this.tsbRun.Name = "tsbRun";
-      this.tsbRun.Size = new System.Drawing.Size(32, 32);
-      this.tsbRun.Text = "Run";
-      this.tsbRun.Click += new System.EventHandler(this.tsbRun_Click);
+      tsbRun.AutoSize = false;
+      tsbRun.DisplayStyle = ToolStripItemDisplayStyle.Image;
+      tsbRun.Image = (Image)resources.GetObject("tsbRun.Image");
+      tsbRun.ImageTransparentColor = Color.Magenta;
+      tsbRun.Name = "tsbRun";
+      tsbRun.Size = new Size(36, 36);
+      tsbRun.Text = "Run";
+      tsbRun.Click += tsbRun_Click;
       // 
       // tsbPause
       // 
-      this.tsbPause.AutoSize = false;
-      this.tsbPause.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-      this.tsbPause.Image = ((System.Drawing.Image)(resources.GetObject("tsbPause.Image")));
-      this.tsbPause.ImageAlign = System.Drawing.ContentAlignment.TopLeft;
-      this.tsbPause.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this.tsbPause.Name = "tsbPause";
-      this.tsbPause.Size = new System.Drawing.Size(32, 32);
-      this.tsbPause.Text = "Pause";
-      this.tsbPause.Click += new System.EventHandler(this.tsbPause_Click);
+      tsbPause.AutoSize = false;
+      tsbPause.DisplayStyle = ToolStripItemDisplayStyle.Image;
+      tsbPause.Image = (Image)resources.GetObject("tsbPause.Image");
+      tsbPause.ImageTransparentColor = Color.Magenta;
+      tsbPause.Name = "tsbPause";
+      tsbPause.Size = new Size(36, 36);
+      tsbPause.Text = "Pause";
+      tsbPause.Click += tsbPause_Click;
       // 
       // tsbStop
       // 
-      this.tsbStop.AutoSize = false;
-      this.tsbStop.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-      this.tsbStop.Image = ((System.Drawing.Image)(resources.GetObject("tsbStop.Image")));
-      this.tsbStop.ImageAlign = System.Drawing.ContentAlignment.TopLeft;
-      this.tsbStop.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this.tsbStop.Name = "tsbStop";
-      this.tsbStop.Size = new System.Drawing.Size(32, 32);
-      this.tsbStop.Text = "Stop";
-      this.tsbStop.Click += new System.EventHandler(this.tsbStop_Click);
+      tsbStop.AutoSize = false;
+      tsbStop.DisplayStyle = ToolStripItemDisplayStyle.Image;
+      tsbStop.Image = (Image)resources.GetObject("tsbStop.Image");
+      tsbStop.ImageTransparentColor = Color.Magenta;
+      tsbStop.Name = "tsbStop";
+      tsbStop.Size = new Size(36, 36);
+      tsbStop.Text = "Stop";
+      tsbStop.Click += tsbStop_Click;
       // 
       // splitContainer1
       // 
-      this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-      this.splitContainer1.Location = new System.Drawing.Point(0, 36);
-      this.splitContainer1.Margin = new System.Windows.Forms.Padding(2);
-      this.splitContainer1.Name = "splitContainer1";
+      splitContainer1.Dock = DockStyle.Fill;
+      splitContainer1.Location = new Point(0, 48);
+      splitContainer1.Name = "splitContainer1";
       // 
       // splitContainer1.Panel1
       // 
-      this.splitContainer1.Panel1.Controls.Add(this.splitContainer3);
-      this.splitContainer1.Panel1MinSize = 240;
+      splitContainer1.Panel1.Controls.Add(splitContainer3);
+      splitContainer1.Panel1MinSize = 380;
       // 
       // splitContainer1.Panel2
       // 
-      this.splitContainer1.Panel2.Controls.Add(this.plotContainer);
-      this.splitContainer1.Size = new System.Drawing.Size(915, 611);
-      this.splitContainer1.SplitterDistance = 240;
-      this.splitContainer1.SplitterWidth = 2;
-      this.splitContainer1.TabIndex = 2;
+      splitContainer1.Panel2.Controls.Add(plotContainer);
+      splitContainer1.Size = new Size(1140, 798);
+      splitContainer1.SplitterDistance = 380;
+      splitContainer1.TabIndex = 2;
       // 
       // splitContainer3
       // 
-      this.splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.splitContainer3.Location = new System.Drawing.Point(0, 0);
-      this.splitContainer3.Margin = new System.Windows.Forms.Padding(2);
-      this.splitContainer3.Name = "splitContainer3";
-      this.splitContainer3.Orientation = System.Windows.Forms.Orientation.Horizontal;
+      splitContainer3.Dock = DockStyle.Fill;
+      splitContainer3.Location = new Point(0, 0);
+      splitContainer3.Name = "splitContainer3";
+      splitContainer3.Orientation = Orientation.Horizontal;
       // 
       // splitContainer3.Panel1
       // 
-      this.splitContainer3.Panel1.Controls.Add(this.fileListBox);
-      this.splitContainer3.Panel1.Controls.Add(this.panel1);
+      splitContainer3.Panel1.Controls.Add(fileListBox);
+      splitContainer3.Panel1.Controls.Add(panel1);
       // 
       // splitContainer3.Panel2
       // 
-      this.splitContainer3.Panel2.Controls.Add(this.gbStats);
-      this.splitContainer3.Size = new System.Drawing.Size(240, 611);
-      this.splitContainer3.SplitterDistance = 369;
-      this.splitContainer3.SplitterWidth = 2;
-      this.splitContainer3.TabIndex = 0;
+      splitContainer3.Panel2.Controls.Add(gbStats);
+      splitContainer3.Size = new Size(380, 798);
+      splitContainer3.SplitterDistance = 484;
+      splitContainer3.TabIndex = 0;
       // 
       // fileListBox
       // 
-      this.fileListBox.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.fileListBox.FormattingEnabled = true;
-      this.fileListBox.HorizontalScrollbar = true;
-      this.fileListBox.Location = new System.Drawing.Point(0, 32);
-      this.fileListBox.Margin = new System.Windows.Forms.Padding(2);
-      this.fileListBox.Name = "fileListBox";
-      this.fileListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-      this.fileListBox.Size = new System.Drawing.Size(240, 337);
-      this.fileListBox.TabIndex = 0;
+      fileListBox.Dock = DockStyle.Fill;
+      fileListBox.FormattingEnabled = true;
+      fileListBox.HorizontalScrollbar = true;
+      fileListBox.ItemHeight = 25;
+      fileListBox.Location = new Point(0, 32);
+      fileListBox.Name = "fileListBox";
+      fileListBox.SelectionMode = SelectionMode.MultiExtended;
+      fileListBox.Size = new Size(380, 452);
+      fileListBox.TabIndex = 0;
       // 
       // panel1
       // 
-      this.panel1.Controls.Add(this.lblSpeed);
-      this.panel1.Controls.Add(this.tbSpeed);
-      this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
-      this.panel1.Location = new System.Drawing.Point(0, 0);
-      this.panel1.Margin = new System.Windows.Forms.Padding(2);
-      this.panel1.Name = "panel1";
-      this.panel1.Size = new System.Drawing.Size(240, 32);
-      this.panel1.TabIndex = 1;
+      panel1.Controls.Add(lblSpeed);
+      panel1.Controls.Add(tbSpeed);
+      panel1.Dock = DockStyle.Top;
+      panel1.Location = new Point(0, 0);
+      panel1.Name = "panel1";
+      panel1.Size = new Size(380, 32);
+      panel1.TabIndex = 1;
       // 
       // lblSpeed
       // 
-      this.lblSpeed.AutoSize = true;
-      this.lblSpeed.Dock = System.Windows.Forms.DockStyle.Left;
-      this.lblSpeed.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.lblSpeed.Location = new System.Drawing.Point(189, 0);
-      this.lblSpeed.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-      this.lblSpeed.Name = "lblSpeed";
-      this.lblSpeed.Size = new System.Drawing.Size(26, 21);
-      this.lblSpeed.TabIndex = 1;
-      this.lblSpeed.Text = "1x";
+      lblSpeed.AutoSize = true;
+      lblSpeed.Dock = DockStyle.Left;
+      lblSpeed.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      lblSpeed.Location = new Point(315, 0);
+      lblSpeed.Name = "lblSpeed";
+      lblSpeed.Size = new Size(38, 32);
+      lblSpeed.TabIndex = 1;
+      lblSpeed.Text = "1x";
       // 
       // tbSpeed
       // 
-      this.tbSpeed.BackColor = System.Drawing.SystemColors.Control;
-      this.tbSpeed.Dock = System.Windows.Forms.DockStyle.Left;
-      this.tbSpeed.LargeChange = 1;
-      this.tbSpeed.Location = new System.Drawing.Point(0, 0);
-      this.tbSpeed.Margin = new System.Windows.Forms.Padding(2);
-      this.tbSpeed.Maximum = 6;
-      this.tbSpeed.Name = "tbSpeed";
-      this.tbSpeed.Size = new System.Drawing.Size(189, 32);
-      this.tbSpeed.TabIndex = 0;
-      this.tbSpeed.ValueChanged += new System.EventHandler(this.tbSpeed_ValueChanged);
+      tbSpeed.BackColor = SystemColors.Control;
+      tbSpeed.Dock = DockStyle.Left;
+      tbSpeed.LargeChange = 1;
+      tbSpeed.Location = new Point(0, 0);
+      tbSpeed.Maximum = 6;
+      tbSpeed.Name = "tbSpeed";
+      tbSpeed.Size = new Size(315, 32);
+      tbSpeed.TabIndex = 0;
+      tbSpeed.ValueChanged += tbSpeed_ValueChanged;
       // 
       // gbStats
       // 
-      this.gbStats.Controls.Add(this.lblRunTime);
-      this.gbStats.Controls.Add(this.lblScanStats);
-      this.gbStats.Controls.Add(this.label3);
-      this.gbStats.Controls.Add(this.label2);
-      this.gbStats.Controls.Add(this.label1);
-      this.gbStats.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.gbStats.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.gbStats.Location = new System.Drawing.Point(0, 0);
-      this.gbStats.Margin = new System.Windows.Forms.Padding(2);
-      this.gbStats.Name = "gbStats";
-      this.gbStats.Padding = new System.Windows.Forms.Padding(2);
-      this.gbStats.Size = new System.Drawing.Size(240, 240);
-      this.gbStats.TabIndex = 0;
-      this.gbStats.TabStop = false;
-      this.gbStats.Text = "Simulation Statistics";
+      gbStats.Controls.Add(lblRunTime);
+      gbStats.Controls.Add(lblScanStats);
+      gbStats.Controls.Add(label3);
+      gbStats.Controls.Add(label2);
+      gbStats.Controls.Add(label1);
+      gbStats.Dock = DockStyle.Fill;
+      gbStats.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      gbStats.Location = new Point(0, 0);
+      gbStats.Name = "gbStats";
+      gbStats.Size = new Size(380, 310);
+      gbStats.TabIndex = 0;
+      gbStats.TabStop = false;
+      gbStats.Text = "Simulation Statistics";
       // 
       // lblRunTime
       // 
-      this.lblRunTime.AutoSize = true;
-      this.lblRunTime.Font = new System.Drawing.Font("Cascadia Code", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.lblRunTime.Location = new System.Drawing.Point(126, 26);
-      this.lblRunTime.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-      this.lblRunTime.Name = "lblRunTime";
-      this.lblRunTime.Size = new System.Drawing.Size(63, 64);
-      this.lblRunTime.TabIndex = 4;
-      this.lblRunTime.Text = "00:00\r\n00:00:00\r\n00:00:00\r\n0";
+      lblRunTime.AutoSize = true;
+      lblRunTime.Font = new Font("Cascadia Code", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      lblRunTime.Location = new Point(153, 33);
+      lblRunTime.Name = "lblRunTime";
+      lblRunTime.Size = new Size(98, 96);
+      lblRunTime.TabIndex = 4;
+      lblRunTime.Text = "00:00\r\n00:00:00\r\n00:00:00\r\n0";
       // 
       // lblScanStats
       // 
-      this.lblScanStats.AutoSize = true;
-      this.lblScanStats.Font = new System.Drawing.Font("Cascadia Code", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.lblScanStats.Location = new System.Drawing.Point(124, 120);
-      this.lblScanStats.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-      this.lblScanStats.Name = "lblScanStats";
-      this.lblScanStats.Size = new System.Drawing.Size(77, 48);
-      this.lblScanStats.TabIndex = 3;
-      this.lblScanStats.Text = "0        0\r\n0        0\r\n0        0";
+      lblScanStats.AutoSize = true;
+      lblScanStats.Font = new Font("Cascadia Code", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      lblScanStats.Location = new Point(153, 173);
+      lblScanStats.Name = "lblScanStats";
+      lblScanStats.Size = new Size(120, 72);
+      lblScanStats.TabIndex = 3;
+      lblScanStats.Text = "0        0\r\n0        0\r\n0        0";
       // 
       // label3
       // 
-      this.label3.AutoSize = true;
-      this.label3.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label3.Location = new System.Drawing.Point(124, 102);
-      this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(109, 15);
-      this.label3.TabIndex = 2;
-      this.label3.Text = "Current        All        ";
+      label3.AutoSize = true;
+      label3.Font = new Font("Segoe UI", 9F, FontStyle.Underline, GraphicsUnit.Point, 0);
+      label3.Location = new Point(153, 148);
+      label3.Name = "label3";
+      label3.Size = new Size(170, 25);
+      label3.TabIndex = 2;
+      label3.Text = "Current        All        ";
       // 
       // label2
       // 
-      this.label2.AutoSize = true;
-      this.label2.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label2.Location = new System.Drawing.Point(11, 117);
-      this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(76, 51);
-      this.label2.TabIndex = 1;
-      this.label2.Text = "Total Scans:\r\nMS1 Scans:\r\nMS2 Scans:";
+      label2.AutoSize = true;
+      label2.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label2.Location = new Point(12, 173);
+      label2.Name = "label2";
+      label2.Size = new Size(103, 75);
+      label2.TabIndex = 1;
+      label2.Text = "Total Scans:\r\nMS1 Scans:\r\nMS2 Scans:";
       // 
       // label1
       // 
-      this.label1.AutoSize = true;
-      this.label1.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label1.Location = new System.Drawing.Point(11, 22);
-      this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(98, 68);
-      this.label1.TabIndex = 0;
-      this.label1.Text = "Current Run RT:\r\nSim Run Time:\r\nTotal Sim Time:\r\nTotal Sim Runs:";
+      label1.AutoSize = true;
+      label1.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label1.Location = new Point(12, 33);
+      label1.Name = "label1";
+      label1.Size = new Size(134, 100);
+      label1.TabIndex = 0;
+      label1.Text = "Current Run RT:\r\nSim Run Time:\r\nTotal Sim Time:\r\nTotal Sim Runs:";
       // 
       // plotContainer
       // 
-      this.plotContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.plotContainer.Location = new System.Drawing.Point(0, 0);
-      this.plotContainer.Margin = new System.Windows.Forms.Padding(2);
-      this.plotContainer.Name = "plotContainer";
-      this.plotContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
+      plotContainer.Dock = DockStyle.Fill;
+      plotContainer.Location = new Point(0, 0);
+      plotContainer.Name = "plotContainer";
+      plotContainer.Orientation = Orientation.Horizontal;
       // 
       // plotContainer.Panel1
       // 
-      this.plotContainer.Panel1.Controls.Add(this.plotTIC);
+      plotContainer.Panel1.Controls.Add(plotTIC);
       // 
       // plotContainer.Panel2
       // 
-      this.plotContainer.Panel2.Controls.Add(this.tabControl1);
-      this.plotContainer.Size = new System.Drawing.Size(673, 611);
-      this.plotContainer.SplitterDistance = 296;
-      this.plotContainer.SplitterWidth = 2;
-      this.plotContainer.TabIndex = 0;
+      plotContainer.Panel2.Controls.Add(tabControl1);
+      plotContainer.Size = new Size(756, 798);
+      plotContainer.SplitterDistance = 390;
+      plotContainer.TabIndex = 0;
       // 
       // plotTIC
       // 
-      this.plotTIC.DisplayScale = 1.5F;
-      this.plotTIC.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.plotTIC.Location = new System.Drawing.Point(0, 0);
-      this.plotTIC.Margin = new System.Windows.Forms.Padding(2);
-      this.plotTIC.Name = "plotTIC";
-      this.plotTIC.Size = new System.Drawing.Size(673, 296);
-      this.plotTIC.TabIndex = 0;
+      plotTIC.DisplayScale = 1.5F;
+      plotTIC.Dock = DockStyle.Fill;
+      plotTIC.Location = new Point(0, 0);
+      plotTIC.Name = "plotTIC";
+      plotTIC.Size = new Size(756, 390);
+      plotTIC.TabIndex = 0;
       // 
       // tabControl1
       // 
-      this.tabControl1.Alignment = System.Windows.Forms.TabAlignment.Bottom;
-      this.tabControl1.Controls.Add(this.tabPage1);
-      this.tabControl1.Controls.Add(this.tabPage2);
-      this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.tabControl1.Location = new System.Drawing.Point(0, 0);
-      this.tabControl1.Margin = new System.Windows.Forms.Padding(2);
-      this.tabControl1.Name = "tabControl1";
-      this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new System.Drawing.Size(673, 313);
-      this.tabControl1.TabIndex = 1;
+      tabControl1.Alignment = TabAlignment.Bottom;
+      tabControl1.Controls.Add(tabPage1);
+      tabControl1.Controls.Add(tabPage2);
+      tabControl1.Dock = DockStyle.Fill;
+      tabControl1.Location = new Point(0, 0);
+      tabControl1.Name = "tabControl1";
+      tabControl1.SelectedIndex = 0;
+      tabControl1.Size = new Size(756, 404);
+      tabControl1.TabIndex = 1;
       // 
       // tabPage1
       // 
-      this.tabPage1.Controls.Add(this.rtbLog);
-      this.tabPage1.Location = new System.Drawing.Point(4, 4);
-      this.tabPage1.Margin = new System.Windows.Forms.Padding(2);
-      this.tabPage1.Name = "tabPage1";
-      this.tabPage1.Padding = new System.Windows.Forms.Padding(2);
-      this.tabPage1.Size = new System.Drawing.Size(665, 287);
-      this.tabPage1.TabIndex = 0;
-      this.tabPage1.Text = "Message Log";
-      this.tabPage1.UseVisualStyleBackColor = true;
+      tabPage1.Controls.Add(rtbLog);
+      tabPage1.Location = new Point(4, 4);
+      tabPage1.Name = "tabPage1";
+      tabPage1.Padding = new Padding(3);
+      tabPage1.Size = new Size(748, 366);
+      tabPage1.TabIndex = 0;
+      tabPage1.Text = "Message Log";
+      tabPage1.UseVisualStyleBackColor = true;
       // 
       // rtbLog
       // 
-      this.rtbLog.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.rtbLog.Location = new System.Drawing.Point(2, 2);
-      this.rtbLog.Margin = new System.Windows.Forms.Padding(2);
-      this.rtbLog.Name = "rtbLog";
-      this.rtbLog.Size = new System.Drawing.Size(661, 283);
-      this.rtbLog.TabIndex = 0;
-      this.rtbLog.Text = "";
+      rtbLog.Dock = DockStyle.Fill;
+      rtbLog.Location = new Point(3, 3);
+      rtbLog.Name = "rtbLog";
+      rtbLog.Size = new Size(742, 360);
+      rtbLog.TabIndex = 0;
+      rtbLog.Text = "";
       // 
       // tabPage2
       // 
-      this.tabPage2.Controls.Add(this.plotSpectrum);
-      this.tabPage2.Controls.Add(this.labelSpectrum);
-      this.tabPage2.Controls.Add(this.labelScanNumber);
-      this.tabPage2.Location = new System.Drawing.Point(4, 4);
-      this.tabPage2.Margin = new System.Windows.Forms.Padding(2);
-      this.tabPage2.Name = "tabPage2";
-      this.tabPage2.Padding = new System.Windows.Forms.Padding(2);
-      this.tabPage2.Size = new System.Drawing.Size(665, 287);
-      this.tabPage2.TabIndex = 1;
-      this.tabPage2.Text = "Spectrum Viewer";
-      this.tabPage2.UseVisualStyleBackColor = true;
+      tabPage2.Controls.Add(plotSpectrum);
+      tabPage2.Controls.Add(labelSpectrum);
+      tabPage2.Controls.Add(labelScanNumber);
+      tabPage2.Location = new Point(4, 4);
+      tabPage2.Name = "tabPage2";
+      tabPage2.Padding = new Padding(3);
+      tabPage2.Size = new Size(748, 366);
+      tabPage2.TabIndex = 1;
+      tabPage2.Text = "Spectrum Viewer";
+      tabPage2.UseVisualStyleBackColor = true;
       // 
       // plotSpectrum
       // 
-      this.plotSpectrum.DisplayScale = 1.5F;
-      this.plotSpectrum.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.plotSpectrum.Location = new System.Drawing.Point(2, 28);
-      this.plotSpectrum.Margin = new System.Windows.Forms.Padding(2);
-      this.plotSpectrum.Name = "plotSpectrum";
-      this.plotSpectrum.Size = new System.Drawing.Size(661, 257);
-      this.plotSpectrum.TabIndex = 0;
+      plotSpectrum.DisplayScale = 1.5F;
+      plotSpectrum.Dock = DockStyle.Fill;
+      plotSpectrum.Location = new Point(3, 53);
+      plotSpectrum.Name = "plotSpectrum";
+      plotSpectrum.Size = new Size(742, 310);
+      plotSpectrum.TabIndex = 0;
       // 
       // labelSpectrum
       // 
-      this.labelSpectrum.AutoSize = true;
-      this.labelSpectrum.Dock = System.Windows.Forms.DockStyle.Top;
-      this.labelSpectrum.Location = new System.Drawing.Point(2, 15);
-      this.labelSpectrum.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-      this.labelSpectrum.Name = "labelSpectrum";
-      this.labelSpectrum.Size = new System.Drawing.Size(52, 13);
-      this.labelSpectrum.TabIndex = 1;
-      this.labelSpectrum.Text = "Spectrum";
+      labelSpectrum.AutoSize = true;
+      labelSpectrum.Dock = DockStyle.Top;
+      labelSpectrum.Location = new Point(3, 28);
+      labelSpectrum.Name = "labelSpectrum";
+      labelSpectrum.Size = new Size(88, 25);
+      labelSpectrum.TabIndex = 1;
+      labelSpectrum.Text = "Spectrum";
       // 
       // labelScanNumber
       // 
-      this.labelScanNumber.AutoSize = true;
-      this.labelScanNumber.Dock = System.Windows.Forms.DockStyle.Top;
-      this.labelScanNumber.Location = new System.Drawing.Point(2, 2);
-      this.labelScanNumber.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-      this.labelScanNumber.Name = "labelScanNumber";
-      this.labelScanNumber.Size = new System.Drawing.Size(69, 13);
-      this.labelScanNumber.TabIndex = 2;
-      this.labelScanNumber.Text = "ScanNumber";
+      labelScanNumber.AutoSize = true;
+      labelScanNumber.Dock = DockStyle.Top;
+      labelScanNumber.Location = new Point(3, 3);
+      labelScanNumber.Name = "labelScanNumber";
+      labelScanNumber.Size = new Size(114, 25);
+      labelScanNumber.TabIndex = 2;
+      labelScanNumber.Text = "ScanNumber";
       // 
       // ofdAdd
       // 
-      this.ofdAdd.Filter = "Thermo Raw|*.raw|MzML|*.mzML|All files|*.*";
-      this.ofdAdd.FilterIndex = 3;
-      this.ofdAdd.Multiselect = true;
+      ofdAdd.Filter = "Thermo Raw|*.raw|MzML|*.mzML|All files|*.*";
+      ofdAdd.FilterIndex = 3;
+      ofdAdd.Multiselect = true;
       // 
       // statusStrip1
       // 
-      this.statusStrip1.AutoSize = false;
-      this.statusStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
-      this.statusStrip1.Location = new System.Drawing.Point(0, 647);
-      this.statusStrip1.Name = "statusStrip1";
-      this.statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 8, 0);
-      this.statusStrip1.Size = new System.Drawing.Size(915, 17);
-      this.statusStrip1.TabIndex = 3;
-      this.statusStrip1.Text = "statusStrip1";
+      statusStrip1.AutoSize = false;
+      statusStrip1.ImageScalingSize = new Size(24, 24);
+      statusStrip1.Location = new Point(0, 846);
+      statusStrip1.Name = "statusStrip1";
+      statusStrip1.Size = new Size(1140, 32);
+      statusStrip1.TabIndex = 3;
+      statusStrip1.Text = "statusStrip1";
       // 
       // VirtualMs
       // 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
-      this.ClientSize = new System.Drawing.Size(915, 664);
-      this.Controls.Add(this.splitContainer1);
-      this.Controls.Add(this.mainToolStrip);
-      this.Controls.Add(this.statusStrip1);
-      this.Margin = new System.Windows.Forms.Padding(2);
-      this.Name = "VirtualMs";
-      this.Text = "Virtual MS";
-      this.mainToolStrip.ResumeLayout(false);
-      this.mainToolStrip.PerformLayout();
-      this.splitContainer1.Panel1.ResumeLayout(false);
-      this.splitContainer1.Panel2.ResumeLayout(false);
-      ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-      this.splitContainer1.ResumeLayout(false);
-      this.splitContainer3.Panel1.ResumeLayout(false);
-      this.splitContainer3.Panel2.ResumeLayout(false);
-      ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
-      this.splitContainer3.ResumeLayout(false);
-      this.panel1.ResumeLayout(false);
-      this.panel1.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.tbSpeed)).EndInit();
-      this.gbStats.ResumeLayout(false);
-      this.gbStats.PerformLayout();
-      this.plotContainer.Panel1.ResumeLayout(false);
-      this.plotContainer.Panel2.ResumeLayout(false);
-      ((System.ComponentModel.ISupportInitialize)(this.plotContainer)).EndInit();
-      this.plotContainer.ResumeLayout(false);
-      this.tabControl1.ResumeLayout(false);
-      this.tabPage1.ResumeLayout(false);
-      this.tabPage2.ResumeLayout(false);
-      this.tabPage2.PerformLayout();
-      this.ResumeLayout(false);
-
+      AutoScaleDimensions = new SizeF(10F, 25F);
+      AutoScaleMode = AutoScaleMode.Font;
+      ClientSize = new Size(1140, 878);
+      Controls.Add(splitContainer1);
+      Controls.Add(mainToolStrip);
+      Controls.Add(statusStrip1);
+      Name = "VirtualMs";
+      Text = "Virtual MS";
+      mainToolStrip.ResumeLayout(false);
+      mainToolStrip.PerformLayout();
+      splitContainer1.Panel1.ResumeLayout(false);
+      splitContainer1.Panel2.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
+      splitContainer1.ResumeLayout(false);
+      splitContainer3.Panel1.ResumeLayout(false);
+      splitContainer3.Panel2.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)splitContainer3).EndInit();
+      splitContainer3.ResumeLayout(false);
+      panel1.ResumeLayout(false);
+      panel1.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)tbSpeed).EndInit();
+      gbStats.ResumeLayout(false);
+      gbStats.PerformLayout();
+      plotContainer.Panel1.ResumeLayout(false);
+      plotContainer.Panel2.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)plotContainer).EndInit();
+      plotContainer.ResumeLayout(false);
+      tabControl1.ResumeLayout(false);
+      tabPage1.ResumeLayout(false);
+      tabPage2.ResumeLayout(false);
+      tabPage2.PerformLayout();
+      ResumeLayout(false);
     }
 
     #endregion
