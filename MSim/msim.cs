@@ -25,6 +25,11 @@ namespace MSim
   /// </summary>
   public class SimRunner
   {
+    //For storing timer values
+    private long ms = 0;
+    private long lastMS = 0;
+    private long fastForwardMS = 0;
+
     public string DetectorClass => throw new NotImplementedException();
 
     /// <summary>
@@ -54,6 +59,11 @@ namespace MSim
     public Spectrum GetLastMsScan()
     {
         return LastMsScan;
+    }
+
+    public double GetRT()
+    {
+      return Convert.ToDouble(ms + fastForwardMS)/60000;
     }
 
     public delegate void MsScanEvent(Spectrum spec);
@@ -181,9 +191,9 @@ namespace MSim
         runInfo.Name = path;
 
         int scanCount = 0;
-        long ms = 0;
-        long lastMS = 0;
-        long fastForwardMS = 0;
+        ms = 0;
+        lastMS = 0;
+        fastForwardMS = 0;
 
         //Start a high performance timer.
         Stopwatch sw = Stopwatch.StartNew();

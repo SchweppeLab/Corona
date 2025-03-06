@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using MSim;
 using Pipes;
 using Nova.Data.Spectrum;
+using MSim.lib;
 
 namespace VirtualMS
 {
@@ -17,6 +18,7 @@ namespace VirtualMS
     private PipesServer server;
     public event PipeConnectionEvent? ClientConnected;
     public event PipeConnectionEvent? ClientDisconnected;
+    public event EventHandler<CustomScan> CustomScanRequest;
 
     public VMSServer(string pipeName)
     {
@@ -53,10 +55,20 @@ namespace VirtualMS
         case '0':
           Console.WriteLine("Client {0} says: {1}", connection.ID, message.DecodeString());
           break;
+        case 'A':
+          OnCustomScanRequest(message);
+          break;
         default:
           Console.WriteLine("Server received unrecognized message code from {0}: {1}", connection.ID, message.MsgCode);
           break;
       }
+    }
+
+    private void OnCustomScanRequest(PipeMessage message)
+    {
+      CustomScan cs = new CustomScan();
+      cs.Deserialize(message.MsgData);
+      CustomScanRequest?.Invoke(this,cs);
     }
 
     private void OnError(Exception exception)

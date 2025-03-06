@@ -56,6 +56,13 @@
       plotSpectrum = new ScottPlot.WinForms.FormsPlot();
       labelSpectrum = new Label();
       labelScanNumber = new Label();
+      tabPage3 = new TabPage();
+      dgvCustomScan = new DataGridView();
+      panel2 = new Panel();
+      nudCustomScans = new NumericUpDown();
+      lblCustomScansRT = new Label();
+      lblCustomScans = new Label();
+      label4 = new Label();
       ofdAdd = new OpenFileDialog();
       statusStrip1 = new StatusStrip();
       mainToolStrip.SuspendLayout();
@@ -77,6 +84,10 @@
       tabControl1.SuspendLayout();
       tabPage1.SuspendLayout();
       tabPage2.SuspendLayout();
+      tabPage3.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)dgvCustomScan).BeginInit();
+      panel2.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)nudCustomScans).BeginInit();
       SuspendLayout();
       // 
       // mainToolStrip
@@ -325,6 +336,7 @@
       tabControl1.Alignment = TabAlignment.Bottom;
       tabControl1.Controls.Add(tabPage1);
       tabControl1.Controls.Add(tabPage2);
+      tabControl1.Controls.Add(tabPage3);
       tabControl1.Dock = DockStyle.Fill;
       tabControl1.Location = new Point(0, 0);
       tabControl1.Name = "tabControl1";
@@ -394,6 +406,81 @@
       labelScanNumber.TabIndex = 2;
       labelScanNumber.Text = "ScanNumber";
       // 
+      // tabPage3
+      // 
+      tabPage3.Controls.Add(dgvCustomScan);
+      tabPage3.Controls.Add(panel2);
+      tabPage3.Location = new Point(4, 4);
+      tabPage3.Name = "tabPage3";
+      tabPage3.Padding = new Padding(3);
+      tabPage3.Size = new Size(748, 366);
+      tabPage3.TabIndex = 2;
+      tabPage3.Text = "Custom Scans";
+      tabPage3.UseVisualStyleBackColor = true;
+      // 
+      // dgvCustomScan
+      // 
+      dgvCustomScan.AllowUserToAddRows = false;
+      dgvCustomScan.AllowUserToDeleteRows = false;
+      dgvCustomScan.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+      dgvCustomScan.Dock = DockStyle.Fill;
+      dgvCustomScan.Location = new Point(3, 39);
+      dgvCustomScan.Name = "dgvCustomScan";
+      dgvCustomScan.ReadOnly = true;
+      dgvCustomScan.RowHeadersVisible = false;
+      dgvCustomScan.RowHeadersWidth = 62;
+      dgvCustomScan.Size = new Size(742, 324);
+      dgvCustomScan.TabIndex = 1;
+      // 
+      // panel2
+      // 
+      panel2.Controls.Add(nudCustomScans);
+      panel2.Controls.Add(lblCustomScansRT);
+      panel2.Controls.Add(lblCustomScans);
+      panel2.Controls.Add(label4);
+      panel2.Dock = DockStyle.Top;
+      panel2.Location = new Point(3, 3);
+      panel2.Name = "panel2";
+      panel2.Size = new Size(742, 36);
+      panel2.TabIndex = 0;
+      // 
+      // nudCustomScans
+      // 
+      nudCustomScans.Location = new Point(3, 3);
+      nudCustomScans.Maximum = new decimal(new int[] { 0, 0, 0, 0 });
+      nudCustomScans.Name = "nudCustomScans";
+      nudCustomScans.RightToLeft = RightToLeft.No;
+      nudCustomScans.Size = new Size(128, 31);
+      nudCustomScans.TabIndex = 6;
+      nudCustomScans.ValueChanged += nudCustomScans_ValueChanged;
+      // 
+      // lblCustomScansRT
+      // 
+      lblCustomScansRT.AutoSize = true;
+      lblCustomScansRT.Location = new Point(255, 5);
+      lblCustomScansRT.Name = "lblCustomScansRT";
+      lblCustomScansRT.Size = new Size(35, 25);
+      lblCustomScansRT.TabIndex = 5;
+      lblCustomScansRT.Text = "RT:";
+      // 
+      // lblCustomScans
+      // 
+      lblCustomScans.AutoSize = true;
+      lblCustomScans.Location = new Point(172, 5);
+      lblCustomScans.Name = "lblCustomScans";
+      lblCustomScans.Size = new Size(22, 25);
+      lblCustomScans.TabIndex = 4;
+      lblCustomScans.Text = "0";
+      // 
+      // label4
+      // 
+      label4.AutoSize = true;
+      label4.Location = new Point(137, 5);
+      label4.Name = "label4";
+      label4.Size = new Size(29, 25);
+      label4.TabIndex = 3;
+      label4.Text = "of";
+      // 
       // ofdAdd
       // 
       ofdAdd.Filter = "Thermo Raw|*.raw|MzML|*.mzML|All files|*.*";
@@ -443,6 +530,11 @@
       tabPage1.ResumeLayout(false);
       tabPage2.ResumeLayout(false);
       tabPage2.PerformLayout();
+      tabPage3.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)dgvCustomScan).EndInit();
+      panel2.ResumeLayout(false);
+      panel2.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)nudCustomScans).EndInit();
       ResumeLayout(false);
     }
 
@@ -477,5 +569,12 @@
     private Label lblSpeed;
     private ToolStripButton tsbPause;
     private ToolStripButton tsbStop;
+    private TabPage tabPage3;
+    private DataGridView dgvCustomScan;
+    private Panel panel2;
+    private Label lblCustomScansRT;
+    private Label lblCustomScans;
+    private Label label4;
+    private NumericUpDown nudCustomScans;
   }
 }

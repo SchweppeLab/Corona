@@ -50,6 +50,9 @@ namespace VirtualMS
     private bool paused = false;
 
     private List<string> Files = new List<string>();
+    private List<CustomScan> CustomScans = new List<CustomScan>();
+    private CustomScan UserCustomScan = new CustomScan();
+    private int CustomScansIndex = -1;
 
     public VirtualMs()
     {
@@ -100,6 +103,9 @@ namespace VirtualMS
       simMS.MsScanArrived += OnMsScanArrived;
       server.ClientConnected += OnClientConnected;
       server.ClientDisconnected += OnClientDisconnected;
+      server.CustomScanRequest += OnCustomScanRequest;
+
+      dgvCustomScan.DataSource = null;
 
       //var exists = System.Diagnostics.Process.GetProcessesByName(
       //  System.IO.Path.GetFileNameWithoutExtension(
@@ -188,7 +194,7 @@ namespace VirtualMS
         simMS.Run(Files.First());
         Files.RemoveAt(0);
       }
-      }
+    }
 
     private void OnAcquisitionStart(RunInfo info)
     {
@@ -207,6 +213,22 @@ namespace VirtualMS
     private void OnClientDisconnected(PipesConnection pc)
     {
       log("Client disconnected: " + pc.ID);
+    }
+
+    private void OnCustomScanRequest(object? sender, CustomScan customScan)
+    {
+      customScan.RetentionTime = simMS.GetRT();
+      log("Custom Scan Requested at: " + customScan.RetentionTime.ToString());
+      CustomScans.Add(customScan);
+      nudCustomScans.Maximum = CustomScans.Count;
+      if (CustomScans.Count == 1)
+      {
+        nudCustomScans.Minimum = 1;
+        CustomScansIndex = 0;
+        UserCustomScan = CustomScans[0];
+        UpdateCustomScans(true);
+      }
+      else UpdateCustomScans(false);
     }
 
     private void OnMsScanArrived(object? sender, MSimEventArgs e)
@@ -343,6 +365,37 @@ namespace VirtualMS
     private void tsbStop_Click(object sender, EventArgs e)
     {
       simMS.Stop();
+    }
+
+    private void UpdateCustomScans(bool refreshDataSource)
+    {
+      if (refreshDataSource)
+      {
+        dgvCustomScan.DataSource = UserCustomScan.Values.ToList();
+        dgvCustomScan.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+        dgvCustomScan.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+        lblCustomScansRT.Text = "RT: " + UserCustomScan.RetentionTime.ToString();
+      }
+      lblCustomScans.Text = CustomScans.Count.ToString();
+    }
+
+    private void nudCustomScans_ValueChanged(object sender, EventArgs e)
+    {
+      CustomScansIndex = Convert.ToInt32(nudCustomScans.Value) - 1;
+      UserCustomScan = CustomScans[CustomScansIndex];
+      UpdateCustomScans(true);
+    }
+
+
+    protected override void WndProc(ref Message m)
+    {
+      const int WM_PARENTNOTIFY = 0x0210;
+      if (m.Msg == WM_PARENTNOTIFY)
+      {
+        if (!Focused)
+          Activate();
+      }
+      base.WndProc(ref m);
     }
   }
 }
