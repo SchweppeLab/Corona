@@ -1,6 +1,6 @@
 # msim
 
-msim is a simulator library to use scans from raw files as if they were real-time scans from an instrument accessed through and instrument API ([Thermo](https://github.com/thermofisherlsms/iapi)).
+msim is a simulator library to use scans from raw files as if they were real-time scans from an instrument accessed through an instrument API ([Thermo](https://github.com/thermofisherlsms/iapi)).
 
 ## Usage
 
@@ -14,24 +14,32 @@ msim can be run using the following method:
 
     SimRunner simRunner = new SimRunner();
 
-    _instAcq = simRunner.Acquisition;
-
-    _scans = null;
-
-    simRunner.Acquisition.AcquisitionStreamOpening += _instAcq_AcquisitionStreamOpening;
-    simRunner.Acquisition.AcquisitionStreamClosing += _instAcq_AcquisitionStreamClosing;
-    
+    simRunner.AcquisitionStart += _instAcq_AcquisitionStreamOpening;
+    simRunner.AcquisitionEnd += _instAcq_AcquisitionStreamClosing;
     simRunner.MsScanArrived += _instMSScanContainer_MsScanArrived;
     
-    simRunner.Run(RawFile, waitFor: 5);
+    simRunner.Run(RawFile);
 
-`waitFor` corresponds to a Thread delay of `n` milliseconds. This is used because the `Run` method is `async`.
-Depending on the downstream application this can be tuned to replicate instrument performance (e.g., scan delays due to actual acquisition).
 
-Raw Files are read based on code from the `Monocle` project: https://github.com/gygilab/Monocle
+Raw Files are read based on the `Nova` project: https://github.com/SchweppeLab/Nova
 
-Author: `Devin Schweppe`
+## Additional Tools
 
-Copywrite: Authors & Schweppe Lab 2021
+### VirtualMS
+
+A virtual mass spectrometer application that uses MSim for real-time data broadcast. The VirtualMS accepts a sequence of data files (raw or mzML),
+and broadcasts them in real-time, or faster using the data stream speed toggles. Applications developed with `Helios` (https://github.com/SchweppeLab/Helios)
+can receive the data from the VirtualMS using an IAPI compatible interface. In this manner, the VirtualMS can be used in place of an instrument
+for application development.
+
+### Blazar
+
+A commandline implementation of a real-time raw file datastream, for demonstration of MSim use.
+
+## Additional Information
+
+Authors: `Devin Schweppe` and `Michael Hoopmann`
+
+Copywrite: Authors & Schweppe Lab 2021-2025
 
 
