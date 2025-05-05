@@ -1,6 +1,6 @@
 ﻿namespace VirtualMS
 {
-  partial class VirtualMs
+  partial class Corona
   {
     /// <summary>
     ///  Required designer variable.
@@ -28,16 +28,35 @@
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(VirtualMs));
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Corona));
       mainToolStrip = new ToolStrip();
-      tspAdd = new ToolStripButton();
+      tsbLoad = new ToolStripButton();
+      tsbDelete = new ToolStripButton();
+      toolStripSeparator1 = new ToolStripSeparator();
+      toolStripSeparator3 = new ToolStripSeparator();
+      tsbAdd = new ToolStripButton();
       tsbRemove = new ToolStripButton();
+      toolStripSeparator4 = new ToolStripSeparator();
+      toolStripSeparator2 = new ToolStripSeparator();
       tsbRun = new ToolStripButton();
       tsbPause = new ToolStripButton();
       tsbStop = new ToolStripButton();
       splitContainer1 = new SplitContainer();
       splitContainer3 = new SplitContainer();
       fileListBox = new ListBox();
+      panel3 = new Panel();
+      lblFileInfo = new Label();
+      panelMeter = new Panel();
+      pan10 = new Panel();
+      pan9 = new Panel();
+      pan8 = new Panel();
+      pan7 = new Panel();
+      pan6 = new Panel();
+      pan5 = new Panel();
+      pan4 = new Panel();
+      pan3 = new Panel();
+      pan2 = new Panel();
+      pan1 = new Panel();
       panel1 = new Panel();
       lblSpeed = new Label();
       tbSpeed = new TrackBar();
@@ -47,6 +66,11 @@
       label3 = new Label();
       label2 = new Label();
       label1 = new Label();
+      tabControlMain = new TabControl();
+      tabPage4 = new TabPage();
+      splitContainer2 = new SplitContainer();
+      dgvFiles = new DataGridView();
+      tabPage5 = new TabPage();
       plotContainer = new SplitContainer();
       plotTIC = new ScottPlot.WinForms.FormsPlot();
       tabControl1 = new TabControl();
@@ -65,6 +89,11 @@
       label4 = new Label();
       ofdAdd = new OpenFileDialog();
       statusStrip1 = new StatusStrip();
+      rpFileName = new DataGridViewTextBoxColumn();
+      rpFilePath = new DataGridViewTextBoxColumn();
+      rpRunSpan = new DataGridViewComboBoxColumn();
+      rpFirst = new DataGridViewTextBoxColumn();
+      rpEnd = new DataGridViewTextBoxColumn();
       mainToolStrip.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
       splitContainer1.Panel1.SuspendLayout();
@@ -74,9 +103,18 @@
       splitContainer3.Panel1.SuspendLayout();
       splitContainer3.Panel2.SuspendLayout();
       splitContainer3.SuspendLayout();
+      panel3.SuspendLayout();
+      panelMeter.SuspendLayout();
       panel1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)tbSpeed).BeginInit();
       gbStats.SuspendLayout();
+      tabControlMain.SuspendLayout();
+      tabPage4.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)splitContainer2).BeginInit();
+      splitContainer2.Panel1.SuspendLayout();
+      splitContainer2.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)dgvFiles).BeginInit();
+      tabPage5.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)plotContainer).BeginInit();
       plotContainer.Panel1.SuspendLayout();
       plotContainer.Panel2.SuspendLayout();
@@ -94,28 +132,63 @@
       // 
       mainToolStrip.AutoSize = false;
       mainToolStrip.ImageScalingSize = new Size(32, 32);
-      mainToolStrip.Items.AddRange(new ToolStripItem[] { tspAdd, tsbRemove, tsbRun, tsbPause, tsbStop });
+      mainToolStrip.Items.AddRange(new ToolStripItem[] { tsbLoad, tsbDelete, toolStripSeparator1, toolStripSeparator3, tsbAdd, tsbRemove, toolStripSeparator4, toolStripSeparator2, tsbRun, tsbPause, tsbStop });
       mainToolStrip.Location = new Point(0, 0);
       mainToolStrip.Name = "mainToolStrip";
       mainToolStrip.Size = new Size(1140, 48);
       mainToolStrip.TabIndex = 0;
       mainToolStrip.Text = "toolStrip1";
       // 
-      // tspAdd
+      // tsbLoad
       // 
-      tspAdd.AutoSize = false;
-      tspAdd.DisplayStyle = ToolStripItemDisplayStyle.Image;
-      tspAdd.Image = (Image)resources.GetObject("tspAdd.Image");
-      tspAdd.ImageTransparentColor = Color.Magenta;
-      tspAdd.Name = "tspAdd";
-      tspAdd.Size = new Size(36, 36);
-      tspAdd.Text = "Add Run";
-      tspAdd.Click += tspAdd_Click;
+      tsbLoad.AutoSize = false;
+      tsbLoad.DisplayStyle = ToolStripItemDisplayStyle.Image;
+      tsbLoad.Image = (Image)resources.GetObject("tsbLoad.Image");
+      tsbLoad.ImageTransparentColor = Color.Magenta;
+      tsbLoad.Name = "tsbLoad";
+      tsbLoad.Size = new Size(36, 36);
+      tsbLoad.Text = "Open MS Files";
+      tsbLoad.Click += toolStripButton1_Click;
+      // 
+      // tsbDelete
+      // 
+      tsbDelete.AutoSize = false;
+      tsbDelete.DisplayStyle = ToolStripItemDisplayStyle.Image;
+      tsbDelete.Enabled = false;
+      tsbDelete.Image = (Image)resources.GetObject("tsbDelete.Image");
+      tsbDelete.ImageTransparentColor = Color.Magenta;
+      tsbDelete.Name = "tsbDelete";
+      tsbDelete.Size = new Size(36, 36);
+      tsbDelete.Text = "Remove MS Files";
+      tsbDelete.Click += tsbDelete_Click;
+      // 
+      // toolStripSeparator1
+      // 
+      toolStripSeparator1.Name = "toolStripSeparator1";
+      toolStripSeparator1.Size = new Size(6, 48);
+      // 
+      // toolStripSeparator3
+      // 
+      toolStripSeparator3.Name = "toolStripSeparator3";
+      toolStripSeparator3.Size = new Size(6, 48);
+      // 
+      // tsbAdd
+      // 
+      tsbAdd.AutoSize = false;
+      tsbAdd.DisplayStyle = ToolStripItemDisplayStyle.Image;
+      tsbAdd.Enabled = false;
+      tsbAdd.Image = (Image)resources.GetObject("tsbAdd.Image");
+      tsbAdd.ImageTransparentColor = Color.Magenta;
+      tsbAdd.Name = "tsbAdd";
+      tsbAdd.Size = new Size(36, 36);
+      tsbAdd.Text = "Add Run";
+      tsbAdd.Click += tsbAdd_Click;
       // 
       // tsbRemove
       // 
       tsbRemove.AutoSize = false;
       tsbRemove.DisplayStyle = ToolStripItemDisplayStyle.Image;
+      tsbRemove.Enabled = false;
       tsbRemove.Image = (Image)resources.GetObject("tsbRemove.Image");
       tsbRemove.ImageTransparentColor = Color.Magenta;
       tsbRemove.Name = "tsbRemove";
@@ -123,10 +196,21 @@
       tsbRemove.Text = "Delete Run";
       tsbRemove.Click += tsbRemove_Click;
       // 
+      // toolStripSeparator4
+      // 
+      toolStripSeparator4.Name = "toolStripSeparator4";
+      toolStripSeparator4.Size = new Size(6, 48);
+      // 
+      // toolStripSeparator2
+      // 
+      toolStripSeparator2.Name = "toolStripSeparator2";
+      toolStripSeparator2.Size = new Size(6, 48);
+      // 
       // tsbRun
       // 
       tsbRun.AutoSize = false;
       tsbRun.DisplayStyle = ToolStripItemDisplayStyle.Image;
+      tsbRun.Enabled = false;
       tsbRun.Image = (Image)resources.GetObject("tsbRun.Image");
       tsbRun.ImageTransparentColor = Color.Magenta;
       tsbRun.Name = "tsbRun";
@@ -138,6 +222,7 @@
       // 
       tsbPause.AutoSize = false;
       tsbPause.DisplayStyle = ToolStripItemDisplayStyle.Image;
+      tsbPause.Enabled = false;
       tsbPause.Image = (Image)resources.GetObject("tsbPause.Image");
       tsbPause.ImageTransparentColor = Color.Magenta;
       tsbPause.Name = "tsbPause";
@@ -149,6 +234,7 @@
       // 
       tsbStop.AutoSize = false;
       tsbStop.DisplayStyle = ToolStripItemDisplayStyle.Image;
+      tsbStop.Enabled = false;
       tsbStop.Image = (Image)resources.GetObject("tsbStop.Image");
       tsbStop.ImageTransparentColor = Color.Magenta;
       tsbStop.Name = "tsbStop";
@@ -159,6 +245,8 @@
       // splitContainer1
       // 
       splitContainer1.Dock = DockStyle.Fill;
+      splitContainer1.FixedPanel = FixedPanel.Panel1;
+      splitContainer1.IsSplitterFixed = true;
       splitContainer1.Location = new Point(0, 48);
       splitContainer1.Name = "splitContainer1";
       // 
@@ -169,7 +257,7 @@
       // 
       // splitContainer1.Panel2
       // 
-      splitContainer1.Panel2.Controls.Add(plotContainer);
+      splitContainer1.Panel2.Controls.Add(tabControlMain);
       splitContainer1.Size = new Size(1140, 798);
       splitContainer1.SplitterDistance = 380;
       splitContainer1.TabIndex = 2;
@@ -177,6 +265,8 @@
       // splitContainer3
       // 
       splitContainer3.Dock = DockStyle.Fill;
+      splitContainer3.FixedPanel = FixedPanel.Panel2;
+      splitContainer3.IsSplitterFixed = true;
       splitContainer3.Location = new Point(0, 0);
       splitContainer3.Name = "splitContainer3";
       splitContainer3.Orientation = Orientation.Horizontal;
@@ -184,13 +274,15 @@
       // splitContainer3.Panel1
       // 
       splitContainer3.Panel1.Controls.Add(fileListBox);
+      splitContainer3.Panel1.Controls.Add(panel3);
+      splitContainer3.Panel1.Controls.Add(panelMeter);
       splitContainer3.Panel1.Controls.Add(panel1);
       // 
       // splitContainer3.Panel2
       // 
       splitContainer3.Panel2.Controls.Add(gbStats);
       splitContainer3.Size = new Size(380, 798);
-      splitContainer3.SplitterDistance = 484;
+      splitContainer3.SplitterDistance = 536;
       splitContainer3.TabIndex = 0;
       // 
       // fileListBox
@@ -199,11 +291,149 @@
       fileListBox.FormattingEnabled = true;
       fileListBox.HorizontalScrollbar = true;
       fileListBox.ItemHeight = 25;
-      fileListBox.Location = new Point(0, 32);
+      fileListBox.Location = new Point(0, 56);
       fileListBox.Name = "fileListBox";
       fileListBox.SelectionMode = SelectionMode.MultiExtended;
-      fileListBox.Size = new Size(380, 452);
+      fileListBox.Size = new Size(380, 384);
       fileListBox.TabIndex = 0;
+      fileListBox.SelectedIndexChanged += fileListBox_SelectedIndexChanged;
+      // 
+      // panel3
+      // 
+      panel3.Controls.Add(lblFileInfo);
+      panel3.Dock = DockStyle.Bottom;
+      panel3.Location = new Point(0, 440);
+      panel3.Name = "panel3";
+      panel3.Size = new Size(380, 96);
+      panel3.TabIndex = 3;
+      // 
+      // lblFileInfo
+      // 
+      lblFileInfo.Location = new Point(3, 3);
+      lblFileInfo.Name = "lblFileInfo";
+      lblFileInfo.Size = new Size(374, 93);
+      lblFileInfo.TabIndex = 0;
+      lblFileInfo.Text = "Select a single file from the queue for details.";
+      // 
+      // panelMeter
+      // 
+      panelMeter.Controls.Add(pan10);
+      panelMeter.Controls.Add(pan9);
+      panelMeter.Controls.Add(pan8);
+      panelMeter.Controls.Add(pan7);
+      panelMeter.Controls.Add(pan6);
+      panelMeter.Controls.Add(pan5);
+      panelMeter.Controls.Add(pan4);
+      panelMeter.Controls.Add(pan3);
+      panelMeter.Controls.Add(pan2);
+      panelMeter.Controls.Add(pan1);
+      panelMeter.Dock = DockStyle.Top;
+      panelMeter.Location = new Point(0, 32);
+      panelMeter.Name = "panelMeter";
+      panelMeter.Padding = new Padding(3);
+      panelMeter.Size = new Size(380, 24);
+      panelMeter.TabIndex = 2;
+      panelMeter.Paint += panelMeter_Paint;
+      // 
+      // pan10
+      // 
+      pan10.BackColor = Color.Gray;
+      pan10.Dock = DockStyle.Left;
+      pan10.Location = new Point(327, 3);
+      pan10.Name = "pan10";
+      pan10.Padding = new Padding(3);
+      pan10.Size = new Size(36, 18);
+      pan10.TabIndex = 9;
+      // 
+      // pan9
+      // 
+      pan9.BackColor = Color.Gray;
+      pan9.Dock = DockStyle.Left;
+      pan9.Location = new Point(291, 3);
+      pan9.Name = "pan9";
+      pan9.Padding = new Padding(3);
+      pan9.Size = new Size(36, 18);
+      pan9.TabIndex = 8;
+      // 
+      // pan8
+      // 
+      pan8.BackColor = Color.Gray;
+      pan8.Dock = DockStyle.Left;
+      pan8.Location = new Point(255, 3);
+      pan8.Name = "pan8";
+      pan8.Padding = new Padding(3);
+      pan8.Size = new Size(36, 18);
+      pan8.TabIndex = 7;
+      // 
+      // pan7
+      // 
+      pan7.BackColor = Color.Gray;
+      pan7.Dock = DockStyle.Left;
+      pan7.Location = new Point(219, 3);
+      pan7.Name = "pan7";
+      pan7.Padding = new Padding(3);
+      pan7.Size = new Size(36, 18);
+      pan7.TabIndex = 6;
+      // 
+      // pan6
+      // 
+      pan6.BackColor = Color.Gray;
+      pan6.Dock = DockStyle.Left;
+      pan6.Location = new Point(183, 3);
+      pan6.Name = "pan6";
+      pan6.Padding = new Padding(3);
+      pan6.Size = new Size(36, 18);
+      pan6.TabIndex = 5;
+      // 
+      // pan5
+      // 
+      pan5.BackColor = Color.Gray;
+      pan5.Dock = DockStyle.Left;
+      pan5.Location = new Point(147, 3);
+      pan5.Name = "pan5";
+      pan5.Padding = new Padding(3);
+      pan5.Size = new Size(36, 18);
+      pan5.TabIndex = 4;
+      // 
+      // pan4
+      // 
+      pan4.BackColor = Color.Gray;
+      pan4.Dock = DockStyle.Left;
+      pan4.Location = new Point(111, 3);
+      pan4.Name = "pan4";
+      pan4.Padding = new Padding(3);
+      pan4.Size = new Size(36, 18);
+      pan4.TabIndex = 3;
+      // 
+      // pan3
+      // 
+      pan3.BackColor = Color.Gray;
+      pan3.Dock = DockStyle.Left;
+      pan3.Location = new Point(75, 3);
+      pan3.Name = "pan3";
+      pan3.Padding = new Padding(3);
+      pan3.Size = new Size(36, 18);
+      pan3.TabIndex = 2;
+      // 
+      // pan2
+      // 
+      pan2.BackColor = Color.Gray;
+      pan2.Dock = DockStyle.Left;
+      pan2.Location = new Point(39, 3);
+      pan2.Name = "pan2";
+      pan2.Padding = new Padding(3);
+      pan2.Size = new Size(36, 18);
+      pan2.TabIndex = 1;
+      // 
+      // pan1
+      // 
+      pan1.BackColor = Color.Gray;
+      pan1.Dock = DockStyle.Left;
+      pan1.Location = new Point(3, 3);
+      pan1.Name = "pan1";
+      pan1.Padding = new Padding(3);
+      pan1.Size = new Size(36, 18);
+      pan1.TabIndex = 0;
       // 
       // panel1
       // 
@@ -249,7 +479,7 @@
       gbStats.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point, 0);
       gbStats.Location = new Point(0, 0);
       gbStats.Name = "gbStats";
-      gbStats.Size = new Size(380, 310);
+      gbStats.Size = new Size(380, 258);
       gbStats.TabIndex = 0;
       gbStats.TabStop = false;
       gbStats.Text = "Simulation Statistics";
@@ -304,10 +534,74 @@
       label1.TabIndex = 0;
       label1.Text = "Current Run RT:\r\nSim Run Time:\r\nTotal Sim Time:\r\nTotal Sim Runs:";
       // 
+      // tabControlMain
+      // 
+      tabControlMain.Controls.Add(tabPage4);
+      tabControlMain.Controls.Add(tabPage5);
+      tabControlMain.Dock = DockStyle.Fill;
+      tabControlMain.Location = new Point(0, 0);
+      tabControlMain.Name = "tabControlMain";
+      tabControlMain.SelectedIndex = 0;
+      tabControlMain.Size = new Size(756, 798);
+      tabControlMain.TabIndex = 1;
+      tabControlMain.SelectedIndexChanged += tabControlMain_SelectedIndexChanged;
+      // 
+      // tabPage4
+      // 
+      tabPage4.Controls.Add(splitContainer2);
+      tabPage4.Location = new Point(4, 34);
+      tabPage4.Name = "tabPage4";
+      tabPage4.Padding = new Padding(3);
+      tabPage4.Size = new Size(748, 760);
+      tabPage4.TabIndex = 0;
+      tabPage4.Text = "Run Parameters";
+      tabPage4.UseVisualStyleBackColor = true;
+      // 
+      // splitContainer2
+      // 
+      splitContainer2.Dock = DockStyle.Fill;
+      splitContainer2.Location = new Point(3, 3);
+      splitContainer2.Name = "splitContainer2";
+      splitContainer2.Orientation = Orientation.Horizontal;
+      // 
+      // splitContainer2.Panel1
+      // 
+      splitContainer2.Panel1.Controls.Add(dgvFiles);
+      splitContainer2.Size = new Size(742, 754);
+      splitContainer2.SplitterDistance = 534;
+      splitContainer2.TabIndex = 0;
+      // 
+      // dgvFiles
+      // 
+      dgvFiles.AllowUserToAddRows = false;
+      dgvFiles.AllowUserToDeleteRows = false;
+      dgvFiles.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+      dgvFiles.Columns.AddRange(new DataGridViewColumn[] { rpFileName, rpFilePath, rpRunSpan, rpFirst, rpEnd });
+      dgvFiles.Dock = DockStyle.Fill;
+      dgvFiles.Location = new Point(0, 0);
+      dgvFiles.Name = "dgvFiles";
+      dgvFiles.RowHeadersWidth = 62;
+      dgvFiles.Size = new Size(742, 534);
+      dgvFiles.TabIndex = 0;
+      dgvFiles.CellValueChanged += dgvFiles_CellValueChanged;
+      dgvFiles.EditingControlShowing += dgvFiles_EditingControlShowing;
+      dgvFiles.SelectionChanged += dgvFiles_SelectionChanged;
+      // 
+      // tabPage5
+      // 
+      tabPage5.Controls.Add(plotContainer);
+      tabPage5.Location = new Point(4, 34);
+      tabPage5.Name = "tabPage5";
+      tabPage5.Padding = new Padding(3);
+      tabPage5.Size = new Size(748, 760);
+      tabPage5.TabIndex = 1;
+      tabPage5.Text = "Real Time Display";
+      tabPage5.UseVisualStyleBackColor = true;
+      // 
       // plotContainer
       // 
       plotContainer.Dock = DockStyle.Fill;
-      plotContainer.Location = new Point(0, 0);
+      plotContainer.Location = new Point(3, 3);
       plotContainer.Name = "plotContainer";
       plotContainer.Orientation = Orientation.Horizontal;
       // 
@@ -318,8 +612,8 @@
       // plotContainer.Panel2
       // 
       plotContainer.Panel2.Controls.Add(tabControl1);
-      plotContainer.Size = new Size(756, 798);
-      plotContainer.SplitterDistance = 390;
+      plotContainer.Size = new Size(742, 754);
+      plotContainer.SplitterDistance = 368;
       plotContainer.TabIndex = 0;
       // 
       // plotTIC
@@ -328,7 +622,7 @@
       plotTIC.Dock = DockStyle.Fill;
       plotTIC.Location = new Point(0, 0);
       plotTIC.Name = "plotTIC";
-      plotTIC.Size = new Size(756, 390);
+      plotTIC.Size = new Size(742, 368);
       plotTIC.TabIndex = 0;
       // 
       // tabControl1
@@ -341,7 +635,7 @@
       tabControl1.Location = new Point(0, 0);
       tabControl1.Name = "tabControl1";
       tabControl1.SelectedIndex = 0;
-      tabControl1.Size = new Size(756, 404);
+      tabControl1.Size = new Size(742, 382);
       tabControl1.TabIndex = 1;
       // 
       // tabPage1
@@ -350,7 +644,7 @@
       tabPage1.Location = new Point(4, 4);
       tabPage1.Name = "tabPage1";
       tabPage1.Padding = new Padding(3);
-      tabPage1.Size = new Size(748, 366);
+      tabPage1.Size = new Size(734, 344);
       tabPage1.TabIndex = 0;
       tabPage1.Text = "Message Log";
       tabPage1.UseVisualStyleBackColor = true;
@@ -360,7 +654,7 @@
       rtbLog.Dock = DockStyle.Fill;
       rtbLog.Location = new Point(3, 3);
       rtbLog.Name = "rtbLog";
-      rtbLog.Size = new Size(742, 360);
+      rtbLog.Size = new Size(728, 338);
       rtbLog.TabIndex = 0;
       rtbLog.Text = "";
       // 
@@ -372,7 +666,7 @@
       tabPage2.Location = new Point(4, 4);
       tabPage2.Name = "tabPage2";
       tabPage2.Padding = new Padding(3);
-      tabPage2.Size = new Size(748, 366);
+      tabPage2.Size = new Size(734, 344);
       tabPage2.TabIndex = 1;
       tabPage2.Text = "Spectrum Viewer";
       tabPage2.UseVisualStyleBackColor = true;
@@ -383,7 +677,7 @@
       plotSpectrum.Dock = DockStyle.Fill;
       plotSpectrum.Location = new Point(3, 53);
       plotSpectrum.Name = "plotSpectrum";
-      plotSpectrum.Size = new Size(742, 310);
+      plotSpectrum.Size = new Size(728, 288);
       plotSpectrum.TabIndex = 0;
       // 
       // labelSpectrum
@@ -413,7 +707,7 @@
       tabPage3.Location = new Point(4, 4);
       tabPage3.Name = "tabPage3";
       tabPage3.Padding = new Padding(3);
-      tabPage3.Size = new Size(748, 366);
+      tabPage3.Size = new Size(734, 344);
       tabPage3.TabIndex = 2;
       tabPage3.Text = "Custom Scans";
       tabPage3.UseVisualStyleBackColor = true;
@@ -429,7 +723,7 @@
       dgvCustomScan.ReadOnly = true;
       dgvCustomScan.RowHeadersVisible = false;
       dgvCustomScan.RowHeadersWidth = 62;
-      dgvCustomScan.Size = new Size(742, 324);
+      dgvCustomScan.Size = new Size(728, 302);
       dgvCustomScan.TabIndex = 1;
       // 
       // panel2
@@ -441,7 +735,7 @@
       panel2.Dock = DockStyle.Top;
       panel2.Location = new Point(3, 3);
       panel2.Name = "panel2";
-      panel2.Size = new Size(742, 36);
+      panel2.Size = new Size(728, 36);
       panel2.TabIndex = 0;
       // 
       // nudCustomScans
@@ -483,8 +777,7 @@
       // 
       // ofdAdd
       // 
-      ofdAdd.Filter = "Thermo Raw|*.raw|MzML|*.mzML|All files|*.*";
-      ofdAdd.FilterIndex = 3;
+      ofdAdd.Filter = "All MS files|*.mzML;*.mzXML;*.raw|MzML|*.mzML|MzXML|*.mzXML|Thermo Raw|*.raw";
       ofdAdd.Multiselect = true;
       // 
       // statusStrip1
@@ -497,7 +790,49 @@
       statusStrip1.TabIndex = 3;
       statusStrip1.Text = "statusStrip1";
       // 
-      // VirtualMs
+      // rpFileName
+      // 
+      rpFileName.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+      rpFileName.HeaderText = "File Name";
+      rpFileName.MinimumWidth = 8;
+      rpFileName.Name = "rpFileName";
+      rpFileName.ReadOnly = true;
+      // 
+      // rpFilePath
+      // 
+      rpFilePath.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+      rpFilePath.HeaderText = "Path";
+      rpFilePath.MinimumWidth = 8;
+      rpFilePath.Name = "rpFilePath";
+      rpFilePath.ReadOnly = true;
+      // 
+      // rpRunSpan
+      // 
+      rpRunSpan.HeaderText = "Run Span";
+      rpRunSpan.Items.AddRange(new object[] { "Spectrum", "Retention Time" });
+      rpRunSpan.MinimumWidth = 8;
+      rpRunSpan.Name = "rpRunSpan";
+      rpRunSpan.Width = 150;
+      // 
+      // rpFirst
+      // 
+      rpFirst.HeaderText = "Start";
+      rpFirst.MinimumWidth = 8;
+      rpFirst.Name = "rpFirst";
+      rpFirst.Resizable = DataGridViewTriState.True;
+      rpFirst.SortMode = DataGridViewColumnSortMode.NotSortable;
+      rpFirst.Width = 150;
+      // 
+      // rpEnd
+      // 
+      rpEnd.HeaderText = "End";
+      rpEnd.MinimumWidth = 8;
+      rpEnd.Name = "rpEnd";
+      rpEnd.Resizable = DataGridViewTriState.True;
+      rpEnd.SortMode = DataGridViewColumnSortMode.NotSortable;
+      rpEnd.Width = 150;
+      // 
+      // Corona
       // 
       AutoScaleDimensions = new SizeF(10F, 25F);
       AutoScaleMode = AutoScaleMode.Font;
@@ -505,8 +840,9 @@
       Controls.Add(splitContainer1);
       Controls.Add(mainToolStrip);
       Controls.Add(statusStrip1);
-      Name = "VirtualMs";
-      Text = "Virtual MS";
+      Icon = (Icon)resources.GetObject("$this.Icon");
+      Name = "Corona";
+      Text = "Corona";
       mainToolStrip.ResumeLayout(false);
       mainToolStrip.PerformLayout();
       splitContainer1.Panel1.ResumeLayout(false);
@@ -517,11 +853,20 @@
       splitContainer3.Panel2.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)splitContainer3).EndInit();
       splitContainer3.ResumeLayout(false);
+      panel3.ResumeLayout(false);
+      panelMeter.ResumeLayout(false);
       panel1.ResumeLayout(false);
       panel1.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)tbSpeed).EndInit();
       gbStats.ResumeLayout(false);
       gbStats.PerformLayout();
+      tabControlMain.ResumeLayout(false);
+      tabPage4.ResumeLayout(false);
+      splitContainer2.Panel1.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)splitContainer2).EndInit();
+      splitContainer2.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)dgvFiles).EndInit();
+      tabPage5.ResumeLayout(false);
       plotContainer.Panel1.ResumeLayout(false);
       plotContainer.Panel2.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)plotContainer).EndInit();
@@ -545,7 +890,7 @@
     private SplitContainer splitContainer3;
     private SplitContainer plotContainer;
     private ListBox fileListBox;
-    private ToolStripButton tspAdd;
+    private ToolStripButton tsbAdd;
     private OpenFileDialog ofdAdd;
     private ToolStripButton tsbRemove;
     private ScottPlot.WinForms.FormsPlot plotTIC;
@@ -576,5 +921,34 @@
     private Label lblCustomScans;
     private Label label4;
     private NumericUpDown nudCustomScans;
+    private TabControl tabControlMain;
+    private TabPage tabPage4;
+    private TabPage tabPage5;
+    private SplitContainer splitContainer2;
+    private DataGridView dgvFiles;
+    private ToolStripButton tsbLoad;
+    private ToolStripButton tsbDelete;
+    private ToolStripSeparator toolStripSeparator1;
+    private ToolStripSeparator toolStripSeparator2;
+    private ToolStripSeparator toolStripSeparator3;
+    private ToolStripSeparator toolStripSeparator4;
+    private Panel panelMeter;
+    private Panel pan2;
+    private Panel pan1;
+    private Panel pan5;
+    private Panel pan4;
+    private Panel pan3;
+    private Panel pan10;
+    private Panel pan9;
+    private Panel pan8;
+    private Panel pan7;
+    private Panel pan6;
+    private Panel panel3;
+    private Label lblFileInfo;
+    private DataGridViewTextBoxColumn rpFileName;
+    private DataGridViewTextBoxColumn rpFilePath;
+    private DataGridViewComboBoxColumn rpRunSpan;
+    private DataGridViewTextBoxColumn rpFirst;
+    private DataGridViewTextBoxColumn rpEnd;
   }
 }

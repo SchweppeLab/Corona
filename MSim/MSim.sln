@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSim", "MSim.csproj", "{979
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazar", "..\Blazar\Blazar.csproj", "{02B19A4A-51B9-4779-9964-78DCA4250F6D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtualMS", "..\VirtualMS\VirtualMS.csproj", "{7DE6C5CB-4DE7-4F6F-BF1A-73565D7BF978}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Corona", "..\VirtualMS\Corona.csproj", "{7DE6C5CB-4DE7-4F6F-BF1A-73565D7BF978}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

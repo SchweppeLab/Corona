@@ -1,4 +1,4 @@
-﻿using Nova.Data.Spectrum;
+﻿using Nova.Data;
 using System;
 
 namespace MSim.lib

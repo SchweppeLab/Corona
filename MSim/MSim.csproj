@@ -18,17 +18,11 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="Nova" Version="1.0.0.4" />
+    <PackageReference Include="Nova.IO" Version="1.0.0.4" />
     <PackageReference Include="SharpZipLib" Version="1.4.2" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
     <PackageReference Include="ThermoFisher.CommonCore.Data" Version="8.0.6" />
     <PackageReference Include="ThermoFisher.CommonCore.RawFileReader" Version="8.0.6" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Nova">
-      <HintPath>..\..\Nova\Nova\bin\x64\Release\Nova.dll</HintPath>
-    </Reference>
-    <Reference Include="NovaIO">
-      <HintPath>..\..\Nova\NovaIO\bin\x64\Release\net8.0\NovaIO.dll</HintPath>
-    </Reference>
   </ItemGroup>
 </Project>

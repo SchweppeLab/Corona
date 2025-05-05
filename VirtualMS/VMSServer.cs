@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO.Pipes;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MSim;
-using Pipes;
-using Nova.Data.Spectrum;
-using MSim.lib;
+﻿using MSim;
+using Nova.IPC.Pipes;
+using Nova.Data;
 
 namespace VirtualMS
 {
@@ -18,7 +11,7 @@ namespace VirtualMS
     private PipesServer server;
     public event PipeConnectionEvent? ClientConnected;
     public event PipeConnectionEvent? ClientDisconnected;
-    public event EventHandler<CustomScan> CustomScanRequest;
+    public event EventHandler<CustomScan>? CustomScanRequest;
 
     public VMSServer(string pipeName)
     {

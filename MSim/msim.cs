@@ -1,6 +1,6 @@
 ﻿using MSim.lib;
-using Nova.Data.Spectrum;
-using Nova.Io;
+using Nova.Data;
+using Nova.Io.Read;
 
 using System;
 using System.Diagnostics;
@@ -181,14 +181,17 @@ namespace MSim
       CancelFlag = false;
       PauseFlag = false;
       IsRunning = true;
+
+      RunInfo runInfo = new RunInfo();
+      runInfo.Name = path;
+
+      //Toss up the start event
+      OnAcquisitionStart(runInfo);
+
       await Task.Run(() =>
       {
-
         FileReader reader = new FileReader();
         Spectrum spectrum;
-
-        RunInfo runInfo = new RunInfo();
-        runInfo.Name = path;
 
         int scanCount = 0;
         ms = 0;
@@ -197,10 +200,8 @@ namespace MSim
 
         //Start a high performance timer.
         Stopwatch sw = Stopwatch.StartNew();
+        RunTimer.Reset();
         RunTimer.Start();
-
-        //Toss up the start event
-        OnAcquisitionStart(runInfo);
 
         spectrum = reader.ReadSpectrum(path, FirstScan, false);
 
@@ -248,7 +249,7 @@ namespace MSim
           }
           if (CancelFlag)
           {
-            if (!RunTimer.IsRunning) RunTimer.Stop();
+            if (RunTimer.IsRunning) RunTimer.Stop();
             return;
           }
 
@@ -256,11 +257,12 @@ namespace MSim
           spectrum = reader.ReadSpectrum(null, -1, false);
         }
         
-        //throw up that we're done with the file.
-        OnAcquisitionEnd(runInfo);
         if(RunTimer.IsRunning) RunTimer.Stop();              
       });
       IsRunning = false;
+
+      //throw up that we're done with the file.
+      OnAcquisitionEnd(runInfo);
     }
   }
 

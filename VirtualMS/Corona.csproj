@@ -7,7 +7,12 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <Platforms>AnyCPU;x64</Platforms>
+    <ApplicationIcon>gfx\Corona.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="gfx\Corona.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="ScottPlot.WinForms" Version="5.0.54" />
@@ -18,18 +23,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MSim\MSim.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Nova">
-      <HintPath>..\..\Nova\Nova\bin\x64\Release\Nova.dll</HintPath>
-    </Reference>
-    <Reference Include="NovaIO">
-      <HintPath>..\..\Nova\NovaIO\bin\x64\Release\net8.0\NovaIO.dll</HintPath>
-    </Reference>
-    <Reference Include="Pipes">
-      <HintPath>..\..\Pipes\bin\x64\Release\Pipes.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
   <ItemGroup>

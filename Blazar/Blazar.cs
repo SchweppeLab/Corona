@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Nova.Data.Spectrum;
+using Nova.Data;
 
 
 class Blazar
@@ -149,7 +149,7 @@ class Blazar
     Spectrum testScan = e.GetScan();
     Console.WriteLine(testScan.ScanNumber + " : RT=" + testScan.RetentionTime.ToString() + "  Data points=" + testScan.DataPoints.Length);
     Console.WriteLine("######################<<<<");
-    Console.WriteLine("MS" + testScan.MsLevel.ToString());
+    Console.WriteLine("MS" + testScan.MsLevel.ToString() + "  IIT: " + testScan.IonInjectionTime.ToString());
     int j=testScan.Count;
     if (j > 10) j = 10;
     for(int i = 0; i < j; i++)
