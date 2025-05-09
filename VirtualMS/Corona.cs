@@ -36,7 +36,7 @@ namespace VirtualMS
   public partial class Corona : Form
   {
     SimRunner simMS = new SimRunner();
-    VMSServer server = new VMSServer("VirtualMS");
+    VMSServer server = new VMSServer("Corona");
     readonly System.Windows.Forms.Timer UpdatePlotTimer = new() { Interval = 100, Enabled = true };
     readonly System.Windows.Forms.Timer UpdateRunTimer = new() { Interval = 1, Enabled = true };
     int runCounter = 0;
@@ -268,8 +268,8 @@ namespace VirtualMS
     private int FindScan(string fn, double rt, bool after)
     {
       FileReader fr = new FileReader(fn);
-      int first = fr.FirstScanNumber;
-      int last = fr.LastScanNumber;
+      int first = fr.FirstScan;
+      int last = fr.LastScan;
       int count = fr.ScanCount;
       int mid = (last + first) / 2;
 
@@ -681,9 +681,9 @@ namespace VirtualMS
           FileStats stats = new FileStats();
           FileReader fileReader = new FileReader(s);
           stats.ScanCount = fileReader.ScanCount;
-          stats.HighScan = fileReader.LastScanNumber;
+          stats.HighScan = fileReader.LastScan;
           stats.HighRT = fileReader.MaxRetentionTime;
-          stats.LowScan = fileReader.FirstScanNumber;
+          stats.LowScan = fileReader.FirstScan;
           stats.Name = Path.GetFileName(s);
           stats.Path = Path.GetDirectoryName(s);
           stats.FullPath = s;
