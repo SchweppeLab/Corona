@@ -15,17 +15,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ScottPlot.WinForms" Version="5.0.54" />
+    <PackageReference Include="ScottPlot.WinForms" Version="5.0.55" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\MSim\MSim.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="NovaIO">
-      <HintPath>..\..\Nova\NovaIO\bin\Release\net8.0\NovaIO.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
   <ItemGroup>

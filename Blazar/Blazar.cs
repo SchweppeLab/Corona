@@ -146,7 +146,7 @@ class Blazar
   {
     RefreshScreen();
     Console.WriteLine("Scan Arrived.");
-    Spectrum testScan = e.GetScan();
+    SpectrumEx testScan = e.GetScan();
     Console.WriteLine(testScan.ScanNumber + " : RT=" + testScan.RetentionTime.ToString() + "  Data points=" + testScan.DataPoints.Length);
     Console.WriteLine("######################<<<<");
     Console.WriteLine("MS" + testScan.MsLevel.ToString() + "  IIT: " + testScan.IonInjectionTime.ToString());

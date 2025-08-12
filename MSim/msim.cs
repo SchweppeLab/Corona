@@ -4,10 +4,12 @@ using Nova.Io.Read;
 
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using ThermoFisher.CommonCore.Data.Business;
 
 namespace MSim
 {
@@ -50,13 +52,13 @@ namespace MSim
     /// <summary>
     /// The last scan that was acquired.
     /// </summary>
-    private Spectrum LastMsScan { get; set; }
+    private SpectrumEx LastMsScan { get; set; }
 
     /// <summary>
     /// Gains access to the last scan that was simulated.
     /// </summary>
     /// <returns>Spectrum object</returns>
-    public Spectrum GetLastMsScan()
+    public SpectrumEx GetLastMsScan()
     {
         return LastMsScan;
     }
@@ -142,7 +144,7 @@ namespace MSim
     /// Raise an event indicating a scan has been acquired.
     /// </summary>
     /// <param name="scan">: the Spectrum object acquired.</param>
-    protected virtual void SendMsScanArrived(Spectrum scan)
+    protected virtual void SendMsScanArrived(SpectrumEx scan)
     {
       MsScanArrived?.Invoke(this, new MSimEventArgs(scan));
     }
@@ -191,7 +193,7 @@ namespace MSim
       await Task.Run(() =>
       {
         FileReader reader = new FileReader();
-        Spectrum spectrum;
+        SpectrumEx spectrum;
 
         int scanCount = 0;
         ms = 0;
@@ -203,7 +205,7 @@ namespace MSim
         RunTimer.Reset();
         RunTimer.Start();
 
-        spectrum = reader.ReadSpectrum(path, FirstScan, false);
+        spectrum = reader.ReadSpectrumEx(path, FirstScan, false);
 
         //if user requested a scan from the middle of the file, advance the stopwatch to that time;
         if (FirstScan > -1)
@@ -254,9 +256,8 @@ namespace MSim
           }
 
           //on to the next scan
-          spectrum = reader.ReadSpectrum(null, -1, false);
+          spectrum = reader.ReadSpectrumEx(null, -1, false);
         }
-        
         if(RunTimer.IsRunning) RunTimer.Stop();              
       });
       IsRunning = false;

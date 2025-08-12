@@ -70,6 +70,11 @@
       tabPage4 = new TabPage();
       splitContainer2 = new SplitContainer();
       dgvFiles = new DataGridView();
+      rpFileName = new DataGridViewTextBoxColumn();
+      rpFilePath = new DataGridViewTextBoxColumn();
+      rpRunSpan = new DataGridViewComboBoxColumn();
+      rpFirst = new DataGridViewTextBoxColumn();
+      rpEnd = new DataGridViewTextBoxColumn();
       tabPage5 = new TabPage();
       plotContainer = new SplitContainer();
       plotTIC = new ScottPlot.WinForms.FormsPlot();
@@ -83,17 +88,14 @@
       tabPage3 = new TabPage();
       dgvCustomScan = new DataGridView();
       panel2 = new Panel();
+      button1 = new Button();
+      cbClearCS = new CheckBox();
       nudCustomScans = new NumericUpDown();
       lblCustomScansRT = new Label();
       lblCustomScans = new Label();
       label4 = new Label();
       ofdAdd = new OpenFileDialog();
       statusStrip1 = new StatusStrip();
-      rpFileName = new DataGridViewTextBoxColumn();
-      rpFilePath = new DataGridViewTextBoxColumn();
-      rpRunSpan = new DataGridViewComboBoxColumn();
-      rpFirst = new DataGridViewTextBoxColumn();
-      rpEnd = new DataGridViewTextBoxColumn();
       mainToolStrip.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
       splitContainer1.Panel1.SuspendLayout();
@@ -587,6 +589,48 @@
       dgvFiles.EditingControlShowing += dgvFiles_EditingControlShowing;
       dgvFiles.SelectionChanged += dgvFiles_SelectionChanged;
       // 
+      // rpFileName
+      // 
+      rpFileName.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+      rpFileName.HeaderText = "File Name";
+      rpFileName.MinimumWidth = 8;
+      rpFileName.Name = "rpFileName";
+      rpFileName.ReadOnly = true;
+      // 
+      // rpFilePath
+      // 
+      rpFilePath.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+      rpFilePath.HeaderText = "Path";
+      rpFilePath.MinimumWidth = 8;
+      rpFilePath.Name = "rpFilePath";
+      rpFilePath.ReadOnly = true;
+      // 
+      // rpRunSpan
+      // 
+      rpRunSpan.HeaderText = "Run Span";
+      rpRunSpan.Items.AddRange(new object[] { "Spectrum", "Retention Time" });
+      rpRunSpan.MinimumWidth = 8;
+      rpRunSpan.Name = "rpRunSpan";
+      rpRunSpan.Width = 150;
+      // 
+      // rpFirst
+      // 
+      rpFirst.HeaderText = "Start";
+      rpFirst.MinimumWidth = 8;
+      rpFirst.Name = "rpFirst";
+      rpFirst.Resizable = DataGridViewTriState.True;
+      rpFirst.SortMode = DataGridViewColumnSortMode.NotSortable;
+      rpFirst.Width = 150;
+      // 
+      // rpEnd
+      // 
+      rpEnd.HeaderText = "End";
+      rpEnd.MinimumWidth = 8;
+      rpEnd.Name = "rpEnd";
+      rpEnd.Resizable = DataGridViewTriState.True;
+      rpEnd.SortMode = DataGridViewColumnSortMode.NotSortable;
+      rpEnd.Width = 150;
+      // 
       // tabPage5
       // 
       tabPage5.Controls.Add(plotContainer);
@@ -728,6 +772,8 @@
       // 
       // panel2
       // 
+      panel2.Controls.Add(button1);
+      panel2.Controls.Add(cbClearCS);
       panel2.Controls.Add(nudCustomScans);
       panel2.Controls.Add(lblCustomScansRT);
       panel2.Controls.Add(lblCustomScans);
@@ -737,6 +783,28 @@
       panel2.Name = "panel2";
       panel2.Size = new Size(728, 36);
       panel2.TabIndex = 0;
+      // 
+      // button1
+      // 
+      button1.Location = new Point(445, 3);
+      button1.Name = "button1";
+      button1.Size = new Size(64, 32);
+      button1.TabIndex = 8;
+      button1.Text = "Clear";
+      button1.UseVisualStyleBackColor = true;
+      button1.Click += button1_Click;
+      // 
+      // cbClearCS
+      // 
+      cbClearCS.AutoSize = true;
+      cbClearCS.Checked = true;
+      cbClearCS.CheckState = CheckState.Checked;
+      cbClearCS.Location = new Point(515, 3);
+      cbClearCS.Name = "cbClearCS";
+      cbClearCS.Size = new Size(210, 29);
+      cbClearCS.TabIndex = 7;
+      cbClearCS.Text = "Auto-clear Upon Start";
+      cbClearCS.UseVisualStyleBackColor = true;
       // 
       // nudCustomScans
       // 
@@ -789,48 +857,6 @@
       statusStrip1.Size = new Size(1140, 32);
       statusStrip1.TabIndex = 3;
       statusStrip1.Text = "statusStrip1";
-      // 
-      // rpFileName
-      // 
-      rpFileName.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-      rpFileName.HeaderText = "File Name";
-      rpFileName.MinimumWidth = 8;
-      rpFileName.Name = "rpFileName";
-      rpFileName.ReadOnly = true;
-      // 
-      // rpFilePath
-      // 
-      rpFilePath.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-      rpFilePath.HeaderText = "Path";
-      rpFilePath.MinimumWidth = 8;
-      rpFilePath.Name = "rpFilePath";
-      rpFilePath.ReadOnly = true;
-      // 
-      // rpRunSpan
-      // 
-      rpRunSpan.HeaderText = "Run Span";
-      rpRunSpan.Items.AddRange(new object[] { "Spectrum", "Retention Time" });
-      rpRunSpan.MinimumWidth = 8;
-      rpRunSpan.Name = "rpRunSpan";
-      rpRunSpan.Width = 150;
-      // 
-      // rpFirst
-      // 
-      rpFirst.HeaderText = "Start";
-      rpFirst.MinimumWidth = 8;
-      rpFirst.Name = "rpFirst";
-      rpFirst.Resizable = DataGridViewTriState.True;
-      rpFirst.SortMode = DataGridViewColumnSortMode.NotSortable;
-      rpFirst.Width = 150;
-      // 
-      // rpEnd
-      // 
-      rpEnd.HeaderText = "End";
-      rpEnd.MinimumWidth = 8;
-      rpEnd.Name = "rpEnd";
-      rpEnd.Resizable = DataGridViewTriState.True;
-      rpEnd.SortMode = DataGridViewColumnSortMode.NotSortable;
-      rpEnd.Width = 150;
       // 
       // Corona
       // 
@@ -950,5 +976,7 @@
     private DataGridViewComboBoxColumn rpRunSpan;
     private DataGridViewTextBoxColumn rpFirst;
     private DataGridViewTextBoxColumn rpEnd;
+    private Button button1;
+    private CheckBox cbClearCS;
   }
 }

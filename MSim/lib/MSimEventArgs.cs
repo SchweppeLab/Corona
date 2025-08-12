@@ -6,14 +6,14 @@ namespace MSim.lib
   public class MSimEventArgs : EventArgs
   {
 
-    public MSimEventArgs(Spectrum newScan)
+    public MSimEventArgs(SpectrumEx newScan)
     {
       Scan = newScan;
     }
 
-    private Spectrum Scan;
+    private SpectrumEx Scan;
 
-    public Spectrum GetScan()
+    public SpectrumEx GetScan()
     {
       return Scan;
     }

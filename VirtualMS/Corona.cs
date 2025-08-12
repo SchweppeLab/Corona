@@ -42,7 +42,7 @@ namespace VirtualMS
     int runCounter = 0;
     int nextPanel = 0;
 
-    readonly DataLogger plot;
+    private DataLogger plot;
     readonly Scatter plotSpec;
 
     private long lastTicks = 0;
@@ -87,6 +87,7 @@ namespace VirtualMS
       plotSpec.MarkerSize = 1;
       plotSpectrum.Plot.Axes.SetupMultiplierNotation(plotSpectrum.Plot.Axes.Left);
       plotSpectrum.Plot.YLabel("Intensity");
+      plotSpectrum.Plot.HideGrid();
       plotSpectrum.Refresh();
 
       //myScat = plotTIC.Plot.Add.Scatter(plotX, plotY);
@@ -97,6 +98,7 @@ namespace VirtualMS
       plotTIC.Plot.Title("TIC");
       plotTIC.Plot.XLabel("Retention Time (min)");
       plotTIC.Plot.YLabel("TIC");
+      plotTIC.Plot.HideGrid();
 
       //plotTIC.Plot.Axes.SetupMultiplierNotation(plotTIC.Plot.Axes.Left);
       //plotTIC.Plot.Axes.AutoScale();
@@ -231,7 +233,6 @@ namespace VirtualMS
         stats = new VMsStats();
         plot.Clear();
         plot.Add(0, 0);
-        //plot.Axes.YAxis.Range.Reset();
         plotTIC.Refresh();
         log("Starting Virtal MS");
 
@@ -360,8 +361,10 @@ namespace VirtualMS
     private void OnAcquisitionStart(RunInfo info)
     {
       server?.SendAcquisitionStart(info);
+      if(cbClearCS.Checked) ClearCustomScans();
       plot.Clear();
       plot.Add(0, 0);
+      plotTIC.Plot.Axes.SetLimitsY(0, 1);
       plotTIC.Refresh();
       curSimCount++;
       log("Acquisition started: " + info.Name);
@@ -380,23 +383,22 @@ namespace VirtualMS
     private void OnCustomScanRequest(object? sender, CustomScan customScan)
     {
       customScan.RetentionTime = simMS.GetRT();
-      log("Custom Scan Requested at: " + customScan.RetentionTime.ToString());
+      //log("Custom Scan Requested at: " + customScan.RetentionTime.ToString());
       CustomScans.Add(customScan);
       nudCustomScans.Maximum = CustomScans.Count;
       if (CustomScans.Count == 1)
       {
         nudCustomScans.Minimum = 1;
         CustomScansIndex = 0;
-        UserCustomScan = CustomScans[0];
-        UpdateCustomScans(true);
+        UserCustomScan = CustomScans[0];  
       }
-      else UpdateCustomScans(false);
+      UpdateCustomScans(false);
     }
 
     private void OnMsScanArrived(object? sender, MSimEventArgs e)
     {
       //log("Scan arrived");
-      Spectrum scan = e.GetScan();
+      SpectrumEx scan = e.GetScan();
       if (scan != null)
       {
         server?.SendSpectrum(scan);
@@ -511,20 +513,25 @@ namespace VirtualMS
           nextPanel++;
           if (nextPanel == 10) nextPanel = 0;
           PanelList[nextPanel].BackColor = System.Drawing.Color.Cyan;
-        } else
+        }
+        else
         {
           Random rnd = new Random();
-          if (rnd.Next(tbSpeed.Value) == 0) {
+          if (rnd.Next(tbSpeed.Value) == 0)
+          {
             PanelList[rnd.Next(10)].BackColor = System.Drawing.Color.DarkGray;
-          } else {
-            if (rnd.Next(2) == 0) {
+          }
+          else
+          {
+            if (rnd.Next(2) == 0)
+            {
               PanelList[rnd.Next(10)].BackColor = System.Drawing.Color.Cyan;
-            } 
+            }
             else
             {
               PanelList[rnd.Next(10)].BackColor = System.Drawing.Color.Magenta;
             }
-          } 
+          }
         }
       }
       else
@@ -600,13 +607,14 @@ namespace VirtualMS
         dgvCustomScan.DataSource = UserCustomScan.Values.ToList();
         dgvCustomScan.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
         dgvCustomScan.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-        lblCustomScansRT.Text = "RT: " + UserCustomScan.RetentionTime.ToString();
+        lblCustomScansRT.Text = "RT: " + UserCustomScan.RetentionTime.ToString("0.####");
       }
       lblCustomScans.Text = CustomScans.Count.ToString();
     }
 
     private void nudCustomScans_ValueChanged(object sender, EventArgs e)
     {
+      if (nudCustomScans.Value == 0) return;
       CustomScansIndex = Convert.ToInt32(nudCustomScans.Value) - 1;
       UserCustomScan = CustomScans[CustomScansIndex];
       UpdateCustomScans(true);
@@ -709,6 +717,15 @@ namespace VirtualMS
 
     private void tsbDelete_Click(object sender, EventArgs e)
     {
+      List<int> indexes = new List<int>();
+      foreach (DataGridViewRow row in dgvFiles.SelectedRows)
+      {
+        indexes.Add(row.Index);
+      }
+      foreach (int index in indexes)
+      {
+        FileList.RemoveAt(index);
+      }
       foreach (DataGridViewRow row in dgvFiles.SelectedRows)
       {
         dgvFiles.Rows.Remove(row);
@@ -767,6 +784,24 @@ namespace VirtualMS
     private void panelMeter_Paint(object sender, PaintEventArgs e)
     {
 
+    }
+
+    private void ClearCustomScans()
+    {
+      dgvCustomScan.DataSource = null;
+      dgvCustomScan.Refresh();
+      CustomScans.Clear();
+      nudCustomScans.Minimum = 0;
+      nudCustomScans.Value = 0;
+      nudCustomScans.Maximum = CustomScans.Count;
+      CustomScansIndex = -1;
+      lblCustomScansRT.Text = "RT: " + UserCustomScan.RetentionTime.ToString("0.####");
+      lblCustomScans.Text = CustomScans.Count.ToString();
+    }
+
+    private void button1_Click(object sender, EventArgs e)
+    {
+      ClearCustomScans();
     }
   }
 }

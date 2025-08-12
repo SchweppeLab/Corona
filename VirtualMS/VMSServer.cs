@@ -1,6 +1,7 @@
 ﻿using MSim;
 using Nova.IPC.Pipes;
 using Nova.Data;
+using ThermoFisher.CommonCore.Data.Business;
 
 namespace VirtualMS
 {
@@ -89,6 +90,14 @@ namespace VirtualMS
     {
       PipeMessage pm = new PipeMessage();
       pm.MsgCode = '1';
+      pm.MsgData = spec.Serialize();
+      server.Send(pm);
+    }
+
+    public void SendSpectrum(SpectrumEx spec)
+    {
+      PipeMessage pm = new PipeMessage();
+      pm.MsgCode = '4';
       pm.MsgData = spec.Serialize();
       server.Send(pm);
     }
