@@ -2,7 +2,7 @@ title:              Corona
 email:              
 description:        A Virtual Mass Spectrometer
 author:             Michael Hoopmann and Devin Schweppe
-baseurl:            "/corona"
+baseurl:            "/Corona"
 url:                "https://schweppelab.github.io"
 
 # Social Profiles
