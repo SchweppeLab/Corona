@@ -4,6 +4,7 @@ description:        A Virtual Mass Spectrometer
 author:             Michael Hoopmann and Devin Schweppe
 baseurl:            "/Corona"
 url:                "https://schweppelab.github.io"
+repourl:            "https://github.com/SchweppeLab/Corona"
 
 # Social Profiles
 twitter_username:   
