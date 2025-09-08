@@ -7,7 +7,7 @@ background: '/img/Corona1.png'
 <h2 class="center">Corona is a virtual mass spectrometer for real-time MS software development.</h2>
 
 <br/>
-<img class="img-fluid img-marquee" src="/img/Corona1-ezgif.com-optimize.gif" alt="Corona: A Virtual Mass Spectrometer" />
+<img class="img-fluid img-marquee" src="{{ site.baseurl }}/img/Corona1-ezgif.com-optimize.gif" alt="Corona: A Virtual Mass Spectrometer" />
 
 <br/>
 
