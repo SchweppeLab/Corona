@@ -1,2 +1,31 @@
 // Import Core Clean Blog SCSS
 @import "../assets/vendor/startbootstrap-clean-blog/scss/styles.scss";
+
+.center {
+  text-align: center;
+}
+
+.narrow {
+  width:80%;
+  margin: 0 auto;
+}
+
+a.clink {
+  color: #27a0e6;
+}
+a:visited.clink {
+  color: #27a0e6;
+}
+a:hover.clink {
+  color: #0085A1;
+}
+a:active.clink {
+  color: #27a0e6;
+}
+
+img.img-marquee {
+  width: 60%;
+  display: block;
+  margin: 0 auto;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
