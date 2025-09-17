@@ -14,6 +14,10 @@ scan event can contain more than a dozen specific settings. Errors in the text-b
 in the form of typos or invalid values, are ignored. In these cases, the instrument will either fail to
 perform the custom scan, or perform a custom scan with suboptimal settings.
 
+<p class="center">
+<img width="600px" src="{{site.baseurl}}/img/posts/CustomScans/CustomScans.png" />
+</p>
+
 Corona contains a custom scan capture pane, logging all custom scan events received in a run. The exact
 instrument settings and their values are listed for inspection. The easiest way to identify why a custom scan
 event failed is to re-run the acquired data on Corona and inspect the custom scan even that preceded the failed
