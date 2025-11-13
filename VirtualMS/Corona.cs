@@ -401,7 +401,12 @@ namespace VirtualMS
       SpectrumEx scan = e.GetScan();
       if (scan != null)
       {
-        server?.SendSpectrum(scan);
+        //IAPI formatted scans get broadcast.
+        if (e.IsIAPI) server?.SendSpectrum(scan);
+        
+        //Only process scans formatted as read from file
+        if (!e.IsNative) return;
+
         double tic = scan.TotalIonCurrent;
         int scanNumber = scan.ScanNumber;
         double rt = scan.RetentionTime;

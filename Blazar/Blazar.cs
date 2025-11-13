@@ -144,6 +144,7 @@ class Blazar
 
   private static void DCont_MsScanArrived(object sender, MSimEventArgs e)
   {
+    if (!e.IsNative) return; //skip any scans not in their original source format.
     RefreshScreen();
     Console.WriteLine("Scan Arrived.");
     SpectrumEx testScan = e.GetScan();

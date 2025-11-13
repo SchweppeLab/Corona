@@ -17,7 +17,7 @@
     <OutputPath>bin\x64\Release\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Nova" Version="1.0.0.11" />
-    <PackageReference Include="Nova.IO" Version="1.0.0.11" />
+    <PackageReference Include="Nova" Version="1.0.0.14" />
+    <PackageReference Include="Nova.IO" Version="1.0.0.14" />
   </ItemGroup>
 </Project>

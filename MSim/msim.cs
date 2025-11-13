@@ -65,7 +65,7 @@ namespace MSim
 
     public double GetRT()
     {
-      return Convert.ToDouble(ms + fastForwardMS)/60000;
+      return Convert.ToDouble(ms + fastForwardMS) /60000;
     }
 
     public delegate void MsScanEvent(Spectrum spec);
@@ -144,9 +144,17 @@ namespace MSim
     /// Raise an event indicating a scan has been acquired.
     /// </summary>
     /// <param name="scan">: the Spectrum object acquired.</param>
-    protected virtual void SendMsScanArrived(SpectrumEx scan)
+    protected virtual void SendMsScanArrived(SpectrumEx scan, SpectrumEx? cent)
     {
-      MsScanArrived?.Invoke(this, new MSimEventArgs(scan));
+      if (cent == null)
+      {
+        MsScanArrived?.Invoke(this, new MSimEventArgs(scan, true, true));
+      }
+      else
+      {
+        MsScanArrived?.Invoke(this, new MSimEventArgs(scan, true, false));
+        MsScanArrived?.Invoke(this, new MSimEventArgs(cent, false, true));
+      }
     }
 
     /// <summary>
@@ -194,6 +202,7 @@ namespace MSim
       {
         FileReader reader = new FileReader();
         SpectrumEx spectrum;
+        SpectrumEx specCent = null; //centroid spectrum is raw file only, replicates IAPI.
 
         int scanCount = 0;
         ms = 0;
@@ -205,7 +214,10 @@ namespace MSim
         RunTimer.Reset();
         RunTimer.Start();
 
+        //Open the file and read the first spectrum
+        FileFormat fileFormat = reader.CheckFileFormat(path);
         spectrum = reader.ReadSpectrumEx(path, FirstScan, false);
+        if (fileFormat == FileFormat.ThermoRaw) specCent = reader.ReadSpectrumEx(null, spectrum.ScanNumber, true);
 
         //if user requested a scan from the middle of the file, advance the stopwatch to that time;
         if (FirstScan > -1)
@@ -229,7 +241,7 @@ namespace MSim
             lastMS = tmpMS;
             //Thread.Sleep(10); //sleeping might make virtual MS less resource greedy.
           }
-          SendMsScanArrived(spectrum);
+          SendMsScanArrived(spectrum,specCent);
 
           //Check if we reached the requested limits of simulation.
           scanCount++;
@@ -257,6 +269,7 @@ namespace MSim
 
           //on to the next scan
           spectrum = reader.ReadSpectrumEx(null, -1, false);
+          if (fileFormat == FileFormat.ThermoRaw) specCent = reader.ReadSpectrumEx(null, spectrum.ScanNumber, true);
         }
         if(RunTimer.IsRunning) RunTimer.Stop();              
       });
