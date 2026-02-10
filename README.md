@@ -10,7 +10,7 @@ The Corona code repository contains three principal code structures, described b
 
 This component contains the Corona software project to produce the Corona virtual mass spectrometer, and depends on the following libraries:
 
-1. msim - contained in this repository, and described below.
+1. MStreamer - contained in this repository, and described below.
 2. [Nova](https://github.com/SchweppeLab/Nova) - a library for spectral data management and interprocess communication.
 3. [ScottPlot](https://github.com/scottplot/scottplot/) - for spectral visualization.
 
@@ -18,14 +18,14 @@ The libraries required are easily obtained from NuGet (public) or the links abov
 the Corona virtual mass spectrometer. Instructions for use are found [here](https://schweppelab.github.io/Corona/).
 
 
-## MSim
+## MStreamer
 
-This source code set contains the mass spectrometer simulator library, named msim. It provides a foundation class for putting an MS simulator into any software. Its job is to 
+Capable of reading an MS spctrum file and streaming the spectra within at their designated retention times. Its job is to 
 read and broadcast scans from MS data as if they were real-time scans from an instrument.
 
-### MSim Usage
+### MStreamer Usage
 
-The main functionality for msim can be access through the `SimRunner`. Listeners assigned to EventHandlers are used to process spectra as they are read from the data file.
+The main functionality for MStreamer can be access through the `SimRunner`. Listeners assigned to EventHandlers are used to process spectra as they are read from the data file.
 Below is an example of how to use msim:
 
     SimRunner simRunner = new SimRunner();
@@ -34,17 +34,18 @@ Below is an example of how to use msim:
     simRunner.MsScanArrived += _instMSScanContainer_MsScanArrived;
     simRunner.Run(RawFile);
 
-Data files are read in msim using the [Nova](https://github.com/SchweppeLab/Nova) library.
+Data files are read in MStreamer using the [Nova](https://github.com/SchweppeLab/Nova) library.
 
 
 ## Blazar
 
-A commandline implementation of a real-time raw file datastream, for demonstration of MSim use.
+A commandline implementation of a real-time raw file datastream, for demonstration of MStreamer use.
+
 
 ## Additional Information
 
 Authors: `Devin Schweppe` and `Michael Hoopmann`
 
-Copywrite: Authors & Schweppe Lab 2021-2025
+Copyrite: Authors & Schweppe Lab 2021-2026
 
 
