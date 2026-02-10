@@ -1,5 +1,4 @@
-﻿using MSim.lib;
-using Nova.Data;
+﻿using Nova.Data;
 using Nova.Io.Read;
 
 using System;
@@ -11,7 +10,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using ThermoFisher.CommonCore.Data.Business;
 
-namespace MSim
+
+/* MStreamer takes inspiration from the original MSim from the Gygi? lab.
+ * Some class names appear similarly.
+ */
+namespace MStreamer
 {
 
   /// <summary>
@@ -47,7 +50,7 @@ namespace MSim
     /// <summary>
     /// Raised when simulated MS scan is acquired.
     /// </summary>
-    public event EventHandler<MSimEventArgs> MsScanArrived;
+    public event EventHandler<MStreamerEventArgs> MsScanArrived;
 
     /// <summary>
     /// The last scan that was acquired.
@@ -148,12 +151,12 @@ namespace MSim
     {
       if (cent == null)
       {
-        MsScanArrived?.Invoke(this, new MSimEventArgs(scan, true, true));
+        MsScanArrived?.Invoke(this, new MStreamerEventArgs(scan, true, true));
       }
       else
       {
-        MsScanArrived?.Invoke(this, new MSimEventArgs(scan, true, false));
-        MsScanArrived?.Invoke(this, new MSimEventArgs(cent, false, true));
+        MsScanArrived?.Invoke(this, new MStreamerEventArgs(scan, true, false));
+        MsScanArrived?.Invoke(this, new MStreamerEventArgs(cent, false, true));
       }
     }
 

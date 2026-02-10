@@ -1,16 +1,16 @@
 ﻿using Nova.Data;
 using System;
 
-namespace MSim.lib
+namespace MStreamer
 {
-  public class MSimEventArgs : EventArgs
+  public class MStreamerEventArgs : EventArgs
   {
 
-    public MSimEventArgs(SpectrumEx newScan,bool isNative, bool isIAPI)
+    public MStreamerEventArgs(SpectrumEx newScan, bool isNative, bool isIAPI)
     {
       Scan = newScan;
       IsIAPI = isIAPI;
-      IsNative = isNative;  
+      IsNative = isNative;
     }
 
     private SpectrumEx Scan;

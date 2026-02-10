@@ -1,5 +1,4 @@
-using MSim;
-using MSim.lib;
+using MStreamer;
 using ScottPlot;
 using ScottPlot.Colormaps;
 using ScottPlot.Plottables;
@@ -76,6 +75,7 @@ namespace VirtualMS
       plot = plotTIC.Plot.Add.DataLogger();
 
       plot.Add(0, 0);
+      plot.Add(0.000001, 1);
       plotTIC.Refresh();
 
       Coordinates[] co = {
@@ -105,6 +105,7 @@ namespace VirtualMS
 
       UpdatePlotTimer.Tick += (s, e) =>
       {
+        if (plot == null) return;
         if (plot.HasNewData) plotTIC.Refresh();
         if (refreshSpectrum)
         {
@@ -343,10 +344,33 @@ namespace VirtualMS
       PopQueue();
       while (FileQueue.Count > 0)
       {
+        //Clear the plot and reset it for the next run
+        //log("WTF1");
+        //plotTIC.Plot.Remove(plot);
+        //log("WTF2");
+        //plotTIC.Refresh();
+        //log("WTF3");
+        //var plotplot = plotTIC.Plot.Add.DataLogger();
+        //log("WTF3.5");
+        //if (plot == null) log("WTF3.75");
+        //else log("ExtraWTF");
+
+        //plot = plotTIC.Plot.Add.DataLogger();
+        //log("WTF3.9");
+        //plot.Add(0, 0);
+        //log("WTF3.99");
+        //plotTIC.Plot.Axes.SetLimitsY(0, 1);
+        //log("WTF3.999");
+        //lock (plotTIC.Plot.Sync)
+        //{
+        //  plotTIC.Refresh();
+        //}
+        //log("WTF4");
+
         string s = FileQueue[0].FullPath;
         if (File.Exists(s) && (Path.GetExtension(s) == ".raw" || Path.GetExtension(s) == ".mzML" || Path.GetExtension(s) == ".mzXML"))
         {
-          simMS.Run(FileQueue[0].FullPath, -1, FileQueue[0].StartScan, FileQueue[0].EndScan);
+           simMS.Run(FileQueue[0].FullPath, -1, FileQueue[0].StartScan, FileQueue[0].EndScan);
           tsbPause.Enabled = true;
           tsbStop.Enabled = true;
           break;
@@ -356,18 +380,24 @@ namespace VirtualMS
           PopQueue();
         }
       }
+      //log("All good");
     }
 
     private void OnAcquisitionStart(RunInfo info)
     {
       server?.SendAcquisitionStart(info);
-      if(cbClearCS.Checked) ClearCustomScans();
+      if (cbClearCS.Checked) ClearCustomScans();
+
       plot.Clear();
       plot.Add(0, 0);
+      plot.Add(0.000001, 1);
       plotTIC.Plot.Axes.SetLimitsY(0, 1);
       plotTIC.Refresh();
       curSimCount++;
-      log("Acquisition started: " + info.Name);
+      stats.curScanCount = 0;
+      stats.curScanMS1 = 0;
+      stats.curScanMS2 = 0;
+      log("Acquisition started: " + info.Name); // + " " + plot.Data.Coordinates.Count);
     }
 
     private void OnClientConnected(PipesConnection pc)
@@ -390,12 +420,12 @@ namespace VirtualMS
       {
         nudCustomScans.Minimum = 1;
         CustomScansIndex = 0;
-        UserCustomScan = CustomScans[0];  
+        UserCustomScan = CustomScans[0];
       }
       UpdateCustomScans(false);
     }
 
-    private void OnMsScanArrived(object? sender, MSimEventArgs e)
+    private void OnMsScanArrived(object? sender, MStreamerEventArgs e)
     {
       //log("Scan arrived");
       SpectrumEx scan = e.GetScan();
@@ -403,7 +433,7 @@ namespace VirtualMS
       {
         //IAPI formatted scans get broadcast.
         if (e.IsIAPI) server?.SendSpectrum(scan);
-        
+
         //Only process scans formatted as read from file
         if (!e.IsNative) return;
 
@@ -807,6 +837,14 @@ namespace VirtualMS
     private void button1_Click(object sender, EventArgs e)
     {
       ClearCustomScans();
+    }
+
+    private void tsbResetStats_Click(object sender, EventArgs e)
+    {
+      curSimCount = 0;
+      allSimTime = TimeSpan.Zero;
+      stats = new VMsStats();
+      RefreshStats();
     }
   }
 }

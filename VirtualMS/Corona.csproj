@@ -15,11 +15,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ScottPlot.WinForms" Version="5.0.55" />
+    <PackageReference Include="ScottPlot.WinForms" Version="5.1.57" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MSim\MSim.csproj" />
+    <ProjectReference Include="..\MStreamer\MStreamer.csproj" />
   </ItemGroup>
 
   <ItemGroup>

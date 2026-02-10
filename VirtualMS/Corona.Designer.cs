@@ -41,6 +41,9 @@
       tsbRun = new ToolStripButton();
       tsbPause = new ToolStripButton();
       tsbStop = new ToolStripButton();
+      toolStripSeparator5 = new ToolStripSeparator();
+      toolStripSeparator6 = new ToolStripSeparator();
+      tsbResetStats = new ToolStripButton();
       splitContainer1 = new SplitContainer();
       splitContainer3 = new SplitContainer();
       fileListBox = new ListBox();
@@ -134,7 +137,7 @@
       // 
       mainToolStrip.AutoSize = false;
       mainToolStrip.ImageScalingSize = new Size(32, 32);
-      mainToolStrip.Items.AddRange(new ToolStripItem[] { tsbLoad, tsbDelete, toolStripSeparator1, toolStripSeparator3, tsbAdd, tsbRemove, toolStripSeparator4, toolStripSeparator2, tsbRun, tsbPause, tsbStop });
+      mainToolStrip.Items.AddRange(new ToolStripItem[] { tsbLoad, tsbDelete, toolStripSeparator1, toolStripSeparator3, tsbAdd, tsbRemove, toolStripSeparator4, toolStripSeparator2, tsbRun, tsbPause, tsbStop, toolStripSeparator5, toolStripSeparator6, tsbResetStats });
       mainToolStrip.Location = new Point(0, 0);
       mainToolStrip.Name = "mainToolStrip";
       mainToolStrip.Size = new Size(1140, 48);
@@ -243,6 +246,26 @@
       tsbStop.Size = new Size(36, 36);
       tsbStop.Text = "Stop";
       tsbStop.Click += tsbStop_Click;
+      // 
+      // toolStripSeparator5
+      // 
+      toolStripSeparator5.Name = "toolStripSeparator5";
+      toolStripSeparator5.Size = new Size(6, 48);
+      // 
+      // toolStripSeparator6
+      // 
+      toolStripSeparator6.Name = "toolStripSeparator6";
+      toolStripSeparator6.Size = new Size(6, 48);
+      // 
+      // tsbResetStats
+      // 
+      tsbResetStats.DisplayStyle = ToolStripItemDisplayStyle.Image;
+      tsbResetStats.Image = (Image)resources.GetObject("tsbResetStats.Image");
+      tsbResetStats.ImageTransparentColor = Color.Magenta;
+      tsbResetStats.Name = "tsbResetStats";
+      tsbResetStats.Size = new Size(36, 43);
+      tsbResetStats.Text = "toolStripButton1";
+      tsbResetStats.Click += tsbResetStats_Click;
       // 
       // splitContainer1
       // 
@@ -978,5 +1001,8 @@
     private DataGridViewTextBoxColumn rpEnd;
     private Button button1;
     private CheckBox cbClearCS;
+    private ToolStripSeparator toolStripSeparator5;
+    private ToolStripSeparator toolStripSeparator6;
+    private ToolStripButton tsbResetStats;
   }
 }

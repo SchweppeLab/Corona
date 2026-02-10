@@ -3,11 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSim", "MSim.csproj", "{9797E099-A6B1-49A7-B6AD-062EF7927629}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazar", "..\Blazar\Blazar.csproj", "{02B19A4A-51B9-4779-9964-78DCA4250F6D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{95C22D67-D3FB-4D30-B141-00113F3CB5E2} = {95C22D67-D3FB-4D30-B141-00113F3CB5E2}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Corona", "..\VirtualMS\Corona.csproj", "{7DE6C5CB-4DE7-4F6F-BF1A-73565D7BF978}"
+	ProjectSection(ProjectDependencies) = postProject
+		{95C22D67-D3FB-4D30-B141-00113F3CB5E2} = {95C22D67-D3FB-4D30-B141-00113F3CB5E2}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MStreamer", "MStreamer.csproj", "{95C22D67-D3FB-4D30-B141-00113F3CB5E2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,14 +23,6 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{9797E099-A6B1-49A7-B6AD-062EF7927629}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9797E099-A6B1-49A7-B6AD-062EF7927629}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9797E099-A6B1-49A7-B6AD-062EF7927629}.Debug|x64.ActiveCfg = Debug|x64
-		{9797E099-A6B1-49A7-B6AD-062EF7927629}.Debug|x64.Build.0 = Debug|x64
-		{9797E099-A6B1-49A7-B6AD-062EF7927629}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9797E099-A6B1-49A7-B6AD-062EF7927629}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9797E099-A6B1-49A7-B6AD-062EF7927629}.Release|x64.ActiveCfg = Release|x64
-		{9797E099-A6B1-49A7-B6AD-062EF7927629}.Release|x64.Build.0 = Release|x64
 		{02B19A4A-51B9-4779-9964-78DCA4250F6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{02B19A4A-51B9-4779-9964-78DCA4250F6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{02B19A4A-51B9-4779-9964-78DCA4250F6D}.Debug|x64.ActiveCfg = Debug|x64
@@ -41,6 +39,14 @@ Global
 		{7DE6C5CB-4DE7-4F6F-BF1A-73565D7BF978}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7DE6C5CB-4DE7-4F6F-BF1A-73565D7BF978}.Release|x64.ActiveCfg = Release|x64
 		{7DE6C5CB-4DE7-4F6F-BF1A-73565D7BF978}.Release|x64.Build.0 = Release|x64
+		{95C22D67-D3FB-4D30-B141-00113F3CB5E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95C22D67-D3FB-4D30-B141-00113F3CB5E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95C22D67-D3FB-4D30-B141-00113F3CB5E2}.Debug|x64.ActiveCfg = Debug|x64
+		{95C22D67-D3FB-4D30-B141-00113F3CB5E2}.Debug|x64.Build.0 = Debug|x64
+		{95C22D67-D3FB-4D30-B141-00113F3CB5E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95C22D67-D3FB-4D30-B141-00113F3CB5E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95C22D67-D3FB-4D30-B141-00113F3CB5E2}.Release|x64.ActiveCfg = Release|x64
+		{95C22D67-D3FB-4D30-B141-00113F3CB5E2}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

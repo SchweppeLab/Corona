@@ -1,5 +1,4 @@
-﻿using MSim;
-using MSim.lib;
+﻿using MStreamer;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -142,7 +141,7 @@ class Blazar
     //    Console.WriteLine(e.StartingInformation.First().Key);
     //}
 
-  private static void DCont_MsScanArrived(object sender, MSimEventArgs e)
+  private static void DCont_MsScanArrived(object sender, MStreamerEventArgs e)
   {
     if (!e.IsNative) return; //skip any scans not in their original source format.
     RefreshScreen();
