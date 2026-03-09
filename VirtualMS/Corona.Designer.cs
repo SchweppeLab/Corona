@@ -264,7 +264,7 @@
       tsbResetStats.ImageTransparentColor = Color.Magenta;
       tsbResetStats.Name = "tsbResetStats";
       tsbResetStats.Size = new Size(36, 43);
-      tsbResetStats.Text = "toolStripButton1";
+      tsbResetStats.Text = "Reset Statistics";
       tsbResetStats.Click += tsbResetStats_Click;
       // 
       // splitContainer1
