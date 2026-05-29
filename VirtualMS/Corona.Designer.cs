@@ -64,6 +64,8 @@
       lblSpeed = new Label();
       tbSpeed = new TrackBar();
       gbStats = new GroupBox();
+      lblCSRate = new Label();
+      label5 = new Label();
       lblRunTime = new Label();
       lblScanStats = new Label();
       label3 = new Label();
@@ -99,6 +101,8 @@
       label4 = new Label();
       ofdAdd = new OpenFileDialog();
       statusStrip1 = new StatusStrip();
+      label6 = new Label();
+      lblCurCSRate = new Label();
       mainToolStrip.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
       splitContainer1.Panel1.SuspendLayout();
@@ -307,7 +311,7 @@
       // 
       splitContainer3.Panel2.Controls.Add(gbStats);
       splitContainer3.Size = new Size(380, 798);
-      splitContainer3.SplitterDistance = 536;
+      splitContainer3.SplitterDistance = 475;
       splitContainer3.TabIndex = 0;
       // 
       // fileListBox
@@ -319,7 +323,7 @@
       fileListBox.Location = new Point(0, 56);
       fileListBox.Name = "fileListBox";
       fileListBox.SelectionMode = SelectionMode.MultiExtended;
-      fileListBox.Size = new Size(380, 384);
+      fileListBox.Size = new Size(380, 323);
       fileListBox.TabIndex = 0;
       fileListBox.SelectedIndexChanged += fileListBox_SelectedIndexChanged;
       // 
@@ -327,7 +331,7 @@
       // 
       panel3.Controls.Add(lblFileInfo);
       panel3.Dock = DockStyle.Bottom;
-      panel3.Location = new Point(0, 440);
+      panel3.Location = new Point(0, 379);
       panel3.Name = "panel3";
       panel3.Size = new Size(380, 96);
       panel3.TabIndex = 3;
@@ -495,6 +499,10 @@
       // 
       // gbStats
       // 
+      gbStats.Controls.Add(lblCurCSRate);
+      gbStats.Controls.Add(label6);
+      gbStats.Controls.Add(lblCSRate);
+      gbStats.Controls.Add(label5);
       gbStats.Controls.Add(lblRunTime);
       gbStats.Controls.Add(lblScanStats);
       gbStats.Controls.Add(label3);
@@ -504,10 +512,30 @@
       gbStats.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point, 0);
       gbStats.Location = new Point(0, 0);
       gbStats.Name = "gbStats";
-      gbStats.Size = new Size(380, 258);
+      gbStats.Size = new Size(380, 319);
       gbStats.TabIndex = 0;
       gbStats.TabStop = false;
       gbStats.Text = "Simulation Statistics";
+      // 
+      // lblCSRate
+      // 
+      lblCSRate.AutoSize = true;
+      lblCSRate.Font = new Font("Cascadia Code", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      lblCSRate.Location = new Point(219, 287);
+      lblCSRate.Name = "lblCSRate";
+      lblCSRate.Size = new Size(21, 24);
+      lblCSRate.TabIndex = 6;
+      lblCSRate.Text = "0";
+      // 
+      // label5
+      // 
+      label5.AutoSize = true;
+      label5.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label5.Location = new Point(12, 261);
+      label5.Name = "label5";
+      label5.Size = new Size(160, 25);
+      label5.TabIndex = 5;
+      label5.Text = "Custom Scan Rate:";
       // 
       // lblRunTime
       // 
@@ -881,6 +909,26 @@
       statusStrip1.TabIndex = 3;
       statusStrip1.Text = "statusStrip1";
       // 
+      // label6
+      // 
+      label6.AutoSize = true;
+      label6.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      label6.Location = new Point(12, 287);
+      label6.Name = "label6";
+      label6.Size = new Size(198, 25);
+      label6.TabIndex = 7;
+      label6.Text = "Max Custom Scan Rate:";
+      // 
+      // lblCurCSRate
+      // 
+      lblCurCSRate.AutoSize = true;
+      lblCurCSRate.Font = new Font("Cascadia Code", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      lblCurCSRate.Location = new Point(219, 261);
+      lblCurCSRate.Name = "lblCurCSRate";
+      lblCurCSRate.Size = new Size(21, 24);
+      lblCurCSRate.TabIndex = 8;
+      lblCurCSRate.Text = "0";
+      // 
       // Corona
       // 
       AutoScaleDimensions = new SizeF(10F, 25F);
@@ -1004,5 +1052,9 @@
     private ToolStripSeparator toolStripSeparator5;
     private ToolStripSeparator toolStripSeparator6;
     private ToolStripButton tsbResetStats;
+    private Label label5;
+    private Label lblCSRate;
+    private Label lblCurCSRate;
+    private Label label6;
   }
 }

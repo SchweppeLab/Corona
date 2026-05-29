@@ -21,6 +21,8 @@ namespace VirtualMS
     public int allScanCount;
     public int allScanMS1;
     public int allScanMS2;
+    public int curCSHz;
+    public int maxCSHz;
     public VMsStats()
     {
       curScanCount = 0;
@@ -29,6 +31,8 @@ namespace VirtualMS
       allScanCount = 0;
       allScanMS1 = 0;
       allScanMS2 = 0;
+      curCSHz = 0;
+      maxCSHz = 0;
     }
   }
 
@@ -65,6 +69,8 @@ namespace VirtualMS
     private List<FileStats> FileQueue = new List<FileStats>();
 
     private List<Panel> PanelList = new List<Panel>();
+
+    private LinkedList<double> customScanQueue = new LinkedList<double>();
 
     public Corona()
     {
@@ -397,6 +403,7 @@ namespace VirtualMS
       stats.curScanCount = 0;
       stats.curScanMS1 = 0;
       stats.curScanMS2 = 0;
+      customScanQueue.Clear();
       log("Acquisition started: " + info.Name); // + " " + plot.Data.Coordinates.Count);
     }
 
@@ -413,6 +420,17 @@ namespace VirtualMS
     private void OnCustomScanRequest(object? sender, CustomScan customScan)
     {
       customScan.RetentionTime = simMS.GetRT();
+      while(customScanQueue.Count>0 && customScanQueue.First.Value < customScan.RetentionTime * 60 - 1)
+      {
+        customScanQueue.RemoveFirst();
+      }
+      customScanQueue.AddLast(customScan.RetentionTime*60);
+      if (customScanQueue.Count > stats.maxCSHz)
+      {
+        stats.maxCSHz = customScanQueue.Count;
+      }
+      stats.curCSHz = customScanQueue.Count;
+
       //log("Custom Scan Requested at: " + customScan.RetentionTime.ToString());
       CustomScans.Add(customScan);
       nudCustomScans.Maximum = CustomScans.Count;
@@ -604,6 +622,9 @@ namespace VirtualMS
       string b = String.Format("{0}{1,9}", stats.curScanMS1, stats.allScanMS1);
       string c = String.Format("{0}{1,9}", stats.curScanMS2, stats.allScanMS2);
       lblScanStats.Text = String.Format("{0}\n{1}\n{2}", a, b, c);
+
+      lblCurCSRate.Text = stats.curCSHz.ToString() + " Hz";
+      lblCSRate.Text = stats.maxCSHz.ToString() + " Hz";
     }
 
     private void tbSpeed_ValueChanged(object sender, EventArgs e)

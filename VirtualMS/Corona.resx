@@ -207,16 +207,31 @@
   <data name="tsbResetStats.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAAFiUAABYlAUlSJPAAAAGOSURBVFhH7ZehUsNAEIYrkTwCEomsW/JvBJJHwGFxSB4B
-        WYmsRCIrKyt5hMpKJMzOJJ3Nn0tuL6GiM/1mVrT7397mbi97WSwunCMAHlV1DeBbVfcAdgDeROSatUVY
-        ABG5aeyKfLeq+hu0lR8bBsBLG0RE7tr/VfWQmCRrAJ66M2TgBGxFOGgTuLfctkIANgntl9eNwglwMBFZ
-        8pgUVh+UxIY1SXwCZAfW5uCaAfDMmh4DCfywLooVs4/F/h4DCVgBHo3H5LBCdKuwY3+HgQQ6xmMihMef
-        KgEfN1QLp8A9RPE2/gtzV3E2oQTqul6q6qeZNRz2zyGUAJ3bD/bPIZSA4YR79s0hHDec6Qiq+uB/13X9
-        2sbMHkN7WznxpDqwPuB/Fz0Ut2D2l1JV1bt7oHBXtKtWbM9G4JbO/kHsOuYHWkKsySEi9xSj7HbEW2Ft
-        2Y4p61I07xI/+ZY1Ibift4lYVSe0diU7FrCzNWuLsUkTgbM29RQl4StWxqZdy6M0HyYr29vmw2Rr28I3
-        5QtnwR9RK6bU+vvqDgAAAABJRU5ErkJggg==
+        YQUAAAAJcEhZcwAAFiUAABYlAUlSJPAAAAGPSURBVFhH7ZehcsMwDIYLB/cIg4WDZYolg8E9wtjo2OAe
+        YbBwsHBwsLCwcI9QWFi4ne6cnfLHieVkBb3rdyfQSpb/2HLkLBZXLhFmfhSRDTN/i8iBmffM/EZEtxhb
+        hSYgortkN+BbisiP09Z2rBtmfmmTENF9+7+IHDOTFI2Zn7ozFEABuiKYNCXuLbeuUAhhi7EhhC8bNwoK
+        wGREtMIxObQ+QMQWY7JYAWBHjC2BNcPMzxjTY0DACeO8aDHbXOjvMSBAC/DPcEwJLUSzCnv0dxgQ0DEc
+        48E9/lwCbF5XLZwD8xDV2/gvzF3F2bgExBhXIvKppg0H/XNwCYBz+4H+ObgEKCbwgL45uPO6lY4gIg/2
+        d4zxtc1ZPIb6tjLBk+pA+4D9XfVQ2ILRX0vTNO9trpquqFct356NgC0d/YPodcwOVEEYU4KIGshRdzvC
+        rdC2rMcU43Kkd4mdfIcxLrCft0K0qjOxS1vAxjYYW41OmklctKmnKAtesQo27VruJX2YrHVv04fJTrcF
+        b8pXLoJfwSWmxRkXZQkAAAAASUVORK5CYII=
 </value>
   </data>
+  <metadata name="rpFileName.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="rpFilePath.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="rpRunSpan.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="rpFirst.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="rpEnd.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
   <metadata name="rpFileName.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
