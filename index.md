@@ -30,7 +30,7 @@ background: '/img/Corona1.png'
 
 <br/>
 
-If you use Corona, please cite the following:
+<h4>If you use Corona, please cite the following:</h4><br/>
 Hoopmann, M. R.; McGann, C. D.; Canterbury, J. D.; Barshop, W. D.; Yu, Q.; Gadzuk-Shea, M.; Hogrebe, A.; Villén, J.; Schweppe, D. K. 
 "Corona: A Virtual Mass Spectrometer for the Development of Real-Time Mass Spectrometry Software." *Anal. Chem.* 2026, ASAP. DOI: 10.1021/acs.analchem.6c01637.
 [Link](https://pubmed.ncbi.nlm.nih.gov/42308194/)
