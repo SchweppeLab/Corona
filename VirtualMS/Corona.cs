@@ -53,6 +53,10 @@ namespace VirtualMS
     private volatile bool statsDirty = false;
     private VMsStats stats = new VMsStats();
 
+    private const int LogMaxLines = 1000;
+    private const int LogTrimMargin = 100; //batch the trim so it isn't an O(n) RichTextBox operation on every log line
+    private int logLineCount = 0;
+
     private int curSimCount = 0;
     private double curSimRT = 0;
     private TimeSpan allSimTime = TimeSpan.Zero;
@@ -567,7 +571,33 @@ namespace VirtualMS
 
     private void log(string msg)
     {
-      rtbLog.AppendText(msg + Environment.NewLine);
+      rtbLog.AppendText(DateTime.Now.ToString("HH:mm:ss.fff") + "  " + msg + Environment.NewLine);
+      logLineCount++;
+      if (logLineCount > LogMaxLines + LogTrimMargin)
+      {
+        int firstLineToKeep = logLineCount - LogMaxLines;
+        int charIndex = rtbLog.GetFirstCharIndexFromLine(firstLineToKeep);
+        if (charIndex > 0)
+        {
+          rtbLog.Select(0, charIndex);
+          rtbLog.SelectedText = string.Empty;
+          rtbLog.SelectionStart = rtbLog.TextLength;
+          rtbLog.ScrollToCaret();
+        }
+        logLineCount = LogMaxLines;
+      }
+    }
+
+    private void btnSaveLog_Click(object sender, EventArgs e)
+    {
+      using SaveFileDialog sfd = new SaveFileDialog();
+      sfd.Filter = "Text files|*.txt|All files|*.*";
+      sfd.FileName = "Corona_Log_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".txt";
+      if (sfd.ShowDialog() == DialogResult.OK)
+      {
+        File.WriteAllText(sfd.FileName, rtbLog.Text);
+        log("Log saved to: " + sfd.FileName);
+      }
     }
 
     void PopQueue()

@@ -86,6 +86,7 @@
       tabControl1 = new TabControl();
       tabPage1 = new TabPage();
       rtbLog = new RichTextBox();
+      btnSaveLog = new Button();
       tabPage2 = new TabPage();
       plotSpectrum = new ScottPlot.WinForms.FormsPlot();
       labelSpectrum = new Label();
@@ -736,6 +737,7 @@
       // tabPage1
       // 
       tabPage1.Controls.Add(rtbLog);
+      tabPage1.Controls.Add(btnSaveLog);
       tabPage1.Location = new Point(4, 4);
       tabPage1.Name = "tabPage1";
       tabPage1.Padding = new Padding(3);
@@ -743,16 +745,27 @@
       tabPage1.TabIndex = 0;
       tabPage1.Text = "Message Log";
       tabPage1.UseVisualStyleBackColor = true;
-      // 
+      //
       // rtbLog
-      // 
+      //
       rtbLog.Dock = DockStyle.Fill;
       rtbLog.Location = new Point(3, 3);
       rtbLog.Name = "rtbLog";
       rtbLog.Size = new Size(728, 338);
       rtbLog.TabIndex = 0;
       rtbLog.Text = "";
-      // 
+      //
+      // btnSaveLog
+      //
+      btnSaveLog.Dock = DockStyle.Bottom;
+      btnSaveLog.Location = new Point(3, 311);
+      btnSaveLog.Name = "btnSaveLog";
+      btnSaveLog.Size = new Size(728, 30);
+      btnSaveLog.TabIndex = 1;
+      btnSaveLog.Text = "Save Log...";
+      btnSaveLog.UseVisualStyleBackColor = true;
+      btnSaveLog.Click += btnSaveLog_Click;
+      //
       // tabPage2
       // 
       tabPage2.Controls.Add(plotSpectrum);
@@ -993,6 +1006,7 @@
     private ScottPlot.WinForms.FormsPlot plotTIC;
     private ToolStripButton tsbRun;
     private RichTextBox rtbLog;
+    private Button btnSaveLog;
     private TabControl tabControl1;
     private TabPage tabPage1;
     private TabPage tabPage2;
