@@ -61,7 +61,17 @@ namespace VirtualMS
     private void OnCustomScanRequest(PipeMessage message)
     {
       CustomScan cs = new CustomScan();
-      cs.Deserialize(message.MsgData);
+      try
+      {
+        cs.Deserialize(message.MsgData);
+      }
+      catch (Exception ex)
+      {
+        //Malformed/truncated custom-scan message from a client. Drop it rather than
+        //let a bad message from one client take down the server for everyone.
+        OnError(ex);
+        return;
+      }
       CustomScanRequest?.Invoke(this,cs);
     }
 
