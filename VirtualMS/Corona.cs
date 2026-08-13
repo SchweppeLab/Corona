@@ -50,6 +50,7 @@ namespace VirtualMS
 
     private long lastTicks = 0;
     private volatile bool refreshSpectrum = false;
+    private volatile bool statsDirty = false;
     private VMsStats stats = new VMsStats();
 
     private int curSimCount = 0;
@@ -117,6 +118,11 @@ namespace VirtualMS
         {
           plotSpectrum.Refresh();
           refreshSpectrum = false;
+        }
+        if (statsDirty)
+        {
+          RefreshStats();
+          statsDirty = false;
         }
       };
 
@@ -505,7 +511,7 @@ namespace VirtualMS
           stats.curScanMS2++;
           stats.allScanMS2++;
         }
-        UiPost(RefreshStats);
+        statsDirty = true;
       }
     }
 
