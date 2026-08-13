@@ -35,6 +35,11 @@ namespace MStreamer
     private long lastMS = 0;
     private long fastForwardMS = 0;
 
+    //For detecting when actual playback can't keep up with the requested Speed
+    private long speedCheckRealMS = 0;
+    private double speedCheckSimRT = 0;
+    private bool speedLagging = false;
+
     public string DetectorClass => throw new NotImplementedException();
 
     /// <summary>
@@ -51,6 +56,13 @@ namespace MStreamer
     /// Raised when simulated MS scan is acquired.
     /// </summary>
     public event EventHandler<MStreamerEventArgs> MsScanArrived;
+
+    /// <summary>
+    /// Raised when actual playback throughput crosses the "keeping up with the requested
+    /// Speed" threshold in either direction - i.e. scan reading/processing has become (or
+    /// has stopped being) the bottleneck rather than the pacing wait.
+    /// </summary>
+    public event SpeedWarningEvent SpeedWarning;
 
     /// <summary>
     /// The last scan that was acquired.
@@ -73,6 +85,7 @@ namespace MStreamer
 
     public delegate void MsScanEvent(Spectrum spec);
     public delegate void AcquisitionEvent(RunInfo info);
+    public delegate void SpeedWarningEvent(string message);
 
     /// <summary>
     /// Used to match simulation times with scan retention times
@@ -228,6 +241,10 @@ namespace MStreamer
           fastForwardMS = (long)(spectrum.RetentionTime * 60000);
         }
 
+        speedCheckRealMS = 0;
+        speedCheckSimRT = spectrum.RetentionTime;
+        speedLagging = false;
+
         while (spectrum.ScanNumber > 0)
         {
 
@@ -249,6 +266,29 @@ namespace MStreamer
             if (realMsRemaining > 5) Thread.Sleep(1);
           }
           SendMsScanArrived(spectrum,specCent);
+
+          //Periodically compare actual scan-delivery throughput against the requested Speed.
+          //Reading/processing a scan takes real wall-clock time regardless of Speed, so a
+          //dense file or slow storage can silently cap achievable playback below what was
+          //requested; only report on a change of state so this doesn't spam the log.
+          long nowRealMS = sw.ElapsedMilliseconds;
+          long elapsedSinceCheck = nowRealMS - speedCheckRealMS;
+          if (elapsedSinceCheck >= 2000)
+          {
+            double achievedSpeed = (spectrum.RetentionTime - speedCheckSimRT) * 60000 / elapsedSinceCheck;
+            bool isLaggingNow = achievedSpeed < Speed * 0.9;
+            if (isLaggingNow && !speedLagging)
+            {
+              SpeedWarning?.Invoke($"Falling behind requested {Speed}x speed - achieving roughly {achievedSpeed:0.#}x. Scan reading/processing is likely the bottleneck.");
+            }
+            else if (!isLaggingNow && speedLagging)
+            {
+              SpeedWarning?.Invoke($"Back on pace with requested {Speed}x speed.");
+            }
+            speedLagging = isLaggingNow;
+            speedCheckRealMS = nowRealMS;
+            speedCheckSimRT = spectrum.RetentionTime;
+          }
 
           //Check if we reached the requested limits of simulation.
           scanCount++;

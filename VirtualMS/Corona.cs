@@ -144,6 +144,7 @@ namespace VirtualMS
       simMS.AcquisitionStart += OnAcquisitionStart;
 
       simMS.MsScanArrived += OnMsScanArrived;
+      simMS.SpeedWarning += OnSpeedWarning;
       server.ClientConnected += OnClientConnected;
       server.ClientDisconnected += OnClientDisconnected;
       server.CustomScanRequest += OnCustomScanRequest;
@@ -381,6 +382,11 @@ namespace VirtualMS
       stats.curScanMS2 = 0;
       customScanQueue.Clear();
       log("Acquisition started: " + info.Name); // + " " + plot.Data.Coordinates.Count);
+    }
+
+    private void OnSpeedWarning(string message)
+    {
+      UiPost(() => log(message));
     }
 
     private void OnClientConnected(PipesConnection pc)
