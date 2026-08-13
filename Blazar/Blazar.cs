@@ -98,8 +98,6 @@ class Blazar
     runner.MsScanArrived += DCont_MsScanArrived;
     runner.AcquisitionStart += AcquisitionStart;
     runner.AcquisitionEnd += AcquisitionEnd;
-    //runner.Acquisition.AcquisitionStreamOpening += Acquisition_AcquisitionStreamOpening;
-    //runner.Acquisition.AcquisitionStreamClosing += Acquisition_AcquisitionStreamClosing;
 
     paused = false;
     activeFile = rawPath.First();
@@ -129,17 +127,6 @@ class Blazar
     Console.WriteLine("AcquisitionStart");
   }
 
-
-  private static void Acquisition_AcquisitionStreamClosing(object sender, EventArgs e)
-    {
-        Console.WriteLine("Stream closing");
-    }
-
-    //private static void Acquisition_AcquisitionStreamOpening(object sender, Thermo.Interfaces.InstrumentAccess_V1.Control.Acquisition.AcquisitionOpeningEventArgs e)
-    //{
-    //    Console.WriteLine("Stream opening");
-    //    Console.WriteLine(e.StartingInformation.First().Key);
-    //}
 
   private static void DCont_MsScanArrived(object sender, MStreamerEventArgs e)
   {

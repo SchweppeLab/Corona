@@ -262,16 +262,6 @@ namespace VirtualMS
       }
     }
 
-    private void Acquisition_AcquisitionStreamClosing(object sender, EventArgs e)
-    {
-      log("Stream closing: " + e.ToString());
-    }
-
-    //private void Acquisition_AcquisitionStreamOpening(object sender, AcquisitionOpeningEventArgs e)
-    //{
-    //  log("Stream opening: " + e.ToString());
-    //}
-
     //Binary search for the scan number closest to the retention time, either before or after.
     private int FindScan(string fn, double rt, bool after)
     {
@@ -350,29 +340,6 @@ namespace VirtualMS
       PopQueue();
       while (FileQueue.Count > 0)
       {
-        //Clear the plot and reset it for the next run
-        //log("WTF1");
-        //plotTIC.Plot.Remove(plot);
-        //log("WTF2");
-        //plotTIC.Refresh();
-        //log("WTF3");
-        //var plotplot = plotTIC.Plot.Add.DataLogger();
-        //log("WTF3.5");
-        //if (plot == null) log("WTF3.75");
-        //else log("ExtraWTF");
-
-        //plot = plotTIC.Plot.Add.DataLogger();
-        //log("WTF3.9");
-        //plot.Add(0, 0);
-        //log("WTF3.99");
-        //plotTIC.Plot.Axes.SetLimitsY(0, 1);
-        //log("WTF3.999");
-        //lock (plotTIC.Plot.Sync)
-        //{
-        //  plotTIC.Refresh();
-        //}
-        //log("WTF4");
-
         string s = FileQueue[0].FullPath;
         if (File.Exists(s) && (Path.GetExtension(s) == ".raw" || Path.GetExtension(s) == ".mzML" || Path.GetExtension(s) == ".mzXML"))
         {
@@ -386,7 +353,6 @@ namespace VirtualMS
           PopQueue();
         }
       }
-      //log("All good");
     }
 
     private void OnAcquisitionStart(RunInfo info)
@@ -533,27 +499,6 @@ namespace VirtualMS
         }
         RefreshStats();
       }
-
-      //Scan testScan = (Scan)e.GetScan();
-      //IMsScan testScan_I = e.GetScan();
-      //Console.WriteLine(testScan.ScanNumber + " : " + testScan_I.Header["ScanNumber"]);
-      //Console.WriteLine(">>>>######################");
-      //foreach (KeyValuePair<string, string> kvp in testScan_I.Header)
-      //{
-      //  Console.WriteLine(kvp.Key + ": " + kvp.Value);
-      //}
-      //Console.WriteLine("######################");
-      //foreach (string item in testScan_I.Trailer.ItemNames.ToList())
-      //{
-      //  testScan_I.Trailer.TryGetValue(item, out string value);
-      //  Console.WriteLine(item + ": " + value);
-      //}
-      //Console.WriteLine("######################<<<<");
-      //Console.WriteLine(testScan.Centroids.First().Mz + " - " + testScan.Centroids.Last().Mz);
-      //Console.WriteLine(testScan_I.Centroids.First().Mz + " - " + testScan_I.Centroids.Last().Mz);
-      //testScan.Meta.Trailer.TryGetValue("Ion Injection Time (ms):", out string valueTest);
-      //testScan_I.Trailer.TryGetValue("Ion Injection Time (ms):", out string valueTest1);
-      //Console.WriteLine(valueTest + " ms - " + valueTest1 + " ms");
     }
 
     void UpdateRunViewer()

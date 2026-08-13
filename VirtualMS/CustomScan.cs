@@ -1,12 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Nova.Data;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using ThermoFisher.CommonCore.Data.Business;
-using ThermoFisher.CommonCore.Data.Interfaces;
 
 namespace VirtualMS
 {
