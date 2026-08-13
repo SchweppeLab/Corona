@@ -22,7 +22,6 @@
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MSim\MStreamer.csproj" />
     <ProjectReference Include="..\MStreamer\MStreamer.csproj" />
   </ItemGroup>
 </Project>
