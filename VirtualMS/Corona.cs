@@ -582,7 +582,11 @@ namespace VirtualMS
     {
       TimeSpan ts = simMS.ElapsedRunTime();
       string aa = ts.ToString(@"hh\:mm\:ss");
-      string bb = (allSimTime + ts).ToString(@"hh\:mm\:ss");
+      //allSimTime only accumulates a run's time once that run has ended (see OnAcquisitionEnd).
+      //While still running, ts is the current run's not-yet-folded-in time, so it's added on top;
+      //once the run ends, allSimTime already includes it, so adding ts again would double-count.
+      TimeSpan totalTs = simMS.IsRunning ? allSimTime + ts : allSimTime;
+      string bb = totalTs.ToString(@"hh\:mm\:ss");
       ts = TimeSpan.FromMinutes(curSimRT);
       string cc = String.Format("{0}:{1}:{2}", ts.Hours.ToString("00"), ts.Minutes.ToString("00"), ts.Seconds.ToString("00"));
       lblRunTime.Text = String.Format("{0}\n{1}\n{2}\n{3}", cc, aa, bb, curSimCount.ToString());
