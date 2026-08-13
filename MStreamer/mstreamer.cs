@@ -82,17 +82,17 @@ namespace MStreamer
     /// <summary>
     /// Speed (in fold change) of the simulation.
     /// </summary>
-    private int Speed = 1;
+    private volatile int Speed = 1;
 
     /// <summary>
     /// Pauses simulation when true.
     /// </summary>
-    private bool PauseFlag = false;
+    private volatile bool PauseFlag = false;
 
     /// <summary>
     /// Cancels simulation when true
     /// </summary>
-    private bool CancelFlag = false;
+    private volatile bool CancelFlag = false;
 
     //TODO: Rather than yes/no, create states such as Running/Stopped/Paused/etc.
     /// <summary>
@@ -242,7 +242,11 @@ namespace MStreamer
             long tmpMS = sw.ElapsedMilliseconds;
             ms += (tmpMS-lastMS) * Speed;
             lastMS = tmpMS;
-            //Thread.Sleep(10); //sleeping might make virtual MS less resource greedy.
+
+            //Sleep through most of a long gap so the wait doesn't peg a CPU core;
+            //only tight-spin for the final few milliseconds to keep firing precise.
+            double realMsRemaining = (spectrum.RetentionTime*60000 - (ms+fastForwardMS)) / Speed;
+            if (realMsRemaining > 5) Thread.Sleep(1);
           }
           SendMsScanArrived(spectrum,specCent);
 
