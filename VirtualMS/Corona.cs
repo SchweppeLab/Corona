@@ -375,38 +375,41 @@ namespace VirtualMS
 
     private void OnClientConnected(PipesConnection pc)
     {
-      log("Client connected: " + pc.ID);
+      UiPost(() => log("Client connected: " + pc.ID));
     }
 
     private void OnClientDisconnected(PipesConnection pc)
     {
-      log("Client disconnected: " + pc.ID);
+      UiPost(() => log("Client disconnected: " + pc.ID));
     }
 
     private void OnCustomScanRequest(object? sender, CustomScan customScan)
     {
+      //Stamp the request time immediately so marshaling delay doesn't skew the recorded RT / Hz calculation.
       customScan.RetentionTime = simMS.GetRT();
-      while(customScanQueue.Count>0 && customScanQueue.First.Value < customScan.RetentionTime * 60 - 1)
+      UiPost(() =>
       {
-        customScanQueue.RemoveFirst();
-      }
-      customScanQueue.AddLast(customScan.RetentionTime*60);
-      if (customScanQueue.Count > stats.maxCSHz)
-      {
-        stats.maxCSHz = customScanQueue.Count;
-      }
-      stats.curCSHz = customScanQueue.Count;
+        while (customScanQueue.Count > 0 && customScanQueue.First.Value < customScan.RetentionTime * 60 - 1)
+        {
+          customScanQueue.RemoveFirst();
+        }
+        customScanQueue.AddLast(customScan.RetentionTime * 60);
+        if (customScanQueue.Count > stats.maxCSHz)
+        {
+          stats.maxCSHz = customScanQueue.Count;
+        }
+        stats.curCSHz = customScanQueue.Count;
 
-      //log("Custom Scan Requested at: " + customScan.RetentionTime.ToString());
-      CustomScans.Add(customScan);
-      nudCustomScans.Maximum = CustomScans.Count;
-      if (CustomScans.Count == 1)
-      {
-        nudCustomScans.Minimum = 1;
-        CustomScansIndex = 0;
-        UserCustomScan = CustomScans[0];
-      }
-      UpdateCustomScans(false);
+        CustomScans.Add(customScan);
+        nudCustomScans.Maximum = CustomScans.Count;
+        if (CustomScans.Count == 1)
+        {
+          nudCustomScans.Minimum = 1;
+          CustomScansIndex = 0;
+          UserCustomScan = CustomScans[0];
+        }
+        UpdateCustomScans(false);
+      });
     }
 
     private void OnMsScanArrived(object? sender, MStreamerEventArgs e)
@@ -477,8 +480,13 @@ namespace VirtualMS
             plotSpectrum.Plot.Axes.SetLimitsY(0, 100);
             //plotSpectrum.Plot.Axes.AutoScale();
           }
-          labelSpectrum.Text = scan.ScanFilter;
-          labelScanNumber.Text = "Scan #" + scan.ScanNumber.ToString() + "  RT:" + scan.RetentionTime.ToString();
+          string scanFilter = scan.ScanFilter;
+          string scanLabel = "Scan #" + scan.ScanNumber.ToString() + "  RT:" + scan.RetentionTime.ToString();
+          UiPost(() =>
+          {
+            labelSpectrum.Text = scanFilter;
+            labelScanNumber.Text = scanLabel;
+          });
           refreshSpectrum = true;
           lastTicks = curTicks;
         }
@@ -497,7 +505,7 @@ namespace VirtualMS
           stats.curScanMS2++;
           stats.allScanMS2++;
         }
-        RefreshStats();
+        UiPost(RefreshStats);
       }
     }
 
@@ -539,6 +547,16 @@ namespace VirtualMS
           p.BackColor = System.Drawing.Color.DarkGray;
         }
       }
+    }
+
+    //Marshals a control-touching action onto the UI thread. Scan arrival, custom-scan
+    //requests, and client connect/disconnect all originate on background threads
+    //(SimRunner's Task.Run and the Nova pipe server's I/O threads), which WinForms
+    //controls cannot be touched from directly.
+    private void UiPost(Action action)
+    {
+      if (InvokeRequired) BeginInvoke(action);
+      else action();
     }
 
     private void log(string msg)
