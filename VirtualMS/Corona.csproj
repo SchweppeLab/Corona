@@ -4,7 +4,7 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
-    <UseWindowsForms>true</UseWindowsForms>
+    <UseWPF>true</UseWPF>
     <ImplicitUsings>enable</ImplicitUsings>
     <Platforms>AnyCPU;x64</Platforms>
     <ApplicationIcon>gfx\Corona.ico</ApplicationIcon>
@@ -13,10 +13,7 @@
 
   <ItemGroup>
     <Content Include="gfx\Corona.ico" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="ScottPlot.WinForms" Version="5.1.57" />
+    <Resource Include="gfx\*.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,18 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageReference Include="ScottPlot.WPF" Version="5.1.59" />
   </ItemGroup>
 
 </Project>
