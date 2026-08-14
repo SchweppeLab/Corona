@@ -5,8 +5,17 @@
         Title="Corona" Height="878" Width="1140">
     <DockPanel LastChildFill="True">
 
-        <ToolBarTray DockPanel.Dock="Top">
-            <ToolBar>
+        <ToolBarTray DockPanel.Dock="Top" Background="White">
+            <ToolBar Background="White" Loaded="ToolBar_Loaded">
+                <ToolBar.Resources>
+                    <Style TargetType="Image">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsEnabled, RelativeSource={RelativeSource AncestorType=Button}}" Value="False">
+                                <Setter Property="Opacity" Value="0.25"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ToolBar.Resources>
                 <Button ToolTip="Open MS Files" Command="{Binding LoadCommand}">
                     <Image Source="gfx/file_open_32dp_5F6368_FILL0_wght400_GRAD0_opsz40.png" Width="28" Height="28"/>
                 </Button>
@@ -82,7 +91,29 @@
 
                 <GroupBox Grid.Row="4" Header="Simulation Statistics" FontSize="13">
                     <Grid Margin="6">
+                        <Grid.Resources>
+                            <Style TargetType="TextBlock" x:Key="StatLabel">
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Setter Property="Margin" Value="0,0,10,0"/>
+                            </Style>
+                            <Style TargetType="TextBlock" x:Key="StatValue">
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Setter Property="FontFamily" Value="Cascadia Code"/>
+                                <Setter Property="TextAlignment" Value="Right"/>
+                                <Setter Property="Margin" Value="6,0,0,0"/>
+                            </Style>
+                            <Style TargetType="TextBlock" x:Key="StatColumnHeader" BasedOn="{StaticResource StatValue}">
+                                <Setter Property="FontStyle" Value="Italic"/>
+                                <Setter Property="Margin" Value="6,10,0,2"/>
+                            </Style>
+                        </Grid.Resources>
                         <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
@@ -90,31 +121,42 @@
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="80"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Grid.Row="0" Grid.Column="0"
-                                   Text="Current Run RT:&#10;Sim Run Time:&#10;Total Sim Time:&#10;Total Sim Runs:"/>
-                        <TextBlock Grid.Row="0" Grid.Column="1" Margin="8,0,0,0" FontFamily="Cascadia Code"
-                                   Text="{Binding RunTimeText}"/>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource StatLabel}" Text="Current Run RT"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1" Style="{StaticResource StatValue}" Text="{Binding CurrentRunRtText}" HorizontalAlignment="Left"/>
 
-                        <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,8,0,0"
-                                   FontStyle="Italic" Text="                    Current        All"/>
-                        <TextBlock Grid.Row="2" Grid.Column="0"
-                                   Text="Total Scans:&#10;MS1 Scans:&#10;MS2 Scans:"/>
-                        <TextBlock Grid.Row="2" Grid.Column="1" Margin="8,0,0,0" FontFamily="Cascadia Code"
-                                   Text="{Binding ScanStatsText}"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource StatLabel}" Text="Sim Run Time"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Style="{StaticResource StatValue}" Text="{Binding SimRunTimeText}" HorizontalAlignment="Left"/>
 
-                        <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,12,0,0">
-                            <DockPanel>
-                                <TextBlock Text="Custom Scan Rate: "/>
-                                <TextBlock FontFamily="Cascadia Code" Text="{Binding CurCSRateText}"/>
-                            </DockPanel>
-                            <DockPanel Margin="0,4,0,0">
-                                <TextBlock Text="Max Custom Scan Rate: "/>
-                                <TextBlock FontFamily="Cascadia Code" Text="{Binding MaxCSRateText}"/>
-                            </DockPanel>
-                        </StackPanel>
+                        <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource StatLabel}" Text="Total Sim Time"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" Style="{StaticResource StatValue}" Text="{Binding TotalSimTimeText}" HorizontalAlignment="Left"/>
+
+                        <TextBlock Grid.Row="3" Grid.Column="0" Style="{StaticResource StatLabel}" Text="Total Sim Runs"/>
+                        <TextBlock Grid.Row="3" Grid.Column="1" Style="{StaticResource StatValue}" Text="{Binding TotalSimRunsText}" HorizontalAlignment="Left"/>
+
+                        <TextBlock Grid.Row="4" Grid.Column="1" Style="{StaticResource StatColumnHeader}" Text="Current" HorizontalAlignment="Left"/>
+                        <TextBlock Grid.Row="4" Grid.Column="2" Style="{StaticResource StatColumnHeader}" Text="All" HorizontalAlignment="Left"/>
+
+                        <TextBlock Grid.Row="5" Grid.Column="0" Style="{StaticResource StatLabel}" Text="Total Scans"/>
+                        <TextBlock Grid.Row="5" Grid.Column="1" Style="{StaticResource StatValue}" Text="{Binding TotalScansCurrentText}" HorizontalAlignment="Left"/>
+                        <TextBlock Grid.Row="5" Grid.Column="2" Style="{StaticResource StatValue}" Text="{Binding TotalScansAllText}" HorizontalAlignment="Left"/>
+
+                        <TextBlock Grid.Row="6" Grid.Column="0" Style="{StaticResource StatLabel}" Text="MS1 Scans"/>
+                        <TextBlock Grid.Row="6" Grid.Column="1" Style="{StaticResource StatValue}" Text="{Binding Ms1ScansCurrentText}" HorizontalAlignment="Left"/>
+                        <TextBlock Grid.Row="6" Grid.Column="2" Style="{StaticResource StatValue}" Text="{Binding Ms1ScansAllText}" HorizontalAlignment="Left"/>
+
+                        <TextBlock Grid.Row="7" Grid.Column="0" Style="{StaticResource StatLabel}" Text="MS2 Scans"/>
+                        <TextBlock Grid.Row="7" Grid.Column="1" Style="{StaticResource StatValue}" Text="{Binding Ms2ScansCurrentText}" HorizontalAlignment="Left"/>
+                        <TextBlock Grid.Row="7" Grid.Column="2" Style="{StaticResource StatValue}" Text="{Binding Ms2ScansAllText}" HorizontalAlignment="Left"/>
+
+                        <TextBlock Grid.Row="8" Grid.Column="0" Margin="0,10,10,0" Style="{StaticResource StatLabel}" Text="Custom Scan Rate"/>
+                        <TextBlock Grid.Row="8" Grid.Column="1" Margin="6,10,0,0" Style="{StaticResource StatValue}" Text="{Binding CurCSRateText}" HorizontalAlignment="Left"/>
+
+                        <TextBlock Grid.Row="9" Grid.Column="0" Style="{StaticResource StatLabel}" Text="Max Custom Scan Rate"/>
+                        <TextBlock Grid.Row="9" Grid.Column="1" Style="{StaticResource StatValue}" Text="{Binding MaxCSRateText}" HorizontalAlignment="Left"/>
                     </Grid>
                 </GroupBox>
             </Grid>

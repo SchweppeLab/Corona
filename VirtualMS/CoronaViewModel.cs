@@ -83,10 +83,34 @@ namespace VirtualMS
     private string logText = "";
 
     [ObservableProperty]
-    private string runTimeText = "00:00\n00:00:00\n00:00:00\n0";
+    private string currentRunRtText = "00:00:00";
 
     [ObservableProperty]
-    private string scanStatsText = "0        0\n0        0\n0        0";
+    private string simRunTimeText = "00:00:00";
+
+    [ObservableProperty]
+    private string totalSimTimeText = "00:00:00";
+
+    [ObservableProperty]
+    private string totalSimRunsText = "0";
+
+    [ObservableProperty]
+    private string totalScansCurrentText = "0";
+
+    [ObservableProperty]
+    private string totalScansAllText = "0";
+
+    [ObservableProperty]
+    private string ms1ScansCurrentText = "0";
+
+    [ObservableProperty]
+    private string ms1ScansAllText = "0";
+
+    [ObservableProperty]
+    private string ms2ScansCurrentText = "0";
+
+    [ObservableProperty]
+    private string ms2ScansAllText = "0";
 
     [ObservableProperty]
     private string curCSRateText = "0 Hz";
@@ -197,12 +221,17 @@ namespace VirtualMS
       string bb = totalTs.ToString(@"hh\:mm\:ss");
       ts = TimeSpan.FromMinutes(curSimRT);
       string cc = string.Format("{0}:{1}:{2}", ts.Hours.ToString("00"), ts.Minutes.ToString("00"), ts.Seconds.ToString("00"));
-      RunTimeText = string.Format("{0}\n{1}\n{2}\n{3}", cc, aa, bb, curSimCount.ToString());
+      CurrentRunRtText = cc;
+      SimRunTimeText = aa;
+      TotalSimTimeText = bb;
+      TotalSimRunsText = curSimCount.ToString();
 
-      string a = string.Format("{0}{1,9}", stats.curScanCount, stats.allScanCount);
-      string b = string.Format("{0}{1,9}", stats.curScanMS1, stats.allScanMS1);
-      string c = string.Format("{0}{1,9}", stats.curScanMS2, stats.allScanMS2);
-      ScanStatsText = string.Format("{0}\n{1}\n{2}", a, b, c);
+      TotalScansCurrentText = stats.curScanCount.ToString();
+      TotalScansAllText = stats.allScanCount.ToString();
+      Ms1ScansCurrentText = stats.curScanMS1.ToString();
+      Ms1ScansAllText = stats.allScanMS1.ToString();
+      Ms2ScansCurrentText = stats.curScanMS2.ToString();
+      Ms2ScansAllText = stats.allScanMS2.ToString();
 
       CurCSRateText = stats.curCSHz.ToString() + " Hz";
       MaxCSRateText = stats.maxCSHz.ToString() + " Hz";

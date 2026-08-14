@@ -154,6 +154,15 @@ namespace VirtualMS
       tb.PreviewTextInput += NumericPreviewTextInput;
     }
 
+    private void ToolBar_Loaded(object sender, RoutedEventArgs e)
+    {
+      if (sender is not ToolBar toolBar) return;
+      if (toolBar.Template.FindName("OverflowGrid", toolBar) is FrameworkElement overflowGrid)
+        overflowGrid.Visibility = Visibility.Collapsed;
+      if (toolBar.Template.FindName("MainPanelBorder", toolBar) is FrameworkElement mainPanelBorder)
+        mainPanelBorder.Margin = new Thickness(0);
+    }
+
     private static void NumericPreviewTextInput(object sender, TextCompositionEventArgs e)
     {
       TextBox tb = (TextBox)sender;
