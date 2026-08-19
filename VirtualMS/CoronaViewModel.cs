@@ -625,7 +625,7 @@ namespace VirtualMS
     {
       // Stamp the request time immediately so marshaling delay doesn't skew the recorded RT / Hz calculation.
       customScan.RetentionTime = simMS.GetRT();
-      UiPost(() =>
+      UiInvoke(() =>
       {
         while (customScanQueue.Count > 0 && customScanQueue.First!.Value < customScan.RetentionTime * 60 - 1)
         {
@@ -648,6 +648,10 @@ namespace VirtualMS
         }
         UpdateCustomScans(false);
       });
+      // Sent from this (background) thread, not the UI thread - UiInvoke above already blocked
+      // until the state update was committed, so ordering is preserved without parking a
+      // network send on the UI dispatcher queue.
+      server?.SendCanAcceptNextCustomScan();
     }
 
     private void OnMsScanArrived(object? sender, MStreamerEventArgs e)
@@ -759,6 +763,16 @@ namespace VirtualMS
       Dispatcher dispatcher = Application.Current?.Dispatcher ?? Dispatcher.CurrentDispatcher;
       if (dispatcher.CheckAccess()) action();
       else dispatcher.BeginInvoke(action);
+    }
+
+    // Like UiPost, but blocks the calling thread until the UI-thread work has actually run.
+    // Use this instead of UiPost when code after the call depends on the dispatched state
+    // update having already been committed.
+    private void UiInvoke(Action action)
+    {
+      Dispatcher dispatcher = Application.Current?.Dispatcher ?? Dispatcher.CurrentDispatcher;
+      if (dispatcher.CheckAccess()) action();
+      else dispatcher.Invoke(action);
     }
   }
 }

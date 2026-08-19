@@ -96,6 +96,14 @@ namespace VirtualMS
       server.Send(pm);
     }
 
+    public void SendCanAcceptNextCustomScan()
+    {
+      PipeMessage pm = new PipeMessage();
+      pm.EncodeString("a"); //dummy string
+      pm.MsgCode = '5';
+      server.Send(pm);
+    }
+
     public void SendSpectrum(Spectrum spec)
     {
       PipeMessage pm = new PipeMessage();
