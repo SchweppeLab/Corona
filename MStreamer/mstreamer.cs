@@ -231,7 +231,7 @@ namespace MStreamer
         RunTimer.Start();
 
         //Open the file and read the first spectrum
-        FileFormat fileFormat = reader.CheckFileFormat(path);
+        FileFormat fileFormat = FileReader.CheckFileFormat(path);
         spectrum = reader.ReadSpectrumEx(path, FirstScan, false);
         if (fileFormat == FileFormat.ThermoRaw) specCent = reader.ReadSpectrumEx(null, spectrum.ScanNumber, true);
 
