@@ -12,7 +12,7 @@ class Blazar
   static int endScan = -1;
   static int totalScan = -1;
   static int speed = 1;
-  static string activeFile;
+  static string activeFile = string.Empty;
   static bool paused = false;
   static List<string> rawPath = new List<string>();
   static SimRunner runner = new SimRunner();
@@ -128,7 +128,7 @@ class Blazar
   }
 
 
-  private static void DCont_MsScanArrived(object sender, MStreamerEventArgs e)
+  private static void DCont_MsScanArrived(object? sender, MStreamerEventArgs e)
   {
     if (!e.IsNative) return; //skip any scans not in their original source format.
     RefreshScreen();
