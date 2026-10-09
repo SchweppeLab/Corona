@@ -3,17 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazar", "..\Blazar\Blazar.csproj", "{02B19A4A-51B9-4779-9964-78DCA4250F6D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazar", "src\Blazar\Blazar.csproj", "{02B19A4A-51B9-4779-9964-78DCA4250F6D}"
 	ProjectSection(ProjectDependencies) = postProject
 		{95C22D67-D3FB-4D30-B141-00113F3CB5E2} = {95C22D67-D3FB-4D30-B141-00113F3CB5E2}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Corona", "..\VirtualMS\Corona.csproj", "{7DE6C5CB-4DE7-4F6F-BF1A-73565D7BF978}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Corona", "src\Corona\Corona.csproj", "{7DE6C5CB-4DE7-4F6F-BF1A-73565D7BF978}"
 	ProjectSection(ProjectDependencies) = postProject
 		{95C22D67-D3FB-4D30-B141-00113F3CB5E2} = {95C22D67-D3FB-4D30-B141-00113F3CB5E2}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MStreamer", "MStreamer.csproj", "{95C22D67-D3FB-4D30-B141-00113F3CB5E2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MStreamer", "src\MStreamer\MStreamer.csproj", "{95C22D67-D3FB-4D30-B141-00113F3CB5E2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
