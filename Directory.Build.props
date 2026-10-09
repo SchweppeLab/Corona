@@ -1,0 +1,29 @@
+<Project>
+
+  <!-- Shared by every project in the repo. MSBuild imports this file for the native launcher
+       projects too, where only Version matters (their VERSIONINFO reads it). Individual
+       project files keep only what is specific to them. -->
+  <PropertyGroup>
+    <!-- The one version for MStreamer, Corona, and Blazar; they ship together. CI overrides it
+         with /p:Version=<this>-dev.<run> for Dev builds, so do not hardcode it anywhere else. -->
+    <Version>1.1.0</Version>
+    <Authors>Michael Hoopmann, Devin Schweppe</Authors>
+    <Company>University of Washington, Schweppe Lab</Company>
+    <Product>Corona</Product>
+    <Copyright>Copyright 2021-2026</Copyright>
+    <RepositoryUrl>https://github.com/SchweppeLab/Corona</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://schweppelab.github.io/Corona/</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Deterministic>true</Deterministic>
+    <!-- Only Release|x64 is exercised and shipped. Defaulting Platform here means a bare
+         `dotnet build`/`dotnet test` on one project lands in the same bin\x64\ tree the
+         solution build uses, so test runs that skip the build find their binaries. -->
+    <Platforms>AnyCPU;x64</Platforms>
+    <Platform Condition="'$(Platform)' == ''">x64</Platform>
+  </PropertyGroup>
+
+</Project>

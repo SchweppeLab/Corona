@@ -1,0 +1,26 @@
+<Project>
+
+  <!-- Central package management: every PackageReference in the repo takes its version from
+       here and nowhere else. -->
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Schweppe Lab Nova. Not on nuget.org (the "Nova" package there is unrelated software).
+         CI downloads the matching bundle from https://github.com/SchweppeLab/Nova/releases
+         by reading this version, so bumping it here is the whole upgrade on the CI side.
+         Local builds resolve it from the local feeds in the machine-level NuGet.Config. -->
+    <PackageVersion Include="Nova" Version="1.1.0-dev.8" />
+    <PackageVersion Include="Nova.IO" Version="1.1.0-dev.8" />
+
+    <!-- Corona -->
+    <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageVersion Include="ScottPlot.WPF" Version="5.1.59" />
+
+    <!-- Tests -->
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageVersion Include="MSTest" Version="3.6.1" />
+  </ItemGroup>
+
+</Project>

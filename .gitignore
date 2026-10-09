@@ -338,3 +338,7 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+# Corona release/packaging staging (see .github/workflows)
+publish/
+pack-out/
+nova-feed/

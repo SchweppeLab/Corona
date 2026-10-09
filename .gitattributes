@@ -61,3 +61,12 @@
 #*.PDF   diff=astextplain
 #*.rtf   diff=astextplain
 #*.RTF   diff=astextplain
+
+###############################################################################
+# Test fixtures: never normalize line endings. Nova's mzML/mzXML readers index
+# by byte offset, so a CRLF conversion silently breaks every scan.
+###############################################################################
+*.mzML   -text
+*.mzXML  -text
+*.raw    binary
+*.nupkg  binary
