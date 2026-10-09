@@ -1,15 +1,6 @@
-﻿using Nova.Data;
+using Nova.Data;
 using Nova.Io.Read;
-
-using System;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using ThermoFisher.CommonCore.Data.Business;
-
 
 /* MStreamer takes inspiration from the original MSim from the Gygi? lab.
  * Some class names appear similarly.
@@ -22,6 +13,9 @@ namespace MStreamer
   /// </summary>
   public struct RunInfo
   {
+    /// <summary>
+    /// Path of the data file being simulated.
+    /// </summary>
     public string Name;
   }
 
@@ -40,51 +34,61 @@ namespace MStreamer
     private double speedCheckSimRT = 0;
     private bool speedLagging = false;
 
-    public string DetectorClass => throw new NotImplementedException();
-
     /// <summary>
     /// Raised when simulated acquisition ends.
     /// </summary>
-    public event AcquisitionEvent AcquisitionEnd;
+    public event AcquisitionEvent? AcquisitionEnd;
 
     /// <summary>
     /// Raised when simulated acquisition starts.
     /// </summary>
-    public event AcquisitionEvent AcquisitionStart;
+    public event AcquisitionEvent? AcquisitionStart;
 
     /// <summary>
     /// Raised when simulated MS scan is acquired.
     /// </summary>
-    public event EventHandler<MStreamerEventArgs> MsScanArrived;
+    public event EventHandler<MStreamerEventArgs>? MsScanArrived;
 
     /// <summary>
     /// Raised when actual playback throughput crosses the "keeping up with the requested
     /// Speed" threshold in either direction - i.e. scan reading/processing has become (or
     /// has stopped being) the bottleneck rather than the pacing wait.
     /// </summary>
-    public event SpeedWarningEvent SpeedWarning;
+    public event SpeedWarningEvent? SpeedWarning;
 
     /// <summary>
     /// The last scan that was acquired.
     /// </summary>
-    private SpectrumEx LastMsScan { get; set; }
+    private SpectrumEx? LastMsScan { get; set; }
 
     /// <summary>
     /// Gains access to the last scan that was simulated.
     /// </summary>
-    /// <returns>Spectrum object</returns>
-    public SpectrumEx GetLastMsScan()
+    /// <returns>Spectrum object, or null before the first scan has been acquired</returns>
+    public SpectrumEx? GetLastMsScan()
     {
         return LastMsScan;
     }
 
+    /// <summary>
+    /// Current simulated retention time.
+    /// </summary>
+    /// <returns>Minutes since the start of the file being simulated</returns>
     public double GetRT()
     {
       return Convert.ToDouble(ms + fastForwardMS) /60000;
     }
 
-    public delegate void MsScanEvent(Spectrum spec);
+    /// <summary>
+    /// Handler for the acquisition start and end events.
+    /// </summary>
+    /// <param name="info">: the run that started or ended.</param>
     public delegate void AcquisitionEvent(RunInfo info);
+
+    /// <summary>
+    /// Handler for the SpeedWarning event.
+    /// </summary>
+    /// <param name="message">: describes the change in playback pace.</param>
     public delegate void SpeedWarningEvent(string message);
 
     /// <summary>
@@ -116,14 +120,14 @@ namespace MStreamer
     /// <summary>
     /// Get the total elapsed time (real time) of the current simulation.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>Real time spent running, excluding time paused</returns>
     public TimeSpan ElapsedRunTime()
     {
       return RunTimer.Elapsed;
     }
 
     /// <summary>
-    /// Raise the aqcuisition end event.
+    /// Raise the acquisition end event.
     /// </summary>
     /// <param name="info">: the run information that just finished.</param>
     private void OnAcquisitionEnd(RunInfo info)
@@ -160,6 +164,7 @@ namespace MStreamer
     /// Raise an event indicating a scan has been acquired.
     /// </summary>
     /// <param name="scan">: the Spectrum object acquired.</param>
+    /// <param name="cent">: the centroided form of the same scan, or null when the file has none.</param>
     protected virtual void SendMsScanArrived(SpectrumEx scan, SpectrumEx? cent)
     {
       if (cent == null)
@@ -218,7 +223,7 @@ namespace MStreamer
       {
         FileReader reader = new FileReader();
         SpectrumEx spectrum;
-        SpectrumEx specCent = null; //centroid spectrum is raw file only, replicates IAPI.
+        SpectrumEx? specCent = null; //centroid spectrum is raw file only, replicates IAPI.
 
         int scanCount = 0;
         ms = 0;
@@ -233,7 +238,7 @@ namespace MStreamer
         //Open the file and read the first spectrum
         FileFormat fileFormat = FileReader.CheckFileFormat(path);
         spectrum = reader.ReadSpectrumEx(path, FirstScan, false);
-        if (fileFormat == FileFormat.ThermoRaw) specCent = reader.ReadSpectrumEx(null, spectrum.ScanNumber, true);
+        if (fileFormat == FileFormat.ThermoRaw) specCent = reader.ReadSpectrumEx("", spectrum.ScanNumber, true);
 
         //if user requested a scan from the middle of the file, advance the stopwatch to that time;
         if (FirstScan > -1)
@@ -252,7 +257,7 @@ namespace MStreamer
           if (LastScan > -1 && spectrum.ScanNumber > LastScan) break;
 
           LastMsScan = spectrum;
-  
+
           //don't fire off the spectra until the instrument acquired it.
           while (ms+fastForwardMS < spectrum.RetentionTime*60000)
           {
@@ -315,10 +320,10 @@ namespace MStreamer
           }
 
           //on to the next scan
-          spectrum = reader.ReadSpectrumEx(null, -1, false);
-          if (fileFormat == FileFormat.ThermoRaw) specCent = reader.ReadSpectrumEx(null, spectrum.ScanNumber, true);
+          spectrum = reader.ReadSpectrumEx("", -1, false);
+          if (fileFormat == FileFormat.ThermoRaw) specCent = reader.ReadSpectrumEx("", spectrum.ScanNumber, true);
         }
-        if(RunTimer.IsRunning) RunTimer.Stop();              
+        if(RunTimer.IsRunning) RunTimer.Stop();
       });
       IsRunning = false;
 
