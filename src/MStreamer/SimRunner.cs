@@ -50,6 +50,11 @@ namespace MStreamer
     public event EventHandler<MStreamerEventArgs>? MsScanArrived;
 
     /// <summary>
+    /// Raised when a run fails to open or read its file. AcquisitionEnd still follows.
+    /// </summary>
+    public event RunErrorEvent? RunError;
+
+    /// <summary>
     /// Raised when actual playback throughput crosses the "keeping up with the requested
     /// Speed" threshold in either direction - i.e. scan reading/processing has become (or
     /// has stopped being) the bottleneck rather than the pacing wait.
@@ -84,6 +89,13 @@ namespace MStreamer
     /// </summary>
     /// <param name="info">: the run that started or ended.</param>
     public delegate void AcquisitionEvent(RunInfo info);
+
+    /// <summary>
+    /// Handler for the RunError event.
+    /// </summary>
+    /// <param name="info">: the run that failed.</param>
+    /// <param name="error">: the failure.</param>
+    public delegate void RunErrorEvent(RunInfo info, Exception error);
 
     /// <summary>
     /// Handler for the SpeedWarning event.
@@ -219,124 +231,136 @@ namespace MStreamer
       //Toss up the start event
       OnAcquisitionStart(runInfo);
 
+      Exception? failure = null;
       await Task.Run(() =>
       {
-        FileReader reader = new FileReader();
-        SpectrumEx spectrum;
-        SpectrumEx? specCent = null; //centroid spectrum is raw file only, replicates IAPI.
-
-        int scanCount = 0;
-        ms = 0;
-        lastMS = 0;
-        fastForwardMS = 0;
-
-        //Start a high performance timer.
-        Stopwatch sw = Stopwatch.StartNew();
-        RunTimer.Reset();
-        RunTimer.Start();
-
-        //Open the file and read the first spectrum
-        FileFormat fileFormat = FileReader.CheckFileFormat(path);
-        spectrum = reader.ReadSpectrumEx(path, FirstScan, false);
-        if (fileFormat == FileFormat.ThermoRaw) specCent = reader.ReadSpectrumEx("", spectrum.ScanNumber, true);
-
-        //if user requested a scan from the middle of the file, advance the stopwatch to that time;
-        if (FirstScan > -1)
+        try
         {
-          fastForwardMS = (long)(spectrum.RetentionTime * 60000);
+          Replay(path, maxNumScans, FirstScan, LastScan);
         }
-
-        speedCheckRealMS = 0;
-        speedCheckSimRT = spectrum.RetentionTime;
-        speedLagging = false;
-
-        while (spectrum.ScanNumber > 0)
+        catch (Exception ex)
         {
-
-          //if we read past the desired last scan, stop now. This is a failsafe if spectrum file skips scan numbers.
-          if (LastScan > -1 && spectrum.ScanNumber > LastScan) break;
-
-          LastMsScan = spectrum;
-
-          //don't fire off the spectra until the instrument acquired it.
-          while (ms+fastForwardMS < spectrum.RetentionTime*60000)
-          {
-            //A Stop() during a long gap must not wait for the gap to elapse.
-            if (CancelFlag) break;
-
-            long tmpMS = sw.ElapsedMilliseconds;
-            ms += (tmpMS-lastMS) * Speed;
-            lastMS = tmpMS;
-
-            //Sleep through most of a long gap so the wait doesn't peg a CPU core;
-            //only tight-spin for the final few milliseconds to keep firing precise.
-            double realMsRemaining = (spectrum.RetentionTime*60000 - (ms+fastForwardMS)) / Speed;
-            if (realMsRemaining > 5) Thread.Sleep(1);
-          }
-          if (CancelFlag)
-          {
-            if (RunTimer.IsRunning) RunTimer.Stop();
-            return;
-          }
-          SendMsScanArrived(spectrum,specCent);
-
-          //Periodically compare actual scan-delivery throughput against the requested Speed.
-          //Reading/processing a scan takes real wall-clock time regardless of Speed, so a
-          //dense file or slow storage can silently cap achievable playback below what was
-          //requested; only report on a change of state so this doesn't spam the log.
-          long nowRealMS = sw.ElapsedMilliseconds;
-          long elapsedSinceCheck = nowRealMS - speedCheckRealMS;
-          if (elapsedSinceCheck >= 2000)
-          {
-            double achievedSpeed = (spectrum.RetentionTime - speedCheckSimRT) * 60000 / elapsedSinceCheck;
-            bool isLaggingNow = achievedSpeed < Speed * 0.9;
-            if (isLaggingNow && !speedLagging)
-            {
-              SpeedWarning?.Invoke($"Falling behind requested {Speed}x speed - achieving roughly {achievedSpeed:0.#}x. Scan reading/processing is likely the bottleneck.");
-            }
-            else if (!isLaggingNow && speedLagging)
-            {
-              SpeedWarning?.Invoke($"Back on pace with requested {Speed}x speed.");
-            }
-            speedLagging = isLaggingNow;
-            speedCheckRealMS = nowRealMS;
-            speedCheckSimRT = spectrum.RetentionTime;
-          }
-
-          //Check if we reached the requested limits of simulation.
-          scanCount++;
-          if (maxNumScans>0 && scanCount >= maxNumScans) break;
-          if (spectrum.ScanNumber == LastScan) break;
-
-          //Manage requests to pause, stop, or restart
-          if (PauseFlag)
-          {
-            sw.Stop();
-            RunTimer.Stop();
-            while (PauseFlag)
-            {
-              if (CancelFlag) break;
-              Thread.Sleep(10);
-            }
-            sw.Start();
-            RunTimer.Start();
-          }
-          if (CancelFlag)
-          {
-            if (RunTimer.IsRunning) RunTimer.Stop();
-            return;
-          }
-
-          //on to the next scan
-          spectrum = reader.ReadSpectrumEx("", -1, false);
-          if (fileFormat == FileFormat.ThermoRaw) specCent = reader.ReadSpectrumEx("", spectrum.ScanNumber, true);
+          //Nova throws when it cannot open or index the file. Report it through RunError
+          //rather than letting it escape this async void method onto the caller's thread.
+          failure = ex;
         }
-        if(RunTimer.IsRunning) RunTimer.Stop();
+        if (RunTimer.IsRunning) RunTimer.Stop();
       });
       IsRunning = false;
 
+      if (failure != null) RunError?.Invoke(runInfo, failure);
+
       //throw up that we're done with the file.
       OnAcquisitionEnd(runInfo);
+    }
+
+    /// <summary>
+    /// The replay loop Run executes on a background thread.
+    /// </summary>
+    private void Replay(string path, int maxNumScans, int FirstScan, int LastScan)
+    {
+      FileReader reader = new FileReader();
+      SpectrumEx spectrum;
+      SpectrumEx? specCent = null; //centroid spectrum is raw file only, replicates IAPI.
+
+      int scanCount = 0;
+      ms = 0;
+      lastMS = 0;
+      fastForwardMS = 0;
+
+      //Start a high performance timer.
+      Stopwatch sw = Stopwatch.StartNew();
+      RunTimer.Reset();
+      RunTimer.Start();
+
+      //Open the file and read the first spectrum
+      FileFormat fileFormat = FileReader.CheckFileFormat(path);
+      spectrum = reader.ReadSpectrumEx(path, FirstScan, false);
+      if (fileFormat == FileFormat.ThermoRaw) specCent = reader.ReadSpectrumEx("", spectrum.ScanNumber, true);
+
+      //if user requested a scan from the middle of the file, advance the stopwatch to that time;
+      if (FirstScan > -1)
+      {
+        fastForwardMS = (long)(spectrum.RetentionTime * 60000);
+      }
+
+      speedCheckRealMS = 0;
+      speedCheckSimRT = spectrum.RetentionTime;
+      speedLagging = false;
+
+      while (spectrum.ScanNumber > 0)
+      {
+
+        //if we read past the desired last scan, stop now. This is a failsafe if spectrum file skips scan numbers.
+        if (LastScan > -1 && spectrum.ScanNumber > LastScan) break;
+
+        LastMsScan = spectrum;
+
+        //don't fire off the spectra until the instrument acquired it.
+        while (ms+fastForwardMS < spectrum.RetentionTime*60000)
+        {
+          //A Stop() during a long gap must not wait for the gap to elapse.
+          if (CancelFlag) break;
+
+          long tmpMS = sw.ElapsedMilliseconds;
+          ms += (tmpMS-lastMS) * Speed;
+          lastMS = tmpMS;
+
+          //Sleep through most of a long gap so the wait doesn't peg a CPU core;
+          //only tight-spin for the final few milliseconds to keep firing precise.
+          double realMsRemaining = (spectrum.RetentionTime*60000 - (ms+fastForwardMS)) / Speed;
+          if (realMsRemaining > 5) Thread.Sleep(1);
+        }
+        if (CancelFlag) return;
+        SendMsScanArrived(spectrum,specCent);
+
+        //Periodically compare actual scan-delivery throughput against the requested Speed.
+        //Reading/processing a scan takes real wall-clock time regardless of Speed, so a
+        //dense file or slow storage can silently cap achievable playback below what was
+        //requested; only report on a change of state so this doesn't spam the log.
+        long nowRealMS = sw.ElapsedMilliseconds;
+        long elapsedSinceCheck = nowRealMS - speedCheckRealMS;
+        if (elapsedSinceCheck >= 2000)
+        {
+          double achievedSpeed = (spectrum.RetentionTime - speedCheckSimRT) * 60000 / elapsedSinceCheck;
+          bool isLaggingNow = achievedSpeed < Speed * 0.9;
+          if (isLaggingNow && !speedLagging)
+          {
+            SpeedWarning?.Invoke($"Falling behind requested {Speed}x speed - achieving roughly {achievedSpeed:0.#}x. Scan reading/processing is likely the bottleneck.");
+          }
+          else if (!isLaggingNow && speedLagging)
+          {
+            SpeedWarning?.Invoke($"Back on pace with requested {Speed}x speed.");
+          }
+          speedLagging = isLaggingNow;
+          speedCheckRealMS = nowRealMS;
+          speedCheckSimRT = spectrum.RetentionTime;
+        }
+
+        //Check if we reached the requested limits of simulation.
+        scanCount++;
+        if (maxNumScans>0 && scanCount >= maxNumScans) break;
+        if (spectrum.ScanNumber == LastScan) break;
+
+        //Manage requests to pause, stop, or restart
+        if (PauseFlag)
+        {
+          sw.Stop();
+          RunTimer.Stop();
+          while (PauseFlag)
+          {
+            if (CancelFlag) break;
+            Thread.Sleep(10);
+          }
+          sw.Start();
+          RunTimer.Start();
+        }
+        if (CancelFlag) return;
+
+        //on to the next scan
+        spectrum = reader.ReadSpectrumEx("", -1, false);
+        if (fileFormat == FileFormat.ThermoRaw) specCent = reader.ReadSpectrumEx("", spectrum.ScanNumber, true);
+      }
     }
   }
 

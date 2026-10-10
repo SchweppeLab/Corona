@@ -139,5 +139,48 @@ namespace MStreamer.Tests
       Assert.IsTrue(rec.Ended.Wait(EndTimeout), "AcquisitionEnd never fired after Resume");
       CollectionAssert.AreEqual(new[] { 1, 2, 3, 4 }, rec.ScanNumbers);
     }
+
+    [TestMethod]
+    public void Run_UnreadableFile_RaisesRunErrorThenEnds()
+    {
+      // Nova 1.1.0 throws SpectrumFileOpenException for a file it cannot open or index,
+      // where earlier builds silently produced empty scans. Run must report it and still end.
+      string junk = Path.Combine(Path.GetTempPath(), "CoronaJunk_" + Guid.NewGuid().ToString("N") + ".mzML");
+      File.WriteAllText(junk, "this is not an mzML file");
+      try
+      {
+        var runner = new SimRunner();
+        var rec = new Recorder(runner);
+        Exception? reported = null;
+        runner.RunError += (_, error) => reported = error;
+
+        runner.Run(junk);
+
+        Assert.IsTrue(rec.Ended.Wait(EndTimeout), "AcquisitionEnd never fired");
+        Assert.IsInstanceOfType(reported, typeof(Nova.Io.Read.SpectrumFileOpenException), reported?.ToString());
+        Assert.AreEqual(0, rec.ScanNumbers.Count);
+        Assert.AreEqual(1, rec.Starts.Count);
+        Assert.IsFalse(runner.IsRunning);
+      }
+      finally
+      {
+        File.Delete(junk);
+      }
+    }
+
+    [TestMethod]
+    public void Run_UnknownExtension_RaisesRunErrorThenEnds()
+    {
+      var runner = new SimRunner();
+      var rec = new Recorder(runner);
+      Exception? reported = null;
+      runner.RunError += (_, error) => reported = error;
+
+      runner.Run(Path.ChangeExtension(FixturePath, ".txt"));
+
+      Assert.IsTrue(rec.Ended.Wait(EndTimeout), "AcquisitionEnd never fired");
+      Assert.IsInstanceOfType(reported, typeof(FormatException), reported?.ToString());
+      Assert.IsFalse(runner.IsRunning);
+    }
   }
 }

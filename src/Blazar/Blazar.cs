@@ -98,6 +98,7 @@ class Blazar
     runner.MsScanArrived += DCont_MsScanArrived;
     runner.AcquisitionStart += AcquisitionStart;
     runner.AcquisitionEnd += AcquisitionEnd;
+    runner.RunError += (info, error) => Console.WriteLine("Run failed for " + info.Name + ": " + error.Message);
 
     paused = false;
     activeFile = rawPath.First();

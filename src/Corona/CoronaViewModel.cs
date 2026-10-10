@@ -181,6 +181,7 @@ namespace Corona
       simMS.AcquisitionStart += OnAcquisitionStart;
       simMS.MsScanArrived += OnMsScanArrived;
       simMS.SpeedWarning += OnSpeedWarning;
+      simMS.RunError += OnRunError;
       server.ClientConnected += OnClientConnected;
       server.ClientDisconnected += OnClientDisconnected;
       server.CustomScanRequest += OnCustomScanRequest;
@@ -277,7 +278,17 @@ namespace Corona
       bool changeView = false;
       foreach (string s in dlg.FileNames)
       {
-        FileReader fileReader = new(s);
+        FileReader fileReader;
+        try
+        {
+          fileReader = new(s);
+        }
+        catch (Exception ex)
+        {
+          // Nova throws for a file it cannot open or index. Skip it and say why.
+          AppendLog($"Could not open {System.IO.Path.GetFileName(s)}: {ex.Message}");
+          continue;
+        }
         FileStats stats = new()
         {
           ScanCount = fileReader.ScanCount,
@@ -514,7 +525,21 @@ namespace Corona
     }
 
     // Binary search for the scan number closest to the retention time, either before or after.
-    private static int FindScan(string fn, double rt, bool after)
+    // Returns 0 when the file cannot be read; the caller treats 0 as "no such scan".
+    private int FindScan(string fn, double rt, bool after)
+    {
+      try
+      {
+        return FindScanInFile(fn, rt, after);
+      }
+      catch (Exception ex)
+      {
+        AppendLog($"Could not read {System.IO.Path.GetFileName(fn)}: {ex.Message}");
+        return 0;
+      }
+    }
+
+    private static int FindScanInFile(string fn, double rt, bool after)
     {
       FileReader fr = new(fn);
       int first = fr.FirstScan;
@@ -615,6 +640,14 @@ namespace Corona
     }
 
     private void OnSpeedWarning(string message) => UiPost(() => AppendLog(message));
+
+    private void OnRunError(RunInfo info, Exception error) =>
+      UiPost(() => AppendLog($"Run failed for {System.IO.Path.GetFileName(info.Name)}: {error.Message}"));
+
+    // For App's DispatcherUnhandledException handler: keep the simulator and its pipe server
+    // up and put the failure where the user looks, instead of letting the process die.
+    public void ReportUnhandledException(Exception error) =>
+      AppendLog($"Unhandled error: {error.GetType().Name}: {error.Message}");
 
     private void OnClientConnected(PipesConnection pc) => UiPost(() => AppendLog("Client connected: " + pc.ID));
 
