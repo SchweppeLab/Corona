@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace VirtualMS
+namespace Corona
 {
   public class CustomScan : EventArgs
   {

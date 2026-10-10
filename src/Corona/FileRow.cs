@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace VirtualMS
+namespace Corona
 {
   // Wraps a FileStats with the per-row "Run Span" editing state the Run Parameters grid needs
   // (Spectrum = scan numbers, Retention Time = minutes) - state that belongs to the grid row,

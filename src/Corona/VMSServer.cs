@@ -1,9 +1,8 @@
 ﻿using MStreamer;
 using Nova.IPC.Pipes;
 using Nova.Data;
-using ThermoFisher.CommonCore.Data.Business;
 
-namespace VirtualMS
+namespace Corona
 {
 
   public class VMSServer

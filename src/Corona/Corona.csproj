@@ -1,14 +1,18 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
-    <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Platforms>AnyCPU;x64</Platforms>
+    <RootNamespace>Corona</RootNamespace>
+    <Platforms>x64</Platforms>
+    <PlatformTarget>x64</PlatformTarget>
     <ApplicationIcon>gfx\Corona.ico</ApplicationIcon>
-    <Version>1.0.2</Version>
+    <!-- ScottPlot.WPF depends on SkiaSharp.Views.WPF, which ships only net462 and
+         net8.0-windows10.0.19041 builds. For this net8.0-windows target NuGet falls back to
+         the net462 build and warns NU1701. That build runs fine on .NET 8 (it references only
+         WPF), so the warning is suppressed rather than raising the OS target to silence it. -->
+    <NoWarn>$(NoWarn);NU1701</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

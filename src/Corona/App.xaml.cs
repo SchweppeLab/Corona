@@ -1,6 +1,6 @@
 using System.Windows;
 
-namespace VirtualMS
+namespace Corona
 {
   public partial class App : Application
   {

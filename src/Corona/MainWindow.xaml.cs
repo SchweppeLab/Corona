@@ -6,7 +6,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using ScottPlot.Plottables;
 
-namespace VirtualMS
+namespace Corona
 {
   public partial class MainWindow : Window
   {
@@ -20,6 +20,7 @@ namespace VirtualMS
     public MainWindow()
     {
       InitializeComponent();
+      Title = $"Corona v{AppVersion.Display}";
 
       ViewModel = new CoronaViewModel();
       DataContext = ViewModel;

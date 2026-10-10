@@ -10,9 +10,8 @@ using MStreamer;
 using Nova.Data;
 using Nova.IPC.Pipes;
 using Nova.Io.Read;
-using ThermoFisher.CommonCore.Data;
 
-namespace VirtualMS
+namespace Corona
 {
   public struct VMsStats
   {
@@ -197,7 +196,7 @@ namespace VirtualMS
       };
       meterTimer.Start();
 
-      AppendLog(Path.GetFileNameWithoutExtension(System.Reflection.Assembly.GetEntryAssembly()!.Location));
+      AppendLog($"Corona v{AppVersion.Display}");
       AppendLog("Server running: " + server.IsRunning());
 
       lastTicks = DateTime.Now.Ticks;
