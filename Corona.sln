@@ -13,6 +13,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazar", "src\Blazar\Blazar
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Blazar.Launcher", "src\Blazar.Launcher\Blazar.Launcher.vcxproj", "{B9D1F3A5-7C2E-4E6B-8F4A-3D5C7E9A1B62}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MStreamer.Tests", "tests\MStreamer.Tests\MStreamer.Tests.csproj", "{C7A1E2D4-5B6F-4A3C-9E8D-1F2A3B4C5D6E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Corona.Tests", "tests\Corona.Tests\Corona.Tests.csproj", "{D8B2F3E5-6C7A-4B4D-8F9E-2A3B4C5D6E7F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -39,6 +43,14 @@ Global
 		{B9D1F3A5-7C2E-4E6B-8F4A-3D5C7E9A1B62}.Debug|x64.Build.0 = Debug|x64
 		{B9D1F3A5-7C2E-4E6B-8F4A-3D5C7E9A1B62}.Release|x64.ActiveCfg = Release|x64
 		{B9D1F3A5-7C2E-4E6B-8F4A-3D5C7E9A1B62}.Release|x64.Build.0 = Release|x64
+		{C7A1E2D4-5B6F-4A3C-9E8D-1F2A3B4C5D6E}.Debug|x64.ActiveCfg = Debug|x64
+		{C7A1E2D4-5B6F-4A3C-9E8D-1F2A3B4C5D6E}.Debug|x64.Build.0 = Debug|x64
+		{C7A1E2D4-5B6F-4A3C-9E8D-1F2A3B4C5D6E}.Release|x64.ActiveCfg = Release|x64
+		{C7A1E2D4-5B6F-4A3C-9E8D-1F2A3B4C5D6E}.Release|x64.Build.0 = Release|x64
+		{D8B2F3E5-6C7A-4B4D-8F9E-2A3B4C5D6E7F}.Debug|x64.ActiveCfg = Debug|x64
+		{D8B2F3E5-6C7A-4B4D-8F9E-2A3B4C5D6E7F}.Debug|x64.Build.0 = Debug|x64
+		{D8B2F3E5-6C7A-4B4D-8F9E-2A3B4C5D6E7F}.Release|x64.ActiveCfg = Release|x64
+		{D8B2F3E5-6C7A-4B4D-8F9E-2A3B4C5D6E7F}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -261,6 +261,9 @@ namespace MStreamer
           //don't fire off the spectra until the instrument acquired it.
           while (ms+fastForwardMS < spectrum.RetentionTime*60000)
           {
+            //A Stop() during a long gap must not wait for the gap to elapse.
+            if (CancelFlag) break;
+
             long tmpMS = sw.ElapsedMilliseconds;
             ms += (tmpMS-lastMS) * Speed;
             lastMS = tmpMS;
@@ -269,6 +272,11 @@ namespace MStreamer
             //only tight-spin for the final few milliseconds to keep firing precise.
             double realMsRemaining = (spectrum.RetentionTime*60000 - (ms+fastForwardMS)) / Speed;
             if (realMsRemaining > 5) Thread.Sleep(1);
+          }
+          if (CancelFlag)
+          {
+            if (RunTimer.IsRunning) RunTimer.Stop();
+            return;
           }
           SendMsScanArrived(spectrum,specCent);
 
