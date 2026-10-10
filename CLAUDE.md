@@ -1,0 +1,116 @@
+# CLAUDE.md
+
+Context for Claude Code (or any future contributor) working in the Corona repository.
+
+## What Corona is
+
+A virtual mass spectrometer. `MStreamer` replays an MS data file (Thermo RAW, mzML, mzXML)
+scan by scan at the original retention times; `Corona` wraps it in a WPF app and serves the
+scans over Nova named pipes to Helios-based clients (Booster, for one) exactly as an
+instrument would, including custom-scan requests coming back; `Blazar` is a console demo of
+MStreamer. Published docs: https://schweppelab.github.io/Corona/ (built from the separate
+`gh-pages` branch, unrelated to `docs/` here).
+
+## Repo layout
+
+```
+Corona.sln                 x64 only; needs Visual Studio's MSBuild (see Build)
+Directory.Build.props      the one Version (1.1.0) and shared metadata; vcxproj files import it too
+Directory.Packages.props   every package version (central package management)
+nuget.config / nuget/      vendored packages for private-repo dependencies (LandmineUI); no <clear/>
+src/MStreamer/             net8.0 library, AnyCPU, packable as MStreamer. SimRunner is the whole API.
+src/Corona/                net8.0-windows WPF app, x64, win-x64, builds into bin\x64\<Config>\app\
+src/Corona.Launcher/       native Win32 stub -> the release root's Corona.exe
+src/Blazar/                net8.0 console app, same layout and launcher pattern
+src/Blazar.Launcher/       native console stub -> the release root's Blazar.exe
+src/Launcher/              launcher.cpp, shared by both launchers via each one's launcher_config.h
+docs/ROADMAP.md            the current plan of record and its status
+```
+
+## Build
+
+```
+& "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe" `
+  Corona.sln /restore /p:Configuration=Release /p:Platform=x64
+```
+
+- Only `Release|x64` is exercised. `Directory.Build.props` defaults `Platform` to x64, so a
+  bare `dotnet build` on one project lands in the same `bin\x64\` tree.
+- The full solution needs `MSBuild.exe` because the launchers are vcxproj files; the dotnet
+  CLI cannot build those. The launcher `ProjectReference`s are conditioned on
+  `$(MSBuildRuntimeType) != 'Core'` so `dotnet build`/`dotnet test` of a single project still
+  works, just without producing the root exe.
+- The build is warning-free. The one suppressed warning (NU1701, SkiaSharp.Views.WPF) has its
+  reason in `Corona.csproj`; do not add another suppression without one.
+- `MStreamer` generates XML docs, so every public member needs a `///` summary (CS1591).
+
+## Release layout: do not flatten it
+
+The build output **is** the release folder: `src\Corona\bin\x64\Release\` holds exactly
+`Corona.exe` plus `app\` (`Corona.App.exe`, every DLL, only win-x64 natives). Same for Blazar.
+Zip as-is. The launcher exists precisely so nothing about assembly loading had to change; do
+not move DLLs out of `app\` or add a custom assembly resolver. The .NET 8 Desktop Runtime is a
+prerequisite by design (no self-contained publish, no installer). This follows Scops
+(`D:\Software\Claude\Scops`, branch Dev), where the alternatives were weighed and rejected.
+
+- Corona's launcher starts the app and exits; Blazar's shares the console, waits, and returns
+  the app's exit code, and keeps the caller's working directory.
+- `Corona.App` and `Corona.exe` set the same AppUserModelID (`SchweppeLab.Corona`, in
+  `src\Corona\AppUserModelId.cs` and `src\Corona.Launcher\launcher_config.h`); keep them in step.
+- The launcher VERSIONINFO is generated at build time from `$(Version)`, so there is no
+  second copy of the version anywhere. Bump `Directory.Build.props` only.
+
+## Packages
+
+- Nova and Nova.IO are not on nuget.org; the `Nova` package there is **unrelated software by
+  someone else**. Never compare against it or suggest it as a source.
+- CI downloads the bundle matching `Directory.Packages.props` from
+  https://github.com/SchweppeLab/Nova/releases (it includes the pinned Thermo RawFileReader
+  packages). Locally the machine-level NuGet.Config feeds serve them.
+- **A local pass can mask a CI failure.** This machine's global package cache and local feeds
+  can satisfy a restore that CI cannot (it did for Thermo 8.0.37, which the local feed does not
+  even hold). Before trusting a packaging change, restore into a fresh packages folder with
+  only nuget.org and the Nova bundle as sources.
+- Never add a `using ThermoFisher.*` to this repo. Three such usings compiled only through
+  Nova.IO's transitive packages and were removed in the 2026-10 restructure; the same pattern
+  broke Nova's CI for two months when the transitive tree changed.
+
+## Versioning and branches
+
+- One version for everything, in `Directory.Build.props`. CI passes `/p:Version=<it>-dev.<run>`
+  for Dev builds. Release tags are `v<version>`; release assets keep the historical
+  `Corona_v1_1_0.zip` naming because the gh-pages download page links to that pattern.
+- `Dev` is the permanent development branch; `main` only receives merges at stable points and
+  `Dev` lives on afterwards.
+
+## Working conventions
+
+- 2-space indentation in every language (C#, XAML, C++, XML, YAML). `.editorconfig` enforces it.
+- Nullable and implicit usings are on everywhere. Fix nullable warnings at the source; do not
+  suppress them.
+- Comments say what the code does not already say, in American English, with no history in
+  them (history goes in commit messages and `docs/`).
+- Doc comments on public members use the existing house style: one terse summary sentence,
+  `<param name="x">: description.</param>`.
+
+## Git and verification
+
+- Never `git push`. The owner pushes. Committing locally on `Dev` is fine; one commit per
+  concern.
+- The owner does all visual and interactive testing of Corona. After a build, launching
+  `Corona.exe` for about three seconds to confirm it starts (and closing it) is the only
+  automated UI check allowed. No screenshots.
+- Always stop any `Corona.App` you started: it opens the named pipe server that Booster
+  connects to, and a lingering instance breaks the owner's instrument testing.
+
+## Gotchas
+
+- Helios/Booster and Corona must run the same Nova version. Nova 1.1.0 changed the spectrum
+  wire format (ScanDescription is serialized) relative to 1.1.0-dev.8; mixed versions
+  misparse every spectrum over the pipe.
+- Nova.IO 1.1.0 throws `SpectrumFileOpenException` where dev.8 silently returned empty
+  spectra. Until the item 5 guards land (see `docs/ROADMAP.md`), a bad file crashes the app
+  under 1.1.0.
+- `SimRunner.Run` is `async void`; exceptions inside it surface on the synchronization
+  context, not to the caller. Tests must wait on `AcquisitionEnd`.
+- Nova's `FileReader.ReadSpectrum*` take `""` as "the file already open"; never pass null.
