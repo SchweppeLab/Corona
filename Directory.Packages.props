@@ -11,8 +11,8 @@
          CI downloads the matching bundle from https://github.com/SchweppeLab/Nova/releases
          by reading this version, so bumping it here is the whole upgrade on the CI side.
          Local builds resolve it from the local feeds in the machine-level NuGet.Config. -->
-    <PackageVersion Include="Nova" Version="1.1.0-dev.8" />
-    <PackageVersion Include="Nova.IO" Version="1.1.0-dev.8" />
+    <PackageVersion Include="Nova" Version="1.1.0" />
+    <PackageVersion Include="Nova.IO" Version="1.1.0" />
 
     <!-- Corona -->
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
