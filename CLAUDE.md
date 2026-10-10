@@ -24,6 +24,9 @@ src/Corona.Launcher/       native Win32 stub -> the release root's Corona.exe
 src/Blazar/                net8.0 console app, same layout and launcher pattern
 src/Blazar.Launcher/       native console stub -> the release root's Blazar.exe
 src/Launcher/              launcher.cpp, shared by both launchers via each one's launcher_config.h
+tests/MStreamer.Tests/     MSTest; replays Files/NovaTestFixture.mzML (4 scans, RT 0.5-1.0 min)
+tests/Corona.Tests/        MSTest; CustomScan parsing and VMSServer over a real named pipe
+.github/workflows/         ci.yml, dev-build.yml, release.yml; scripts/Get-NovaFeed.ps1
 docs/ROADMAP.md            the current plan of record and its status
 ```
 
@@ -43,6 +46,41 @@ docs/ROADMAP.md            the current plan of record and its status
 - The build is warning-free. The one suppressed warning (NU1701, SkiaSharp.Views.WPF) has its
   reason in `Corona.csproj`; do not add another suppression without one.
 - `MStreamer` generates XML docs, so every public member needs a `///` summary (CS1591).
+
+## Tests
+
+```
+dotnet test tests\MStreamer.Tests\MStreamer.Tests.csproj -c Release --no-build
+dotnet test tests\Corona.Tests\Corona.Tests.csproj -c Release --no-build
+```
+
+12 tests as of 2026-10-09, all passing. `--no-build` works right after a solution build because
+`Platform` defaults to x64; without it the dotnet CLI rebuilds the test projects itself.
+`SimRunner.Run` is `async void`, so SimRunner tests wait on `AcquisitionEnd` with a timeout;
+the fixture replays in about 0.6 s at 100x. The pipe test uses a GUID-derived pipe name so it
+never collides with a running Corona.
+
+## CI/CD
+
+Three workflows, the same shape as Nova's (`D:\Software\Claude\Nova\.github\workflows`):
+
+- `ci.yml`: build + test on PRs to `main`/`Dev` and pushes to `main`. No packaging.
+- `dev-build.yml`: push to `Dev` or manual. Builds with `/p:Version=<Version>-dev.<run>`,
+  tests, zips `src\Corona\bin\x64\Release` and `src\Blazar\bin\x64\Release` minus `.pdb`
+  files as `Corona_v<v>.zip`/`Blazar_v<v>.zip`, packs `MStreamer.<v>.nupkg`, publishes a dated
+  pre-release (`dev-<run>-<sha>`) and the rolling `dev-latest` (tag force-moved, assets replaced).
+- `release.yml`: manual, refuses anything but `main`, real version, refuses to clobber a
+  promoted release, publishes `v<version>` as a pre-release for manual promotion.
+- All three run `.github/scripts/Get-NovaFeed.ps1` first: it reads the Nova version from
+  `Directory.Packages.props` and downloads that release bundle from SchweppeLab/Nova (official
+  `v<x.y.z>` or the dev release carrying `Nova.<version>.zip`), registering the bundle and its
+  `ThermoRawFileReader/` folder as NuGet sources. If `nuget/Nova.<version>.nupkg` exists, it
+  uses that instead.
+- The full solution builds with `msbuild` (microsoft/setup-msbuild) because of the launchers;
+  tests run with `dotnet test --no-build` afterwards.
+- To reproduce CI locally, extract a Nova bundle and pass
+  `/p:RestoreSources="https://api.nuget.org/v3/index.json;<bundle>;<bundle>\ThermoRawFileReader;<repo>\nuget"`
+  and `/p:RestorePackagesPath=<empty folder>` to the msbuild restore.
 
 ## Release layout: do not flatten it
 

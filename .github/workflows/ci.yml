@@ -1,0 +1,45 @@
+name: CI
+
+# Build + test only; no packaging, no releases. Runs on every PR targeting main or Dev, and
+# on direct pushes to main, so problems surface before a merge or a real release. Dev's own
+# push-triggered checks happen in dev-build.yml (it builds and tests before packaging), so
+# this workflow deliberately does not also trigger on push to Dev.
+
+on:
+  pull_request:
+    branches: [main, Dev]
+  push:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: windows-2022
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      # The launchers are vcxproj files; only Visual Studio's MSBuild can build them. The
+      # windows-2022 image carries the v143 C++ toolset and a Windows 10 SDK.
+      - uses: microsoft/setup-msbuild@v2
+
+      - name: Resolve Nova packages
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: ./.github/scripts/Get-NovaFeed.ps1
+
+      - name: Build
+        run: msbuild Corona.sln /restore /p:Configuration=Release /p:Platform=x64 /v:minimal
+
+      # --no-build: the solution build above already produced the test assemblies in the
+      # same bin\x64\ tree (Directory.Build.props defaults Platform to x64).
+      # --logger "console;verbosity=detailed" lists every test by name in the log.
+      - name: Test MStreamer
+        run: dotnet test tests\MStreamer.Tests\MStreamer.Tests.csproj --no-build --configuration Release --verbosity minimal --logger "console;verbosity=detailed"
+
+      - name: Test Corona
+        run: dotnet test tests\Corona.Tests\Corona.Tests.csproj --no-build --configuration Release --verbosity minimal --logger "console;verbosity=detailed"

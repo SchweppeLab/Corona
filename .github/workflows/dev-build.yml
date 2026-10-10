@@ -1,0 +1,148 @@
+name: Dev build
+
+# Builds release-shaped artifacts from the Dev branch on every push and publishes them as
+# GitHub Release assets, same approach as Nova's dev-nuget.yml. Two releases per run:
+#   - a dated pre-release (tag dev-<run number>-<short sha>), kept forever, so a specific
+#     past dev build can be pinned to or re-downloaded later;
+#   - the rolling dev-latest pre-release, whose tag and assets are replaced every run, so
+#     testers have one permanent URL that always holds the newest build.
+#
+# Assets: Corona_v<version>.zip and Blazar_v<version>.zip (each exactly <Product>.exe plus
+# app\, the build output as a user gets it, minus .pdb files) and MStreamer.<version>.nupkg.
+# The version is Directory.Build.props's <Version> plus -dev.<run number>; it is passed to
+# MSBuild so the exes, the launchers' VERSIONINFO, and the package all carry it.
+
+on:
+  push:
+    branches: [Dev]
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  build-test-release:
+    runs-on: windows-2022
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - uses: microsoft/setup-msbuild@v2
+
+      - name: Resolve Nova packages
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: ./.github/scripts/Get-NovaFeed.ps1
+
+      # Base version comes from Directory.Build.props, so a new dev cycle needs no workflow
+      # edit, just the same one-line bump release.yml reads.
+      - name: Compute dev version
+        id: version
+        shell: pwsh
+        run: |
+          $props = Get-Content Directory.Build.props -Raw
+          if ($props -notmatch '<Version>([^<]+)</Version>') {
+            throw "Could not find <Version> in Directory.Build.props"
+          }
+          $base = $matches[1]
+          $shortSha = (git rev-parse --short HEAD)
+          $version = "$base-dev.${{ github.run_number }}"
+          "version=$version" >> $env:GITHUB_OUTPUT
+          "tag=dev-${{ github.run_number }}-$shortSha" >> $env:GITHUB_OUTPUT
+          "short_sha=$shortSha" >> $env:GITHUB_OUTPUT
+          "asset_suffix=v$($version -replace '\.', '_')" >> $env:GITHUB_OUTPUT
+
+      - name: Build
+        run: msbuild Corona.sln /restore /p:Configuration=Release /p:Platform=x64 /p:Version=${{ steps.version.outputs.version }} /v:minimal
+
+      - name: Test MStreamer
+        run: dotnet test tests\MStreamer.Tests\MStreamer.Tests.csproj --no-build --configuration Release --verbosity minimal --logger "console;verbosity=detailed"
+
+      - name: Test Corona
+        run: dotnet test tests\Corona.Tests\Corona.Tests.csproj --no-build --configuration Release --verbosity minimal --logger "console;verbosity=detailed"
+
+      - name: Pack MStreamer
+        run: dotnet pack src\MStreamer\MStreamer.csproj --configuration Release --no-build --output pack-out -p:PackageVersion=${{ steps.version.outputs.version }}
+
+      # The build output is the release folder (CLAUDE.md, "Release layout"); only .pdb files
+      # are left out. Each zip's root holds <Product>.exe and app\.
+      - name: Zip the release folders
+        shell: pwsh
+        run: |
+          function New-ReleaseZip($buildDir, $zipPath) {
+            $stage = Join-Path publish ([IO.Path]::GetFileNameWithoutExtension($zipPath))
+            New-Item -ItemType Directory -Force $stage | Out-Null
+            Copy-Item "$buildDir\*" $stage -Recurse
+            Get-ChildItem $stage -Recurse -Filter *.pdb | Remove-Item
+            Compress-Archive -Path "$stage\*" -DestinationPath $zipPath -Force
+            Write-Host "$zipPath <- $buildDir"
+          }
+          New-ReleaseZip "src\Corona\bin\x64\Release" "Corona_${{ steps.version.outputs.asset_suffix }}.zip"
+          New-ReleaseZip "src\Blazar\bin\x64\Release" "Blazar_${{ steps.version.outputs.asset_suffix }}.zip"
+
+      - name: Publish dated dev release (history)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: "Dev build ${{ steps.version.outputs.version }}"
+          body: |
+            Automated development build from `Dev` @ ${{ steps.version.outputs.short_sha }}.
+            Not a stable release. Requires the .NET 8 Desktop Runtime (x64).
+          prerelease: true
+          make_latest: "false"
+          files: |
+            Corona_${{ steps.version.outputs.asset_suffix }}.zip
+            Blazar_${{ steps.version.outputs.asset_suffix }}.zip
+            pack-out/*.nupkg
+
+      # action-gh-release updates an existing release for a tag it has seen, but it does not
+      # move a pre-existing git tag to a new commit; without this, dev-latest's tag would
+      # point at the first build forever even though its assets stay fresh.
+      - name: Move the dev-latest tag to this commit
+        run: |
+          git tag -f dev-latest
+          git push origin dev-latest --force
+
+      # dev-latest's assets carry real versioned names, so each run's differ from the last
+      # and action-gh-release's same-name replacement would let old ones accumulate. Delete
+      # whatever is attached before uploading this run's.
+      - name: Clear stale assets from the dev-latest release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view dev-latest --repo ${{ github.repository }} *> $null
+          if ($LASTEXITCODE -eq 0) {
+            $assets = gh release view dev-latest --repo ${{ github.repository }} --json assets --jq ".assets[].name"
+            foreach ($asset in $assets) {
+              if ($asset) {
+                gh release delete-asset dev-latest $asset --repo ${{ github.repository }} -y
+              }
+            }
+          }
+          exit 0
+
+      - name: Publish rolling dev-latest release (always-fresh link)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: dev-latest
+          name: "Latest dev build"
+          body: |
+            Always the most recent successful build from `Dev` (currently
+            ${{ steps.version.outputs.version }}, @ ${{ steps.version.outputs.short_sha }}).
+            Assets here are replaced on every push; see the
+            [Releases page](https://github.com/${{ github.repository }}/releases) to pin a
+            specific past build instead. Requires the .NET 8 Desktop Runtime (x64).
+          prerelease: true
+          make_latest: "false"
+          files: |
+            Corona_${{ steps.version.outputs.asset_suffix }}.zip
+            Blazar_${{ steps.version.outputs.asset_suffix }}.zip
+            pack-out/*.nupkg

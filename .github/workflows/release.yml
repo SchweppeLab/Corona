@@ -1,0 +1,123 @@
+name: Release
+
+# Manual-only, main-only. Builds the real version from Directory.Build.props (no -dev.N
+# suffix) and publishes it as a GitHub Release marked pre-release, so the result can be
+# downloaded and checked before it is promoted to a real release by hand from the GitHub UI.
+# Nothing here ever clears the pre-release flag automatically.
+#
+# Assets keep the names Corona's past hand-built releases used (Corona_v1_0_2.zip), because
+# the gh-pages download page links to that pattern: Corona_v<x_y_z>.zip, Blazar_v<x_y_z>.zip,
+# and MStreamer.<x.y.z>.nupkg. The tag is v<x.y.z>, as in Nova.
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  build-test-release:
+    runs-on: windows-2022
+
+    steps:
+      # workflow_dispatch lets any branch be picked from the Actions UI; only main ever
+      # produces an official release, so refuse anything else outright.
+      - name: Require main branch
+        if: github.ref != 'refs/heads/main'
+        run: |
+          echo "::error::Release can only be run from main (attempted ref: ${{ github.ref }}). Merge Dev to main first, then re-run from there."
+          exit 1
+
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - uses: microsoft/setup-msbuild@v2
+
+      - name: Resolve Nova packages
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: ./.github/scripts/Get-NovaFeed.ps1
+
+      - name: Read release version
+        id: version
+        shell: pwsh
+        run: |
+          $props = Get-Content Directory.Build.props -Raw
+          if ($props -notmatch '<Version>([^<]+)</Version>') {
+            throw "Could not find <Version> in Directory.Build.props"
+          }
+          $version = $matches[1]
+          "version=$version" >> $env:GITHUB_OUTPUT
+          "tag=v$version" >> $env:GITHUB_OUTPUT
+          "asset_suffix=v$($version -replace '\.', '_')" >> $env:GITHUB_OUTPUT
+
+      # Refuses to clobber a release that has already been promoted out of pre-release.
+      # Re-running against a tag still in pre-release or draft is fine and expected.
+      # Every path ends in an explicit exit: Actions appends an exit-on-LASTEXITCODE to pwsh
+      # steps, and gh's exit code 1 for "release not found" would otherwise fail the step.
+      - name: Guard against overwriting an already-published official release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = "${{ steps.version.outputs.tag }}"
+          $existingJson = gh release view $tag --json isPrerelease,isDraft 2>$null
+          if ($LASTEXITCODE -ne 0) {
+            Write-Host "No existing release for $tag; proceeding."
+            exit 0
+          }
+          $existing = $existingJson | ConvertFrom-Json
+          if (-not $existing.isDraft -and -not $existing.isPrerelease) {
+            Write-Error "$tag already exists as a published (non-prerelease) release. Bump <Version> in Directory.Build.props before re-running Release."
+            exit 1
+          }
+          Write-Host "$tag exists as a draft or pre-release; it will be updated."
+          exit 0
+
+      - name: Build
+        run: msbuild Corona.sln /restore /p:Configuration=Release /p:Platform=x64 /v:minimal
+
+      - name: Test MStreamer
+        run: dotnet test tests\MStreamer.Tests\MStreamer.Tests.csproj --no-build --configuration Release --verbosity minimal --logger "console;verbosity=detailed"
+
+      - name: Test Corona
+        run: dotnet test tests\Corona.Tests\Corona.Tests.csproj --no-build --configuration Release --verbosity minimal --logger "console;verbosity=detailed"
+
+      - name: Pack MStreamer
+        run: dotnet pack src\MStreamer\MStreamer.csproj --configuration Release --no-build --output pack-out -p:PackageVersion=${{ steps.version.outputs.version }}
+
+      - name: Zip the release folders
+        shell: pwsh
+        run: |
+          function New-ReleaseZip($buildDir, $zipPath) {
+            $stage = Join-Path publish ([IO.Path]::GetFileNameWithoutExtension($zipPath))
+            New-Item -ItemType Directory -Force $stage | Out-Null
+            Copy-Item "$buildDir\*" $stage -Recurse
+            Get-ChildItem $stage -Recurse -Filter *.pdb | Remove-Item
+            Compress-Archive -Path "$stage\*" -DestinationPath $zipPath -Force
+            Write-Host "$zipPath <- $buildDir"
+          }
+          New-ReleaseZip "src\Corona\bin\x64\Release" "Corona_${{ steps.version.outputs.asset_suffix }}.zip"
+          New-ReleaseZip "src\Blazar\bin\x64\Release" "Blazar_${{ steps.version.outputs.asset_suffix }}.zip"
+
+      - name: Publish release (pre-release, pending manual promotion)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: "Corona ${{ steps.version.outputs.version }}"
+          body: |
+            Release candidate for `${{ steps.version.outputs.tag }}`, built from `main` @
+            ${{ github.sha }}. Requires the .NET 8 Desktop Runtime (x64).
+
+            Marked pre-release pending review; once confirmed, promote this to a full
+            release manually from the GitHub UI.
+          prerelease: true
+          make_latest: "false"
+          files: |
+            Corona_${{ steps.version.outputs.asset_suffix }}.zip
+            Blazar_${{ steps.version.outputs.asset_suffix }}.zip
+            pack-out/*.nupkg

@@ -7,7 +7,7 @@ status lines as items land; the detail behind each decision is in the commit mes
 |---|------|--------|
 | 1 | Permanent `Dev` branch; `main` only receives stable merges | Done locally 2026-10-09 (`wpf-ui` renamed; owner pushes `Dev`, deletes `origin/wpf-ui` and `origin/CleanUp`) |
 | 2 | Professional repo layout: library + two apps, launchers, shared props, docs | Done 2026-10-09 |
-| 3 | GitHub Actions: build, test, Dev pre-releases, manual official releases | Next |
+| 3 | GitHub Actions: build, test, Dev pre-releases, manual official releases | Done locally 2026-10-09 (12 tests; workflows verified by a CI-equivalent local restore/build/test/pack); first real run after the owner pushes `Dev` |
 | 4 | Finish the WPF visual punch list, then adopt LandmineUI.Wpf | Pending; starts with the owner's list of visual nags |
 | 5 | Upgrade to the official Nova release with file-open guards | Pending; gated on Helios/Booster moving to the same Nova |
 

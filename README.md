@@ -19,6 +19,8 @@ src/Corona.Launcher/    native stub that is the release root's Corona.exe
 src/Blazar/             console demonstration of MStreamer
 src/Blazar.Launcher/    native stub that is the release root's Blazar.exe
 src/Launcher/           the one launcher source both stubs compile
+tests/                  MStreamer.Tests and Corona.Tests (MSTest)
+.github/                CI workflows and the Nova package-resolution script
 nuget/                  vendored packages (see nuget/README.md)
 docs/                   repo-local documentation; the published site lives on the gh-pages branch
 ```
@@ -55,6 +57,31 @@ dotnet nuget add source <extracted folder>\ThermoRawFileReader -n ThermoRawFileR
 ```
 
 Everything else comes from nuget.org or from the `nuget/` folder in this repo.
+
+### Tests
+
+Two MSTest projects under `tests/`. After a solution build:
+
+```
+dotnet test tests\MStreamer.Tests\MStreamer.Tests.csproj -c Release --no-build
+dotnet test tests\Corona.Tests\Corona.Tests.csproj -c Release --no-build
+```
+
+Without `--no-build` the `dotnet` CLI builds them itself (minus the launchers, which it
+cannot build).
+
+## Continuous integration
+
+Three GitHub Actions workflows under `.github/workflows/`, modeled on Nova's:
+
+- `ci.yml` builds and tests every pull request to `main` or `Dev` and every push to `main`.
+- `dev-build.yml` runs on every push to `Dev`: build, test, then publish `Corona_v<version>.zip`,
+  `Blazar_v<version>.zip`, and `MStreamer.<version>.nupkg` (version `x.y.z-dev.<run>`) as a
+  dated pre-release and as the rolling `dev-latest` pre-release.
+- `release.yml` is started by hand from `main` only: same build and assets at the real
+  version, published as a pre-release for review and promoted manually.
+
+All three fetch Nova from its GitHub release through `.github/scripts/Get-NovaFeed.ps1`.
 
 ## Release layout
 
