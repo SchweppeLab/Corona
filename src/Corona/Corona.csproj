@@ -5,8 +5,23 @@
     <TargetFramework>net8.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <RootNamespace>Corona</RootNamespace>
+    <!-- The release root's Corona.exe is the native launcher (..\Corona.Launcher); the managed
+         application lives in app\ under its own name so the two cannot collide. -->
+    <AssemblyName>Corona.App</AssemblyName>
     <Platforms>x64</Platforms>
     <PlatformTarget>x64</PlatformTarget>
+    <!-- Framework-dependent, Windows x64 only: the .NET 8 Desktop Runtime is a prerequisite by
+         design, and pinning the runtime identifier keeps the foreign-platform native libraries
+         (SkiaSharp, HarfBuzz) out of the build output. -->
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>false</SelfContained>
+    <!-- Release-folder layout, as in Scops: this project builds into app\ beneath
+         bin\x64\<Config>\, and ..\Corona.Launcher builds the root's single Corona.exe into that
+         same bin\x64\<Config>\. The folder a user opens shows one obvious thing to run, while
+         the .NET host still sees the ordinary flat layout it expects inside app\. -->
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <OutputPath>bin\$(Platform)\$(Configuration)\app\</OutputPath>
     <ApplicationIcon>gfx\Corona.ico</ApplicationIcon>
     <!-- ScottPlot.WPF depends on SkiaSharp.Views.WPF, which ships only net462 and
          net8.0-windows10.0.19041 builds. For this net8.0-windows target NuGet falls back to
@@ -22,6 +37,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MStreamer\MStreamer.csproj" />
+    <!-- Builds the root launcher whenever this project builds, so bin\x64\<Config>\ is never
+         missing its Corona.exe. Nothing to reference: it is a native exe. Only Visual Studio's
+         MSBuild can build a vcxproj, so the dotnet CLI (which the tests use) skips it. -->
+    <ProjectReference Include="..\Corona.Launcher\Corona.Launcher.vcxproj" Condition="'$(MSBuildRuntimeType)' != 'Core'">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
+    </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>

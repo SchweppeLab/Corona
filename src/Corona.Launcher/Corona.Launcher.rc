@@ -1,0 +1,35 @@
+#include <windows.h>
+
+// Generated into $(IntDir) by Corona.Launcher.vcxproj from the repo version in
+// Directory.Build.props, so this file never carries a version of its own.
+#include "launcher_version.h"
+
+// Icon 1 is what Explorer shows for Corona.exe: the same artwork Corona.App embeds via
+// ApplicationIcon, so the root file and the running window match.
+1 ICON "..\\Corona\\gfx\\Corona.ico"
+
+1 VERSIONINFO
+FILEVERSION LAUNCHER_VERSION_MAJOR,LAUNCHER_VERSION_MINOR,LAUNCHER_VERSION_PATCH,0
+PRODUCTVERSION LAUNCHER_VERSION_MAJOR,LAUNCHER_VERSION_MINOR,LAUNCHER_VERSION_PATCH,0
+FILEOS VOS_NT_WINDOWS32
+FILETYPE VFT_APP
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "040904B0"
+    BEGIN
+      VALUE "CompanyName", "University of Washington, Schweppe Lab"
+      VALUE "FileDescription", "Corona virtual mass spectrometer"
+      VALUE "FileVersion", LAUNCHER_VERSION_STRING
+      VALUE "InternalName", "Corona"
+      VALUE "LegalCopyright", "Copyright 2021-2026"
+      VALUE "OriginalFilename", "Corona.exe"
+      VALUE "ProductName", "Corona"
+      VALUE "ProductVersion", LAUNCHER_VERSION_STRING
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x409, 1200
+  END
+END

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{6E2B4A7C-1D3F-4C58-9A6B-7F0E2D5C8B41}</ProjectGuid>
+    <RootNamespace>CoronaLauncher</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings" />
+  <ImportGroup Label="Shared" />
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <!-- The release-folder root: Corona.App builds into the app\ folder beneath this same
+         directory (see Corona.csproj's OutputPath), so bin\x64\<Config>\ ends up as exactly
+         "Corona.exe + app\", the folder a user gets, unchanged. -->
+    <OutDir>$(ProjectDir)..\Corona\bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)obj\$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>Corona</TargetName>
+  </PropertyGroup>
+  <!-- The CRT is linked statically (MultiThreaded, not MultiThreadedDLL) in both
+       configurations on purpose: this exe is the first thing a recipient runs, and it must
+       not itself depend on a VC++ redistributable being installed. -->
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <AdditionalDependencies>shell32.lib;user32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <!-- Keep the PDB out of the release root, which must hold nothing but Corona.exe and app\. -->
+      <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
+    </Link>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>shell32.lib;user32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
+    </Link>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Launcher\launcher.cpp" />
+    <ClInclude Include="launcher_config.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Corona.Launcher.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets" />
+  <!-- The VERSIONINFO in the .rc reads these defines, so the launcher reports the same
+       version as the application without a second copy of the number. Version comes from
+       Directory.Build.props (or /p:Version on a CI build, which may carry a -dev.N suffix
+       that only the string form keeps). -->
+  <Target Name="WriteLauncherVersionHeader" BeforeTargets="ResourceCompile">
+    <PropertyGroup>
+      <_LauncherNumericVersion>$(Version.Split('-')[0])</_LauncherNumericVersion>
+      <_LauncherVersionMajor>$(_LauncherNumericVersion.Split('.')[0])</_LauncherVersionMajor>
+      <_LauncherVersionMinor>$(_LauncherNumericVersion.Split('.')[1])</_LauncherVersionMinor>
+      <_LauncherVersionPatch>$(_LauncherNumericVersion.Split('.')[2])</_LauncherVersionPatch>
+    </PropertyGroup>
+    <ItemGroup>
+      <_LauncherVersionLine Include="#define LAUNCHER_VERSION_MAJOR $(_LauncherVersionMajor)" />
+      <_LauncherVersionLine Include="#define LAUNCHER_VERSION_MINOR $(_LauncherVersionMinor)" />
+      <_LauncherVersionLine Include="#define LAUNCHER_VERSION_PATCH $(_LauncherVersionPatch)" />
+      <_LauncherVersionLine Include="#define LAUNCHER_VERSION_STRING &quot;$(Version)&quot;" />
+    </ItemGroup>
+    <MakeDir Directories="$(IntDir)" />
+    <WriteLinesToFile File="$(IntDir)launcher_version.h" Lines="@(_LauncherVersionLine)" Overwrite="true" WriteOnlyWhenDifferent="true" />
+  </Target>
+</Project>

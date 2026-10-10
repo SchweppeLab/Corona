@@ -4,12 +4,28 @@
     <TargetFramework>net8.0</TargetFramework>
     <OutputType>Exe</OutputType>
     <RootNamespace>Blazar</RootNamespace>
+    <!-- The release root's Blazar.exe is the native launcher (..\Blazar.Launcher); the managed
+         application lives in app\ under its own name so the two cannot collide. -->
+    <AssemblyName>Blazar.App</AssemblyName>
     <Platforms>x64</Platforms>
     <PlatformTarget>x64</PlatformTarget>
+    <!-- Framework-dependent, Windows x64 only; see Corona.csproj. -->
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>false</SelfContained>
+    <!-- Release-folder layout: this project builds into app\ beneath bin\x64\<Config>\, and
+         ..\Blazar.Launcher builds the root's single Blazar.exe into that same folder. -->
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <OutputPath>bin\$(Platform)\$(Configuration)\app\</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\MStreamer\MStreamer.csproj" />
+    <!-- Builds the root launcher whenever this project builds; see Corona.csproj. -->
+    <ProjectReference Include="..\Blazar.Launcher\Blazar.Launcher.vcxproj" Condition="'$(MSBuildRuntimeType)' != 'Core'">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
+    </ProjectReference>
   </ItemGroup>
 
 </Project>

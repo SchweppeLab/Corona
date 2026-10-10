@@ -1,0 +1,34 @@
+#include <windows.h>
+
+// Generated into $(IntDir) by Blazar.Launcher.vcxproj from the repo version in
+// Directory.Build.props, so this file never carries a version of its own.
+#include "launcher_version.h"
+
+// Blazar shares Corona's icon; it has no artwork of its own.
+1 ICON "..\\Corona\\gfx\\Corona.ico"
+
+1 VERSIONINFO
+FILEVERSION LAUNCHER_VERSION_MAJOR,LAUNCHER_VERSION_MINOR,LAUNCHER_VERSION_PATCH,0
+PRODUCTVERSION LAUNCHER_VERSION_MAJOR,LAUNCHER_VERSION_MINOR,LAUNCHER_VERSION_PATCH,0
+FILEOS VOS_NT_WINDOWS32
+FILETYPE VFT_APP
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "040904B0"
+    BEGIN
+      VALUE "CompanyName", "University of Washington, Schweppe Lab"
+      VALUE "FileDescription", "Blazar console MS simulator"
+      VALUE "FileVersion", LAUNCHER_VERSION_STRING
+      VALUE "InternalName", "Blazar"
+      VALUE "LegalCopyright", "Copyright 2021-2026"
+      VALUE "OriginalFilename", "Blazar.exe"
+      VALUE "ProductName", "Corona"
+      VALUE "ProductVersion", LAUNCHER_VERSION_STRING
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x409, 1200
+  END
+END
