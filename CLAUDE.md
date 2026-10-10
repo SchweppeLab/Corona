@@ -54,7 +54,7 @@ dotnet test tests\MStreamer.Tests\MStreamer.Tests.csproj -c Release --no-build
 dotnet test tests\Corona.Tests\Corona.Tests.csproj -c Release --no-build
 ```
 
-12 tests as of 2026-10-09, all passing. `--no-build` works right after a solution build because
+14 tests as of 2026-10-09, all passing. `--no-build` works right after a solution build because
 `Platform` defaults to x64; without it the dotnet CLI rebuilds the test projects itself.
 `SimRunner.Run` is `async void`, so SimRunner tests wait on `AcquisitionEnd` with a timeout;
 the fixture replays in about 0.6 s at 100x. The pipe test uses a GUID-derived pipe name so it
@@ -144,11 +144,13 @@ prerequisite by design (no self-contained publish, no installer). This follows S
 ## Gotchas
 
 - Helios/Booster and Corona must run the same Nova version. Nova 1.1.0 changed the spectrum
-  wire format (ScanDescription is serialized) relative to 1.1.0-dev.8; mixed versions
-  misparse every spectrum over the pipe.
-- Nova.IO 1.1.0 throws `SpectrumFileOpenException` where dev.8 silently returned empty
-  spectra. Until the item 5 guards land (see `docs/ROADMAP.md`), a bad file crashes the app
-  under 1.1.0.
-- `SimRunner.Run` is `async void`; exceptions inside it surface on the synchronization
-  context, not to the caller. Tests must wait on `AcquisitionEnd`.
+  wire format (ScanDescription is serialized) relative to 1.1.0-dev.8 and earlier; mixed
+  versions misparse every spectrum over the pipe. Corona pins 1.1.0.
+- Nova.IO 1.1.0 throws `SpectrumFileOpenException` for an existing file it cannot open or
+  index, and `FileReader(string)` throws for any file it cannot open; a missing file still
+  reads as empty scans. `SimRunner.Run` catches everything from the replay and raises
+  `RunError` (then `AcquisitionEnd` as usual); `CoronaViewModel.Load`/`FindScan` catch per
+  file and log; `App` handles `DispatcherUnhandledException`. Keep those guards.
+- `SimRunner.Run` is `async void`; nothing inside it reaches the caller. Tests must wait on
+  `AcquisitionEnd`.
 - Nova's `FileReader.ReadSpectrum*` take `""` as "the file already open"; never pass null.
