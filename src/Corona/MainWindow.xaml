@@ -2,11 +2,24 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:scottplot="clr-namespace:ScottPlot.WPF;assembly=ScottPlot.WPF"
-        Title="Corona" Height="878" Width="1140">
+        Title="Corona" Height="878" Width="1140"
+        Icon="gfx/Corona.ico"
+        Background="{DynamicResource BackgroundBrush}"
+        Style="{StaticResource SharpWindowStyle}">
     <DockPanel LastChildFill="True">
 
-        <ToolBarTray DockPanel.Dock="Top" Background="White">
-            <ToolBar Background="White" Loaded="ToolBar_Loaded">
+        <DockPanel DockPanel.Dock="Top" LastChildFill="True">
+            <!-- Theme picker. Outside the ToolBar on purpose: inside one, WPF would hand these
+                 controls its own toolbar styles instead of LandmineUI's. -->
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="8,0" VerticalAlignment="Center">
+                <TextBlock Text="Theme" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                <ComboBox x:Name="ThemeCombo" Width="130" SelectionChanged="ThemeCombo_SelectionChanged"/>
+                <CheckBox x:Name="DarkCheck" Content="Dark" VerticalAlignment="Center" Margin="10,0,0,0"
+                          Click="DarkCheck_Click"/>
+            </StackPanel>
+
+        <ToolBarTray Background="Transparent">
+            <ToolBar>
                 <ToolBar.Resources>
                     <Style TargetType="Image">
                         <Style.Triggers>
@@ -45,6 +58,7 @@
                 </Button>
             </ToolBar>
         </ToolBarTray>
+        </DockPanel>
 
         <Grid>
             <Grid.ColumnDefinitions>
