@@ -17,6 +17,11 @@
     <!-- Corona -->
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
     <PackageVersion Include="ScottPlot.WPF" Version="5.1.59" />
+    <!-- LandmineUI (theming and control styles). Its repo is private, so the packages are
+         vendored under nuget/; bump here and replace them there together. -->
+    <PackageVersion Include="LandmineUI.Core" Version="1.2.0" />
+    <PackageVersion Include="LandmineUI.Themes" Version="1.2.0" />
+    <PackageVersion Include="LandmineUI.Wpf" Version="1.2.0" />
 
     <!-- Tests -->
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
