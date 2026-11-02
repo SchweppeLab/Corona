@@ -62,9 +62,9 @@ repository, so its three packages are vendored in the `nuget/` folder, which the
 
 ### Themes
 
-Corona ships LandmineUI's themes (Fjord, Moss & Plum, Nocturne, Nightshade, Nightshade HC),
-each in light and dark. Pick one from the toolbar; the choice is saved per user in
-`%AppData%\Corona\settings.json`.
+Corona ships every LandmineUI theme (Fjord, Moss & Plum, Nocturne, Nightshade, Nightshade HC,
+and the seven mid-tone themes), each in light and dark. Pick one from the toolbar; the choice
+is saved per user in `%AppData%\Corona\settings.json`.
 
 ### Tests
 

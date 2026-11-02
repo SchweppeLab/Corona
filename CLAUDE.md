@@ -93,8 +93,11 @@ swaps the theme dictionary and raises `App.ThemeChanged`; the only listener is
 `ChartPalette`. The theme picker lives outside the ToolBar on purpose (inside one, WPF's own
 toolbar styles win). `AppSettings` persists the choice under `%AppData%\Corona`.
 
-LandmineUI's repo is private; its packages are vendored under `nuget/` (release v1.2.0,
-five themes). Anything Corona needs that LandmineUI lacks is a wish file in
+LandmineUI's repo is private; its packages are vendored under `nuget/` at the version in
+`Directory.Packages.props` (1.3.3-dev.12 as of 2026-11-02, twelve themes; the owner drops
+new builds into `D:\Software\NuGet\LandmineUI`). LandmineUI buttons default to 32 px tall
+with 16 px side padding; small utility buttons (the custom-scan stepper) set explicit
+`Height`/`Padding` rather than inheriting that. Anything Corona needs that LandmineUI lacks is a wish file in
 `D:\Software\Claude\Wishes\LandmineUI\` (addressed with honorifics), never an edit to
 LandmineUI. The toolbar icons are fixed gray PNGs, so they are dim on dark themes; that is a
 known limit, not a bug to chase in XAML.
