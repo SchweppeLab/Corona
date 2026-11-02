@@ -69,15 +69,16 @@
                             IsSnapToTickEnabled="True" TickFrequency="1" VerticalAlignment="Center"/>
                 </DockPanel>
 
+                <!-- Activity meter: ten equal slots sharing the column width, so none is clipped. -->
                 <ItemsControl Grid.Row="1" ItemsSource="{Binding MeterSlots}" Margin="0,4">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal"/>
+                            <UniformGrid Rows="1"/>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Border Width="36" Height="18" Margin="0,0,2,0" Background="{Binding}"/>
+                            <Border Height="14" Margin="1,0" Background="{Binding}"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
