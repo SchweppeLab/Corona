@@ -8,7 +8,7 @@ status lines as items land; the detail behind each decision is in the commit mes
 | 1 | Permanent `Dev` branch; `main` only receives stable merges | Done locally 2026-10-09 (`wpf-ui` renamed; owner pushes `Dev`, deletes `origin/wpf-ui` and `origin/CleanUp`) |
 | 2 | Professional repo layout: library + two apps, launchers, shared props, docs | Done 2026-10-09 |
 | 3 | GitHub Actions: build, test, Dev pre-releases, manual official releases | Done locally 2026-10-09 (12 tests; workflows verified by a CI-equivalent local restore/build/test/pack); first real run after the owner pushes `Dev` |
-| 4 | Finish the WPF visual punch list, then adopt LandmineUI.Wpf | Next; starts with the owner's list of visual nags |
+| 4 | Finish the WPF visual punch list, then adopt LandmineUI.Wpf | 2026-11-02: activity meter fixed (fills its column, 14 px tall); LandmineUI.Wpf 1.2.0 adopted with a theme picker (5 themes, light/dark, persisted). Remaining visual nags, if any, are found by the owner on review. |
 | 5 | Upgrade to the official Nova release with file-open guards | Done 2026-10-09, pulled ahead of item 4 so CI can restore Nova (see below). Helios/Booster must run Nova 1.1.0 to talk to these builds. |
 
 ## Decisions
@@ -26,9 +26,11 @@ status lines as items land; the detail behind each decision is in the commit mes
   longer carried the `1.1.0-dev.8` build Corona pinned, so CI could not have restored it.
   Corona now pins the `1.1.0` release, which CI downloads. Consequence: Dev builds speak the
   1.1.0 pipe wire format, so Helios/Booster need Nova 1.1.0 to receive scans from them.
-- **Item 4 LandmineUI**: latest official LandmineUI (1.2.0 at planning time) from the local
-  feed; theme merged in `App.OnStartup` the way LandmineUI's Gallery does it; a light theme
-  by default since Corona is light today; anything LandmineUI lacks becomes a wish file in
+- **Item 4 LandmineUI** (done): LandmineUI v1.2.0 (the build tagged in the LandmineUI repo)
+  vendored under `nuget/`; theme merged in `App.OnStartup` the way LandmineUI's Gallery does
+  it; Fjord Light by default since Corona was light before; a toolbar picker covers all five
+  themes in light and dark and saves the choice; plots follow the theme through
+  `ChartPalette`. Anything LandmineUI lacks becomes a wish file in
   `D:\Software\Claude\Wishes\LandmineUI\`, never an edit to LandmineUI.
 - **Item 5 guards** (done): `SimRunner.Run` raises `RunError` and still fires
   `AcquisitionEnd`; `CoronaViewModel.Load` and `FindScan` catch per file and log; `App`

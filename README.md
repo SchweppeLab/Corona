@@ -56,7 +56,15 @@ dotnet nuget add source <extracted folder> -n Nova
 dotnet nuget add source <extracted folder>\ThermoRawFileReader -n ThermoRawFileReader
 ```
 
-Everything else comes from nuget.org or from the `nuget/` folder in this repo.
+LandmineUI (the theming and control-style library Corona's window uses) has a private
+repository, so its three packages are vendored in the `nuget/` folder, which the root
+`nuget.config` registers as a source. Everything else comes from nuget.org.
+
+### Themes
+
+Corona ships LandmineUI's themes (Fjord, Moss & Plum, Nocturne, Nightshade, Nightshade HC),
+each in light and dark. Pick one from the toolbar; the choice is saved per user in
+`%AppData%\Corona\settings.json`.
 
 ### Tests
 

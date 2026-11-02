@@ -82,6 +82,23 @@ Three workflows, the same shape as Nova's (`D:\Software\Claude\Nova\.github\work
   `/p:RestoreSources="https://api.nuget.org/v3/index.json;<bundle>;<bundle>\ThermoRawFileReader;<repo>\nuget"`
   and `/p:RestorePackagesPath=<empty folder>` to the msbuild restore.
 
+## Theming (LandmineUI)
+
+`App.OnStartup` merges `ThemeResources.Build(tokens, mode)` first, then LandmineUI.Wpf's
+`Controls/<Name>.xaml` dictionaries for every stock control Corona uses (list in
+`App.xaml.cs`; a control missing there keeps WPF's own look, which fails in dark themes).
+`MainWindow` takes `SharpWindowStyle` (custom chrome) and `BackgroundBrush`. `App.ApplyTheme`
+swaps the theme dictionary and raises `App.ThemeChanged`; the only listener is
+`MainWindow.StylePlots`, because ScottPlot paints its own surface and reads colors through
+`ChartPalette`. The theme picker lives outside the ToolBar on purpose (inside one, WPF's own
+toolbar styles win). `AppSettings` persists the choice under `%AppData%\Corona`.
+
+LandmineUI's repo is private; its packages are vendored under `nuget/` (release v1.2.0,
+five themes). Anything Corona needs that LandmineUI lacks is a wish file in
+`D:\Software\Claude\Wishes\LandmineUI\` (addressed with honorifics), never an edit to
+LandmineUI. The toolbar icons are fixed gray PNGs, so they are dim on dark themes; that is a
+known limit, not a bug to chase in XAML.
+
 ## Release layout: do not flatten it
 
 The build output **is** the release folder: `src\Corona\bin\x64\Release\` holds exactly
