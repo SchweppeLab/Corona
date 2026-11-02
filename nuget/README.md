@@ -3,7 +3,8 @@
 This folder is a local NuGet source, registered as `Corona-Vendored` in the root
 `nuget.config`. It holds `.nupkg` files for dependencies that cannot be restored from a
 public feed: LandmineUI (Core, Themes, Wpf), whose repository is private. The packages here
-are the v1.2.0 release builds from the LandmineUI feed on the owner's machine.
+come from the LandmineUI feed on the owner's machine (`D:\Software\NuGet\LandmineUI`); the
+version is the one pinned in `Directory.Packages.props`.
 
 Nova and Nova.IO are **not** vendored here. CI downloads them, together with the pinned
 Thermo RawFileReader packages, from the matching release at

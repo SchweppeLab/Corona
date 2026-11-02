@@ -342,3 +342,7 @@ healthchecksdb
 publish/
 pack-out/
 nova-feed/
+
+# The vendored-package feed is deliberately tracked (see nuget/README.md); the *.nupkg rule
+# above is for build output.
+!nuget/*.nupkg

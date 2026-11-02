@@ -20,6 +20,14 @@ namespace Corona
       NocturneTokens.Value,
       NightshadeTokens.Value,
       NightshadeHCTokens.Value,
+      // The mid-tone themes LandmineUI added in 1.3.0, in the order it lists them.
+      AmberDuskTokens.Value,
+      AbyssalTealTokens.Value,
+      UnderstoryTokens.Value,
+      GoldenHourTokens.Value,
+      KilnTokens.Value,
+      CitronTokens.Value,
+      StormSandTokens.Value,
     };
 
     public static ThemeTokens CurrentTheme { get; private set; } = FjordTokens.Value;
