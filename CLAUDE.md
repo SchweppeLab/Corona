@@ -99,8 +99,14 @@ new builds into `D:\Software\NuGet\LandmineUI`). LandmineUI buttons default to 3
 with 16 px side padding; small utility buttons (the custom-scan stepper) set explicit
 `Height`/`Padding` rather than inheriting that. Anything Corona needs that LandmineUI lacks is a wish file in
 `D:\Software\Claude\Wishes\LandmineUI\` (addressed with honorifics), never an edit to
-LandmineUI. The toolbar icons are fixed gray PNGs, so they are dim on dark themes; that is a
-known limit, not a bug to chase in XAML.
+LandmineUI.
+
+The toolbar glyphs are Material Symbols geometries in `src/Corona/Icons.xaml` (the SVG
+sources sit beside them in `gfx/`), drawn by the `ToolBarIcon` template in the button's
+Foreground, so they follow every theme and the disabled state. A new toolbar button gets a
+geometry there, not a bitmap. Two LandmineUI style facts that bit once: its TextBox is a
+single 32 px line unless `AcceptsReturn` is set (the Message Log sets it), and its TabControl
+template always puts the tab strip on top, so `TabStripPlacement` does nothing.
 
 ## Release layout: do not flatten it
 
