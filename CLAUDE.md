@@ -113,7 +113,8 @@ status information to come, as it was in the WinForms version.
 ## Release layout: do not flatten it
 
 The build output **is** the release folder: `src\Corona\bin\x64\Release\` holds exactly
-`Corona.exe` plus `app\` (`Corona.App.exe`, every DLL, only win-x64 natives). Same for Blazar.
+`Corona.exe` plus `app\` (the app's own `Corona.exe`, every DLL, only win-x64 natives). Same
+for Blazar.
 Zip as-is. The launcher exists precisely so nothing about assembly loading had to change; do
 not move DLLs out of `app\` or add a custom assembly resolver. The .NET 8 Desktop Runtime is a
 prerequisite by design (no self-contained publish, no installer). This follows Scops
@@ -121,7 +122,11 @@ prerequisite by design (no self-contained publish, no installer). This follows S
 
 - Corona's launcher starts the app and exits; Blazar's shares the console, waits, and returns
   the app's exit code, and keeps the caller's working directory.
-- `Corona.App` and `Corona.exe` set the same AppUserModelID (`SchweppeLab.Corona`, in
+- **The app's process name is a contract.** Helios finds Corona by a running process named
+  exactly `Corona`, so the managed app is `app\Corona.exe` (`AssemblyName` `Corona`), the same
+  name as the root launcher. Do not rename it the way Scops names `Scops.App`: a `Corona.App`
+  build left every Helios client unable to find Corona.
+- `app\Corona.exe` and the root `Corona.exe` set the same AppUserModelID (`SchweppeLab.Corona`, in
   `src\Corona\AppUserModelId.cs` and `src\Corona.Launcher\launcher_config.h`); keep them in step.
 - The launcher VERSIONINFO is generated at build time from `$(Version)`, so there is no
   second copy of the version anywhere. Bump `Directory.Build.props` only.
@@ -166,8 +171,9 @@ prerequisite by design (no self-contained publish, no installer). This follows S
 - The owner does all visual and interactive testing of Corona. After a build, launching
   `Corona.exe` for about three seconds to confirm it starts (and closing it) is the only
   automated UI check allowed. No screenshots.
-- Always stop any `Corona.App` you started: it opens the named pipe server that Booster
-  connects to, and a lingering instance breaks the owner's instrument testing.
+- Always stop any Corona you started, and only that one: it opens the named pipe server that
+  Booster connects to, and a lingering instance breaks the owner's instrument testing. Match it
+  by process ID, since the owner's own instance has the same `Corona` process name.
 
 ## Gotchas
 

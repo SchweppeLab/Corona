@@ -41,7 +41,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <!-- The release-folder root: Corona.App builds into the app\ folder beneath this same
+    <!-- The release-folder root: the Corona app builds into the app\ folder beneath this same
          directory (see Corona.csproj's OutputPath), so bin\x64\<Config>\ ends up as exactly
          "Corona.exe + app\", the folder a user gets, unchanged. -->
     <OutDir>$(ProjectDir)..\Corona\bin\$(Platform)\$(Configuration)\</OutDir>

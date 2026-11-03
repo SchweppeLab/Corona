@@ -4,7 +4,7 @@
 // Directory.Build.props, so this file never carries a version of its own.
 #include "launcher_version.h"
 
-// Icon 1 is what Explorer shows for Corona.exe: the same artwork Corona.App embeds via
+// Icon 1 is what Explorer shows for Corona.exe: the same artwork the app embeds via
 // ApplicationIcon, so the root file and the running window match.
 1 ICON "..\\Corona\\gfx\\Corona.ico"
 
