@@ -94,7 +94,7 @@ swaps the theme dictionary and raises `App.ThemeChanged`; the only listener is
 toolbar styles win). `AppSettings` persists the choice under `%AppData%\Corona`.
 
 LandmineUI's repo is private; its packages are vendored under `nuget/` at the version in
-`Directory.Packages.props` (1.3.3-dev.12 as of 2026-11-02, twelve themes; the owner drops
+`Directory.Packages.props` (1.4.0 as of 2026-11-03, twelve themes; the owner drops
 new builds into `D:\Software\NuGet\LandmineUI`). LandmineUI buttons default to 32 px tall
 with 16 px side padding; small utility buttons (the custom-scan stepper) set explicit
 `Height`/`Padding` rather than inheriting that. Anything Corona needs that LandmineUI lacks is a wish file in
@@ -106,10 +106,9 @@ sources sit beside them in `gfx/`), drawn by the `ToolBarIcon` template in the b
 Foreground, so they follow every theme and the disabled state. A new toolbar button gets a
 geometry there, not a bitmap. Two LandmineUI style facts that bit once: its TextBox is a
 single 32 px line unless `AcceptsReturn` is set (the Message Log sets it), and its TabControl
-template always puts the tab strip on top, so `TabStripPlacement` does nothing (a wish for
-that was filed 2026-11-03; the lower TabControl keeps `Bottom` so it takes effect when
-LandmineUI delivers). The status bar is deliberately empty: it is reserved for status
-information to come, as it was in the WinForms version.
+honors `TabStripPlacement` only from 1.4.0 on (granted as a Corona wish; the lower
+TabControl's `Bottom` relies on it). The status bar is deliberately empty: it is reserved for
+status information to come, as it was in the WinForms version.
 
 ## Release layout: do not flatten it
 
