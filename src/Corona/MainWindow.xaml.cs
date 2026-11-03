@@ -46,6 +46,7 @@ namespace Corona
       initialSpec.MarkerSize = 1;
       plotSpectrum.Plot.Axes.SetupMultiplierNotation(plotSpectrum.Plot.Axes.Left);
       plotSpectrum.Plot.YLabel("Intensity");
+      plotSpectrum.Plot.XLabel("m/z");
       plotSpectrum.Plot.HideGrid();
 
       StylePlots();
