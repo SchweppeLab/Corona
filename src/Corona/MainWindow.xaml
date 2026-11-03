@@ -6,6 +6,29 @@
         Icon="gfx/Corona.ico"
         Background="{DynamicResource BackgroundBrush}"
         Style="{StaticResource SharpWindowStyle}">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Icons.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <!-- A toolbar glyph drawn in its button's Foreground, so it follows the theme and the
+                 button's disabled state. The Content is one of the Icons.xaml geometries. -->
+            <DataTemplate x:Key="ToolBarIcon">
+                <Path Width="24" Height="24" Stretch="None" Data="{Binding}"
+                      Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}">
+                    <Path.Style>
+                        <Style TargetType="Path">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsEnabled, RelativeSource={RelativeSource AncestorType=Button}}" Value="False">
+                                    <Setter Property="Opacity" Value="0.4"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Path.Style>
+                </Path>
+            </DataTemplate>
+        </ResourceDictionary>
+    </Window.Resources>
     <DockPanel LastChildFill="True">
 
         <DockPanel DockPanel.Dock="Top" LastChildFill="True">
@@ -20,42 +43,25 @@
 
         <ToolBarTray Background="Transparent">
             <ToolBar>
-                <ToolBar.Resources>
-                    <Style TargetType="Image">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsEnabled, RelativeSource={RelativeSource AncestorType=Button}}" Value="False">
-                                <Setter Property="Opacity" Value="0.25"/>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </ToolBar.Resources>
-                <Button ToolTip="Open MS Files" Command="{Binding LoadCommand}">
-                    <Image Source="gfx/file_open_32dp_5F6368_FILL0_wght400_GRAD0_opsz40.png" Width="28" Height="28"/>
-                </Button>
-                <Button x:Name="DeleteButton" ToolTip="Remove MS Files" Click="DeleteButton_Click" IsEnabled="{Binding CanDelete}">
-                    <Image Source="gfx/delete_forever_32dp_5F6368_FILL0_wght400_GRAD0_opsz40.png" Width="28" Height="28"/>
-                </Button>
+                <Button ToolTip="Open MS Files" Command="{Binding LoadCommand}"
+                        Content="{StaticResource IconFileOpen}" ContentTemplate="{StaticResource ToolBarIcon}"/>
+                <Button x:Name="DeleteButton" ToolTip="Remove MS Files" Click="DeleteButton_Click" IsEnabled="{Binding CanDelete}"
+                        Content="{StaticResource IconDeleteForever}" ContentTemplate="{StaticResource ToolBarIcon}"/>
                 <Separator/>
-                <Button x:Name="AddButton" ToolTip="Add Run" Click="AddButton_Click" IsEnabled="{Binding CanAdd}">
-                    <Image Source="gfx/add_to_queue_32dp_5F6368_FILL0_wght400_GRAD0_opsz40.png" Width="28" Height="28"/>
-                </Button>
-                <Button x:Name="RemoveButton" ToolTip="Delete Run" Click="RemoveButton_Click" IsEnabled="{Binding CanRemove}">
-                    <Image Source="gfx/remove_from_queue_32dp_5F6368_FILL0_wght400_GRAD0_opsz40.png" Width="28" Height="28"/>
-                </Button>
+                <Button x:Name="AddButton" ToolTip="Add Run" Click="AddButton_Click" IsEnabled="{Binding CanAdd}"
+                        Content="{StaticResource IconAddToQueue}" ContentTemplate="{StaticResource ToolBarIcon}"/>
+                <Button x:Name="RemoveButton" ToolTip="Delete Run" Click="RemoveButton_Click" IsEnabled="{Binding CanRemove}"
+                        Content="{StaticResource IconRemoveFromQueue}" ContentTemplate="{StaticResource ToolBarIcon}"/>
                 <Separator/>
-                <Button ToolTip="Run" Command="{Binding RunCommand}">
-                    <Image Source="gfx/play_circle_32dp_5F6368_FILL0_wght400_GRAD0_opsz40.png" Width="28" Height="28"/>
-                </Button>
-                <Button ToolTip="Pause" Command="{Binding PauseCommand}">
-                    <Image Source="gfx/pause_circle_32dp_5F6368_FILL0_wght0_GRAD0_opsz40.png" Width="28" Height="28"/>
-                </Button>
-                <Button ToolTip="Stop" Command="{Binding StopCommand}">
-                    <Image Source="gfx/stop_circle_32dp_5F6368_FILL0_wght0_GRAD0_opsz40.png" Width="28" Height="28"/>
-                </Button>
+                <Button ToolTip="Run" Command="{Binding RunCommand}"
+                        Content="{StaticResource IconPlayCircle}" ContentTemplate="{StaticResource ToolBarIcon}"/>
+                <Button ToolTip="Pause" Command="{Binding PauseCommand}"
+                        Content="{StaticResource IconPauseCircle}" ContentTemplate="{StaticResource ToolBarIcon}"/>
+                <Button ToolTip="Stop" Command="{Binding StopCommand}"
+                        Content="{StaticResource IconStopCircle}" ContentTemplate="{StaticResource ToolBarIcon}"/>
                 <Separator/>
-                <Button ToolTip="Reset Statistics" Command="{Binding ResetStatsCommand}">
-                    <Image Source="gfx/reset_32dp_434343_FILL0_wght400_GRAD200_opsz40.png" Width="28" Height="28"/>
-                </Button>
+                <Button ToolTip="Reset Statistics" Command="{Binding ResetStatsCommand}"
+                        Content="{StaticResource IconReplay}" ContentTemplate="{StaticResource ToolBarIcon}"/>
             </ToolBar>
         </ToolBarTray>
         </DockPanel>

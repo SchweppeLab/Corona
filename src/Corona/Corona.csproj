@@ -34,7 +34,6 @@
     <!-- Also the exe's icon (ApplicationIcon above); as a Resource it serves the window's
          own caption and taskbar entry via pack URI. -->
     <Resource Include="gfx\Corona.ico" />
-    <Resource Include="gfx\*.png" />
   </ItemGroup>
 
   <ItemGroup>
