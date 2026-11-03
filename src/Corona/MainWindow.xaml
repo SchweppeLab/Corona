@@ -66,6 +66,10 @@
         </ToolBarTray>
         </DockPanel>
 
+        <!-- Reserved, as it was in the WinForms version, for status information to come; it holds
+             its height so the layout does not shift when the first item lands. -->
+        <StatusBar x:Name="MainStatusBar" DockPanel.Dock="Bottom" MinHeight="28"/>
+
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="380"/>

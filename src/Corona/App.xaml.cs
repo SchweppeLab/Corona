@@ -56,7 +56,7 @@ namespace Corona
       {
         "Window", "ToolBar", "Button", "CheckBox", "ComboBox", "TextBox", "ListBox", "DataGrid",
         "TabControl", "GroupBox", "Slider", "GridSplitter", "ScrollBar", "ScrollViewer", "ToolTip",
-        "Separator", "Label", "Menu", "ContextMenu",
+        "Separator", "Label", "Menu", "ContextMenu", "StatusBar",
       })
       {
         Resources.MergedDictionaries.Add(new ResourceDictionary

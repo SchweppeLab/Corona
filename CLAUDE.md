@@ -106,7 +106,10 @@ sources sit beside them in `gfx/`), drawn by the `ToolBarIcon` template in the b
 Foreground, so they follow every theme and the disabled state. A new toolbar button gets a
 geometry there, not a bitmap. Two LandmineUI style facts that bit once: its TextBox is a
 single 32 px line unless `AcceptsReturn` is set (the Message Log sets it), and its TabControl
-template always puts the tab strip on top, so `TabStripPlacement` does nothing.
+template always puts the tab strip on top, so `TabStripPlacement` does nothing (a wish for
+that was filed 2026-11-03; the lower TabControl keeps `Bottom` so it takes effect when
+LandmineUI delivers). The status bar is deliberately empty: it is reserved for status
+information to come, as it was in the WinForms version.
 
 ## Release layout: do not flatten it
 
