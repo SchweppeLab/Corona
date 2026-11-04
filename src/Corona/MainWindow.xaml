@@ -243,20 +243,26 @@
                             <TabItem Header="Custom Scans">
                                 <DockPanel LastChildFill="True">
                                     <!-- Compact row: LandmineUI's button default (32 px tall, 16 px side padding) is
-                                         sized for primary actions, not a scan stepper. -->
-                                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="4">
-                                        <Button Content="-" Width="26" Height="24" Padding="0" Command="{Binding CustomScanPreviousCommand}"/>
-                                        <TextBox Text="{Binding CustomScanNumber, UpdateSourceTrigger=PropertyChanged}"
-                                                 Width="50" Height="24" Padding="4,0" Margin="2,0" TextAlignment="Center" VerticalContentAlignment="Center"/>
-                                        <Button Content="+" Width="26" Height="24" Padding="0" Command="{Binding CustomScanNextCommand}"/>
-                                        <TextBlock Text=" of " VerticalAlignment="Center"/>
-                                        <TextBlock Text="{Binding CustomScanCountText}" VerticalAlignment="Center" Width="30"/>
-                                        <TextBlock Text="{Binding CustomScanRTText}" VerticalAlignment="Center" Margin="12,0,0,0"/>
-                                        <Button Content="Clear" Height="24" Padding="10,0" Margin="12,0,0,0"
-                                                Command="{Binding ClearCustomScansCommand}"/>
-                                        <CheckBox Content="Auto-clear Upon Start" VerticalAlignment="Center" Margin="12,0,0,0"
-                                                  IsChecked="{Binding ClearCustomScansOnStart}"/>
-                                    </StackPanel>
+                                         sized for primary actions, not a scan stepper. The scan number and count take
+                                         minimum widths, so more digits widen them instead of running under the RT, and
+                                         the groups wrap instead of running off a narrow window. -->
+                                    <WrapPanel DockPanel.Dock="Top" Margin="4,2">
+                                        <StackPanel Orientation="Horizontal" Margin="0,2,12,2">
+                                            <Button Content="-" Width="26" Height="24" Padding="0" Command="{Binding CustomScanPreviousCommand}"/>
+                                            <TextBox Text="{Binding CustomScanNumber, UpdateSourceTrigger=PropertyChanged}"
+                                                     MinWidth="50" Height="24" Padding="4,0" Margin="2,0" TextAlignment="Center" VerticalContentAlignment="Center"/>
+                                            <Button Content="+" Width="26" Height="24" Padding="0" Command="{Binding CustomScanNextCommand}"/>
+                                            <TextBlock Text=" of " VerticalAlignment="Center"/>
+                                            <TextBlock Text="{Binding CustomScanCountText}" VerticalAlignment="Center" MinWidth="30"/>
+                                        </StackPanel>
+                                        <TextBlock Text="{Binding CustomScanRTText}" VerticalAlignment="Center" Margin="0,2,12,2"/>
+                                        <StackPanel Orientation="Horizontal" Margin="0,2">
+                                            <Button Content="Clear" Height="24" Padding="10,0"
+                                                    Command="{Binding ClearCustomScansCommand}"/>
+                                            <CheckBox Content="Auto-clear Upon Start" VerticalAlignment="Center" Margin="12,0,0,0"
+                                                      IsChecked="{Binding ClearCustomScansOnStart}"/>
+                                        </StackPanel>
+                                    </WrapPanel>
                                     <DataGrid ItemsSource="{Binding CustomScanValues}" AutoGenerateColumns="False"
                                               IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False"
                                               HeadersVisibility="Column">
