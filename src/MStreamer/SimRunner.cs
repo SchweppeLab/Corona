@@ -123,6 +123,11 @@ namespace MStreamer
     /// </summary>
     private volatile bool CancelFlag = false;
 
+    /// <summary>
+    /// Ends the start delay early when true.
+    /// </summary>
+    private volatile bool StartDelayReleased = false;
+
     //TODO: Rather than yes/no, create states such as Running/Stopped/Paused/etc.
     /// <summary>
     /// Indicates if the simulation is currently running.
@@ -173,6 +178,14 @@ namespace MStreamer
     }
 
     /// <summary>
+    /// Ends a pending start delay (see Run) so the first scan can go out. No effect without one.
+    /// </summary>
+    public void ReleaseStartDelay()
+    {
+      StartDelayReleased = true;
+    }
+
+    /// <summary>
     /// Raise an event indicating a scan has been acquired.
     /// </summary>
     /// <param name="scan">: the Spectrum object acquired.</param>
@@ -219,10 +232,13 @@ namespace MStreamer
     /// <param name="maxNumScans">: stops the simulation when this number of scans are acquired.</param>
     /// <param name="FirstScan">: starts the simulation from this scan number.</param>
     /// <param name="LastScan">: stops the simulation when this scan number is reached.</param>
-    public async void Run(string path, int maxNumScans = -1, int FirstScan = -1, int LastScan = -1)
+    /// <param name="maxRunMinutes">: stops the simulation once this much simulated time has passed since it started.</param>
+    /// <param name="startDelaySeconds">: holds the first scan back for this many real seconds, or until ReleaseStartDelay is called.</param>
+    public async void Run(string path, int maxNumScans = -1, int FirstScan = -1, int LastScan = -1, double maxRunMinutes = -1, double startDelaySeconds = 0)
     {
       CancelFlag = false;
       PauseFlag = false;
+      StartDelayReleased = false;
       IsRunning = true;
 
       RunInfo runInfo = new RunInfo();
@@ -236,7 +252,7 @@ namespace MStreamer
       {
         try
         {
-          Replay(path, maxNumScans, FirstScan, LastScan);
+          Replay(path, maxNumScans, FirstScan, LastScan, maxRunMinutes, startDelaySeconds);
         }
         catch (Exception ex)
         {
@@ -257,7 +273,7 @@ namespace MStreamer
     /// <summary>
     /// The replay loop Run executes on a background thread.
     /// </summary>
-    private void Replay(string path, int maxNumScans, int FirstScan, int LastScan)
+    private void Replay(string path, int maxNumScans, int FirstScan, int LastScan, double maxRunMinutes, double startDelaySeconds)
     {
       FileReader reader = new FileReader();
       SpectrumEx spectrum;
@@ -284,6 +300,27 @@ namespace MStreamer
         fastForwardMS = (long)(spectrum.RetentionTime * 60000);
       }
 
+      //An instrument given a start delay takes no scan until the delay passes or a custom scan
+      //arrives (ReleaseStartDelay). The hold is not run time, so both timers wait it out.
+      if (startDelaySeconds > 0)
+      {
+        sw.Stop();
+        RunTimer.Stop();
+        long holdMS = (long)(startDelaySeconds * 1000);
+        Stopwatch hold = Stopwatch.StartNew();
+        while (!StartDelayReleased && hold.ElapsedMilliseconds < holdMS)
+        {
+          if (CancelFlag) return;
+          Thread.Sleep(10);
+        }
+        sw.Start();
+        RunTimer.Start();
+      }
+
+      //Where the simulated clock, which starts at fastForwardMS, ends a duration-limited run.
+      double limitMS = maxRunMinutes > 0 ? fastForwardMS + maxRunMinutes * 60000 : double.PositiveInfinity;
+      bool timeIsUp = false;
+
       speedCheckRealMS = 0;
       speedCheckSimRT = spectrum.RetentionTime;
       speedLagging = false;
@@ -299,8 +336,10 @@ namespace MStreamer
         //don't fire off the spectra until the instrument acquired it.
         while (ms+fastForwardMS < spectrum.RetentionTime*60000)
         {
-          //A Stop() during a long gap must not wait for the gap to elapse.
+          //A Stop() during a long gap must not wait for the gap to elapse, nor must the
+          //duration limit wait for the next scan.
           if (CancelFlag) break;
+          if (ms+fastForwardMS >= limitMS) { timeIsUp = true; break; }
 
           long tmpMS = sw.ElapsedMilliseconds;
           ms += (tmpMS-lastMS) * Speed;
@@ -311,7 +350,7 @@ namespace MStreamer
           double realMsRemaining = (spectrum.RetentionTime*60000 - (ms+fastForwardMS)) / Speed;
           if (realMsRemaining > 5) Thread.Sleep(1);
         }
-        if (CancelFlag) return;
+        if (CancelFlag || timeIsUp) return;
         SendMsScanArrived(spectrum,specCent);
 
         //Periodically compare actual scan-delivery throughput against the requested Speed.

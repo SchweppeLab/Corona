@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using MStreamer;
 
 namespace MStreamer.Tests
@@ -181,6 +182,57 @@ namespace MStreamer.Tests
       Assert.IsTrue(rec.Ended.Wait(EndTimeout), "AcquisitionEnd never fired");
       Assert.IsInstanceOfType(reported, typeof(FormatException), reported?.ToString());
       Assert.IsFalse(runner.IsRunning);
+    }
+
+    [TestMethod]
+    public void MaxRunMinutes_EndsTheRunWhenTheSimulatedClockReachesIt()
+    {
+      // The limit falls in the gap between the second scan (0.60 min) and the third (0.90 min),
+      // so the run ends there without waiting for the third scan to come due.
+      var runner = new SimRunner();
+      var rec = new Recorder(runner);
+      runner.SetSpeed(100);
+
+      runner.Run(FixturePath, maxRunMinutes: 0.75);
+
+      Assert.IsTrue(rec.Ended.Wait(EndTimeout), "AcquisitionEnd never fired");
+      CollectionAssert.AreEqual(new[] { 1, 2 }, rec.ScanNumbers);
+      Assert.IsFalse(runner.IsRunning);
+    }
+
+    [TestMethod]
+    public void StartDelay_HoldsTheFirstScanUntilReleased()
+    {
+      // At 100x the first scan is 0.3 s away; a 30 s hold must keep it back until released.
+      var runner = new SimRunner();
+      var rec = new Recorder(runner);
+      runner.SetSpeed(100);
+
+      runner.Run(FixturePath, startDelaySeconds: 30);
+      Thread.Sleep(800);
+      Assert.AreEqual(0, rec.ScanNumbers.Count, "a scan went out during the hold");
+      Assert.AreEqual(1, rec.Starts.Count, "the run must start before the hold");
+      Assert.IsTrue(runner.IsRunning);
+
+      runner.ReleaseStartDelay();
+
+      Assert.IsTrue(rec.Ended.Wait(EndTimeout), "AcquisitionEnd never fired after the release");
+      CollectionAssert.AreEqual(new[] { 1, 2, 3, 4 }, rec.ScanNumbers);
+    }
+
+    [TestMethod]
+    public void StartDelay_ExpiresOnItsOwn()
+    {
+      var runner = new SimRunner();
+      var rec = new Recorder(runner);
+      runner.SetSpeed(100);
+      var clock = Stopwatch.StartNew();
+
+      runner.Run(FixturePath, startDelaySeconds: 0.5);
+
+      Assert.IsTrue(rec.Ended.Wait(EndTimeout), "AcquisitionEnd never fired");
+      Assert.IsTrue(clock.ElapsedMilliseconds >= 500, $"the run ended after {clock.ElapsedMilliseconds} ms, inside the hold");
+      CollectionAssert.AreEqual(new[] { 1, 2, 3, 4 }, rec.ScanNumbers);
     }
   }
 }
