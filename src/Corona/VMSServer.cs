@@ -1,9 +1,15 @@
-﻿using MStreamer;
 using Nova.IPC.Pipes;
 using Nova.Data;
 
 namespace Corona
 {
+  /// <summary>
+  /// Handler for a client's mode, start or cancel command (pipe messages 'M', 'S' and 'C').
+  /// </summary>
+  /// <param name="connection">: the client.</param>
+  /// <param name="code">: the message code.</param>
+  /// <param name="payload">: the message text, Key=Value lines or empty.</param>
+  public delegate void ClientCommandEvent(PipesConnection connection, char code, string payload);
 
   public class VMSServer
   {
@@ -12,6 +18,7 @@ namespace Corona
     public event PipeConnectionEvent? ClientConnected;
     public event PipeConnectionEvent? ClientDisconnected;
     public event EventHandler<CustomScan>? CustomScanRequest;
+    public event ClientCommandEvent? CommandReceived;
 
     public VMSServer(string pipeName)
     {
@@ -51,6 +58,11 @@ namespace Corona
         case 'A':
           OnCustomScanRequest(message);
           break;
+        case 'M':
+        case 'S':
+        case 'C':
+          OnCommand(connection, message);
+          break;
         default:
           Console.WriteLine("Server received unrecognized message code from {0}: {1}", connection.ID, message.MsgCode);
           break;
@@ -74,33 +86,56 @@ namespace Corona
       CustomScanRequest?.Invoke(this,cs);
     }
 
+    private void OnCommand(PipesConnection connection, PipeMessage message)
+    {
+      string payload;
+      try
+      {
+        payload = message.MsgData is { Length: > 0 } ? message.DecodeString() : "";
+      }
+      catch (Exception ex)
+      {
+        //A text payload that does not decode is dropped, like a malformed custom scan.
+        OnError(ex);
+        return;
+      }
+      CommandReceived?.Invoke(connection, message.MsgCode, payload);
+    }
+
     private void OnError(Exception exception)
     {
       Console.Error.WriteLine("ERROR: {0}", exception);
     }
 
-    public void SendAcquisitionEnd(RunInfo info)
+    /// <summary>
+    /// Tells every client the instrument's state (message '6').
+    /// </summary>
+    public void SendStateReport(StateReport report)
     {
-      PipeMessage pm = new PipeMessage();
-      pm.EncodeString(info.Name);
-      pm.MsgCode = '3';
-      server.Send(pm);
+      server.Send(Text('6', report.ToPayload()));
     }
 
-    public void SendAcquisitionStart(RunInfo info)
+    /// <summary>
+    /// Tells one client, the one that just connected, the instrument's state.
+    /// </summary>
+    public void SendStateReport(StateReport report, PipesConnection client)
     {
-      PipeMessage pm = new PipeMessage();
-      pm.EncodeString(info.Name);
-      pm.MsgCode = '2';
-      server.Send(pm);
+      client.Send(Text('6', report.ToPayload()));
+    }
+
+    public void SendAcquisitionEnd(string name)
+    {
+      server.Send(Text('3', name));
+    }
+
+    public void SendAcquisitionStart(string name)
+    {
+      server.Send(Text('2', name));
     }
 
     public void SendCanAcceptNextCustomScan()
     {
-      PipeMessage pm = new PipeMessage();
-      pm.EncodeString("a"); //dummy string
-      pm.MsgCode = '5';
-      server.Send(pm);
+      server.Send(Text('5', "a")); //dummy string
     }
 
     public void SendSpectrum(Spectrum spec)
@@ -122,6 +157,15 @@ namespace Corona
     public void Stop()
     {
       server.Stop();
+    }
+
+    //EncodeString resets the code to '0', so the code goes on afterwards.
+    private static PipeMessage Text(char code, string text)
+    {
+      PipeMessage pm = new PipeMessage();
+      pm.EncodeString(text);
+      pm.MsgCode = code;
+      return pm;
     }
 
   }

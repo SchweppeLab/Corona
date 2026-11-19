@@ -10,10 +10,12 @@ namespace Corona.Tests
   {
     private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(5);
 
+    private static string NewPipeName() => "CoronaTestPipe_" + Guid.NewGuid().ToString("N");
+
     [TestMethod]
     public void MalformedCustomScanRequest_IsDroppedAndTheServerKeepsServing()
     {
-      string pipe = "CoronaTestPipe_" + Guid.NewGuid().ToString("N");
+      string pipe = NewPipeName();
       var server = new VMSServer(pipe);
       var connected = new ManualResetEventSlim();
       var requested = new ManualResetEventSlim();
@@ -44,6 +46,56 @@ namespace Corona.Tests
       {
         client.AutoReconnect = false;
         client.Stop();
+        server.Stop();
+      }
+    }
+
+    [TestMethod]
+    public void Commands_ArriveWithTheirCodeAndPayload()
+    {
+      string pipe = NewPipeName();
+      var server = new VMSServer(pipe);
+      var commands = new List<(char Code, string Payload)>();
+      var third = new ManualResetEventSlim();
+      server.CommandReceived += (_, code, payload) => { commands.Add((code, payload)); if (commands.Count == 3) third.Set(); };
+      using var client = new PipeRecorder(pipe);
+      try
+      {
+        // The start payload as Helios serializes it; the comment is the one its probe sends.
+        string start = "Kind=Permanent\nRawFileName=probe.raw\nSampleName=\nComment=a comment; with = signs\nContinuation=StayOn\nSingleProcessingDelay=0\nWaitForContactClosure=False\n";
+        client.Send('M', "Mode=On");
+        client.Send('S', start);
+        client.Send('C', "");
+
+        Assert.IsTrue(third.Wait(Timeout), "received only " + string.Concat(commands.Select(c => c.Code)));
+        CollectionAssert.AreEqual(new[] { ('M', "Mode=On"), ('S', start), ('C', "") }, commands);
+      }
+      finally
+      {
+        server.Stop();
+      }
+    }
+
+    [TestMethod]
+    public void UnknownCode_IsIgnoredAndTheNextCommandStillArrives()
+    {
+      string pipe = NewPipeName();
+      var server = new VMSServer(pipe);
+      var commands = new List<char>();
+      var received = new ManualResetEventSlim();
+      server.CommandReceived += (_, code, _) => { commands.Add(code); received.Set(); };
+      using var client = new PipeRecorder(pipe);
+      try
+      {
+        client.Send('Z', "not a message Corona knows");
+        client.Send('C', "");
+
+        Assert.IsTrue(received.Wait(Timeout), "the command after the unknown code never arrived");
+        CollectionAssert.AreEqual(new[] { 'C' }, commands);
+        Assert.AreEqual("yes", server.IsRunning());
+      }
+      finally
+      {
         server.Stop();
       }
     }

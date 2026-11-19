@@ -25,4 +25,9 @@
     <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- The replay fixture MStreamer.Tests describes, for the acquisition tests. -->
+    <None Include="..\MStreamer.Tests\Files\**" Link="Files\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

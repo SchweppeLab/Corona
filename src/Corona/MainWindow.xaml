@@ -66,9 +66,19 @@
         </ToolBarTray>
         </DockPanel>
 
-        <!-- Reserved, as it was in the WinForms version, for status information to come; it holds
-             its height so the layout does not shift when the first item lands. -->
-        <StatusBar x:Name="MainStatusBar" DockPanel.Dock="Bottom" MinHeight="28"/>
+        <!-- The instrument's mode and state, as Helios clients see them (CLAUDE.md, "Instrument
+             state"). The selector sets the mode the way a client's command does; a client's own
+             acquisition (DirectControl) shows in the text and leaves the selector at On. -->
+        <StatusBar x:Name="MainStatusBar" DockPanel.Dock="Bottom" MinHeight="28">
+            <StatusBarItem>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Instrument mode" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                    <ComboBox ItemsSource="{Binding SelectableModes}" SelectedItem="{Binding SelectedMode}"
+                              Width="120" Height="24" Padding="6,0"/>
+                </StackPanel>
+            </StatusBarItem>
+            <StatusBarItem Content="{Binding InstrumentStatusText}" Margin="12,0,0,0"/>
+        </StatusBar>
 
         <Grid>
             <Grid.ColumnDefinitions>

@@ -33,6 +33,7 @@ namespace Corona
   {
     private readonly SimRunner simMS = new();
     private readonly VMSServer server = new("Corona");
+    private readonly AcquisitionControl instrument;
 
     private readonly DispatcherTimer meterTimer = new() { Interval = TimeSpan.FromMilliseconds(1) };
 
@@ -50,6 +51,8 @@ namespace Corona
 
     private int runSpeed = 1;
     private bool paused = false;
+    private bool runStartedByClient = false;
+    private bool syncingMode = false;
     private int runCounter = 0;
     private int nextPanel = 0;
 
@@ -148,6 +151,16 @@ namespace Corona
     private int selectedTabIndex = 0;
 
     [ObservableProperty]
+    private string instrumentStatusText = "Mode: On   State: ReadyForRun";
+
+    // The status bar's mode selector; see OnSelectedModeChanged.
+    [ObservableProperty]
+    private string selectedMode = "On";
+
+    public IReadOnlyList<string> SelectableModes { get; } =
+      InstrumentStatus.SelectableModes.Select(m => m.ToString()).ToList();
+
+    [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(LoadCommand))]
     private bool canLoad = true;
 
@@ -177,6 +190,12 @@ namespace Corona
 
     public CoronaViewModel()
     {
+      // First, so its runner handlers run before the ones below (handlers run in subscription
+      // order) and every state report precedes the stream message it belongs to.
+      instrument = new AcquisitionControl(simMS, server);
+      instrument.Status.Changed += report => UiPost(() => OnInstrumentStatusChanged(report));
+      server.CommandReceived += (client, code, payload) => UiPost(() => HandleClientCommand(client.ID, code, payload));
+
       simMS.AcquisitionEnd += OnAcquisitionEnd;
       simMS.AcquisitionStart += OnAcquisitionStart;
       simMS.MsScanArrived += OnMsScanArrived;
@@ -330,7 +349,7 @@ namespace Corona
           }
         }
         FileQueue.Add(fs);
-        if (!simMS.IsRunning) CanRun = true;
+        RefreshRunButtons();
       }
     }
 
@@ -344,9 +363,10 @@ namespace Corona
       foreach (int i in selectedIndices.OrderByDescending(x => x))
       {
         AppendLog("Removing index: " + i.ToString());
-        if (i == 0 && simMS.IsRunning) simMS.Stop();
+        if (i == 0 && simMS.IsRunning) instrument.Cancel();
         else if (i >= 0 && i < FileQueue.Count) FileQueue.RemoveAt(i);
       }
+      RefreshRunButtons();
     }
 
     [RelayCommand(CanExecute = nameof(CanRun))]
@@ -356,41 +376,43 @@ namespace Corona
       {
         if (paused)
         {
-          simMS.Resume();
-          CanRun = false;
-          CanPause = true;
           paused = false;
+          instrument.Resume();
+          RefreshRunButtons();
         }
+        return;
       }
-      else
+
+      FileStats? next = NextSupportedQueuedFile();
+      if (next == null)
       {
-        if (FileQueue.Count == 0)
-        {
-          AppendLog("FileQueue is empty. Should not have been allowed to start simulation.");
-          return;
-        }
-
-        stats = new VMsStats();
-        TicResetRequested?.Invoke();
-        AppendLog("Starting Virtal MS");
-
-        while (FileQueue.Count > 0)
-        {
-          string s = FileQueue[0].FullPath;
-          if (IsSupportedFile(s))
-          {
-            simMS.Run(FileQueue[0].FullPath, -1, FileQueue[0].StartScan, FileQueue[0].EndScan);
-            CanPause = true;
-            CanStop = true;
-            CanRun = false;
-            break;
-          }
-          else
-          {
-            PopQueue();
-          }
-        }
+        AppendLog("FileQueue is empty. Should not have been allowed to start simulation.");
+        return;
       }
+
+      stats = new VMsStats();
+      TicResetRequested?.Invoke();
+      AppendLog("Starting Virtual MS");
+      runStartedByClient = false;
+      instrument.Start(next);
+      RefreshRunButtons();
+    }
+
+    // The queue's first replayable file, discarding the ones before it that are not.
+    private FileStats? NextSupportedQueuedFile()
+    {
+      while (FileQueue.Count > 0 && !IsSupportedFile(FileQueue[0].FullPath)) PopQueue();
+      return FileQueue.Count > 0 ? FileQueue[0] : null;
+    }
+
+    // Run, Pause and Stop follow the replay and the instrument mode: nothing starts unless the
+    // instrument is On, as on the real thing, while a paused replay can always be resumed.
+    private void RefreshRunButtons()
+    {
+      bool running = simMS.IsRunning;
+      CanRun = paused || (instrument.Status.Current.Mode == SystemMode.On && !running && FileQueue.Count > 0);
+      CanPause = running && !paused;
+      CanStop = running;
     }
 
     private static bool IsSupportedFile(string s)
@@ -402,22 +424,15 @@ namespace Corona
     [RelayCommand(CanExecute = nameof(CanPause))]
     private void Pause()
     {
-      if (paused)
-      {
-        paused = false;
-        simMS.Resume();
-      }
-      else
-      {
-        paused = true;
-        simMS.Pause();
-        CanRun = true;
-        CanPause = false;
-      }
+      if (!simMS.IsRunning) return;
+      paused = !paused;
+      if (paused) instrument.Pause();
+      else instrument.Resume();
+      RefreshRunButtons();
     }
 
     [RelayCommand(CanExecute = nameof(CanStop))]
-    private void Stop() => simMS.Stop();
+    private void Stop() => instrument.Cancel();
 
     [RelayCommand]
     private void ResetStats()
@@ -600,34 +615,25 @@ namespace Corona
 
     private void OnAcquisitionEnd(RunInfo info)
     {
-      server?.SendAcquisitionEnd(info);
       AppendLog("Acquisition ended: " + info.Name);
-
-      CanRun = false;
-      CanPause = false;
-      CanStop = false;
+      paused = false;
       allSimTime += simMS.ElapsedRunTime();
       PopQueue();
-      while (FileQueue.Count > 0)
+
+      // The Run button plays the whole queue; a client's start is one acquisition, as on an
+      // instrument. Either way the queue waits while the instrument is not on.
+      bool byClient = runStartedByClient;
+      runStartedByClient = false;
+      if (!byClient && instrument.CanStart)
       {
-        string s = FileQueue[0].FullPath;
-        if (IsSupportedFile(s))
-        {
-          simMS.Run(FileQueue[0].FullPath, -1, FileQueue[0].StartScan, FileQueue[0].EndScan);
-          CanPause = true;
-          CanStop = true;
-          break;
-        }
-        else
-        {
-          PopQueue();
-        }
+        FileStats? next = NextSupportedQueuedFile();
+        if (next != null) instrument.Start(next);
       }
+      RefreshRunButtons();
     }
 
     private void OnAcquisitionStart(RunInfo info)
     {
-      server?.SendAcquisitionStart(info);
       if (ClearCustomScansOnStart) ClearCustomScans();
 
       AcquisitionTicResetRequested?.Invoke();
@@ -657,6 +663,7 @@ namespace Corona
     {
       // Stamp the request time immediately so marshaling delay doesn't skew the recorded RT / Hz calculation.
       customScan.RetentionTime = simMS.GetRT();
+      instrument.CustomScanArrived();
       UiInvoke(() =>
       {
         while (customScanQueue.Count > 0 && customScanQueue.First!.Value < customScan.RetentionTime * 60 - 1)
@@ -684,6 +691,85 @@ namespace Corona
       // until the state update was committed, so ordering is preserved without parking a
       // network send on the UI dispatcher queue.
       server?.SendCanAcceptNextCustomScan();
+    }
+
+    // Every state change, as the clients receive it. Runs on the UI thread.
+    private void OnInstrumentStatusChanged(StateReport report)
+    {
+      InstrumentStatusText = $"Mode: {report.Mode}   State: {report.State}";
+      AppendLog($"Instrument state: {report}");
+      if (Array.IndexOf(InstrumentStatus.SelectableModes, report.Mode) >= 0 && SelectedMode != report.Mode.ToString())
+      {
+        syncingMode = true;
+        SelectedMode = report.Mode.ToString();
+        syncingMode = false;
+      }
+      RefreshRunButtons();
+    }
+
+    partial void OnSelectedModeChanged(string value)
+    {
+      if (syncingMode || !Enum.TryParse(value, out SystemMode mode)) return;
+      AppendLog($"Instrument mode set to {mode} from the status bar.");
+      instrument.SetMode(mode);
+    }
+
+    // A client's mode, start or cancel command, logged with its code and acted on as an
+    // instrument would. Runs on the UI thread.
+    private void HandleClientCommand(int clientId, char code, string payload)
+    {
+      string shown = payload.Trim().Replace("\r", "").Replace("\n", ", ");
+      AppendLog($"Client {clientId} command {code}" + (shown.Length > 0 ? ": " + shown : ""));
+      switch (code)
+      {
+        case 'M':
+          if (ModeRequest.TryParse(payload, out SystemMode mode)) instrument.SetMode(mode);
+          else AppendLog("Mode request ignored: not a mode the instrument can be put in.");
+          break;
+        case 'S':
+          StartForClient(payload);
+          break;
+        case 'C':
+          if (simMS.IsRunning) instrument.Cancel();
+          else AppendLog("Cancel ignored: no acquisition is running.");
+          break;
+      }
+    }
+
+    private void StartForClient(string payload)
+    {
+      AcquisitionRequest request;
+      try
+      {
+        request = AcquisitionRequest.Parse(payload);
+      }
+      catch (FormatException ex)
+      {
+        AppendLog($"Start refused: {ex.Message}.");
+        return;
+      }
+
+      // The IAPI's conditions, mode On and no acquisition pending, and Corona's own: a file.
+      if (!instrument.CanStart)
+      {
+        AppendLog($"Start refused: the instrument is {instrument.Status.Current}.");
+        return;
+      }
+      FileStats? next = NextSupportedQueuedFile();
+      if (next == null)
+      {
+        AppendLog("Start refused: no file is queued.");
+        return;
+      }
+      if (request.WaitForContactClosure) AppendLog("No contact closure on a virtual instrument; starting without one.");
+      if (request.Kind == AcquisitionKind.MethodRun) AppendLog($"No methods on a virtual instrument; the queued file replays in place of {request.MethodName}.");
+
+      stats = new VMsStats();
+      TicResetRequested?.Invoke();
+      AppendLog("Starting Virtual MS for the client: " + request);
+      runStartedByClient = true;
+      instrument.Start(next, request);
+      RefreshRunButtons();
     }
 
     private void OnMsScanArrived(object? sender, MStreamerEventArgs e)
