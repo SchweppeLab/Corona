@@ -54,8 +54,10 @@ dotnet test tests\MStreamer.Tests\MStreamer.Tests.csproj -c Release --no-build
 dotnet test tests\Corona.Tests\Corona.Tests.csproj -c Release --no-build
 ```
 
-14 tests as of 2026-10-09, all passing. `--no-build` works right after a solution build because
+45 tests as of 2026-11-19, all passing. `--no-build` works right after a solution build because
 `Platform` defaults to x64; without it the dotnet CLI rebuilds the test projects itself.
+`Corona.Tests` links the MStreamer fixture for its acquisition tests, which replay it over a
+real pipe.
 `SimRunner.Run` is `async void`, so SimRunner tests wait on `AcquisitionEnd` with a timeout;
 the fixture replays in about 0.6 s at 100x. The pipe test uses a GUID-derived pipe name so it
 never collides with a running Corona.
@@ -107,8 +109,37 @@ Foreground, so they follow every theme and the disabled state. A new toolbar but
 geometry there, not a bitmap. Two LandmineUI style facts that bit once: its TextBox is a
 single 32 px line unless `AcceptsReturn` is set (the Message Log sets it), and its TabControl
 honors `TabStripPlacement` only from 1.4.0 on (granted as a Corona wish; the lower
-TabControl's `Bottom` relies on it). The status bar is deliberately empty: it is reserved for
-status information to come, as it was in the WinForms version.
+TabControl's `Bottom` relies on it). The status bar holds the instrument's mode selector and
+its mode and state (see Instrument state).
+
+## Instrument state (the Helios protocol)
+
+Corona replicates an instrument. Helios's VMS backend relays what Corona reports and never
+fabricates state, so whatever Corona reports is what every Helios client sees. The wire
+contract is `docs/corona-pipe-protocol.md` in the Helios repo (`D:\Software\Claude\Helios`);
+both sides change together.
+
+- `InstrumentStatus` (`InstrumentState.cs`) holds the IAPI mode and state and whether a pause
+  or resume is possible, and allows only the transitions an instrument makes. Report only a
+  status Corona is in: when Corona cannot do what an instrument does (contact closure,
+  methods), leave the status alone and log it rather than fake a transition.
+- `AcquisitionControl` is the one path for every start, pause, cancel and mode change, whether
+  a Corona button or a client asked. It sends message `6` to a client on connect and to all
+  clients on every change, ordered around the stream messages: a start is `6` Running then
+  `2`, an end is `3` then `6` idle. It subscribes to `SimRunner` before the view model does so
+  that order holds.
+- A client's start (`S`) replays the file at the head of the queue, one acquisition per start,
+  under `DirectControl`, honoring the scan-count or duration limit, the start delay (which a
+  custom scan ends early), the raw file name (message `2`) and the continuation. It is
+  refused, with the status unchanged and a log line, unless the instrument is On and idle and
+  a file is queued. The Run button plays the whole queue, in mode On.
+- A mode other than On (`M`, or the status bar's selector) ends a running replay first and is
+  reported after the stream closes. Run is disabled unless the mode is On.
+- `PipeMessage.EncodeString` resets `MsgCode` to `'0'`; `VMSServer.Text` sets the code after.
+  Unknown message codes are ignored and malformed payloads dropped, never crashing dispatch.
+- `AcquisitionControlTests` watch the whole sequence from a Nova pipe client; the Helios
+  in-process probe in `D:\Software\Claude\Notes\Corona-State-Protocol-Instructions.md` is the
+  end-to-end check.
 
 ## Release layout: do not flatten it
 
